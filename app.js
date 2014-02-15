@@ -58,11 +58,6 @@ var jsonp = function(response) {
   var middleware = userApiClientLibrary.middleware;
   var checkToken = middleware.expressify(middleware.checkToken(userApiClient));
 
-  var uploadDir = './uploads';
-  if (! fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-  }
-
   var app = express();
 
   app.use(express.compress());
@@ -79,18 +74,6 @@ var jsonp = function(response) {
     response.send(200, 'OK');
   });
 
-  app.post(
-    '/uploads',
-    checkToken,
-    function(req, res) {
-      userMetadataClient.getMeta(req.tidepool.user.userhash, function(err, userMeta){
-        var payload = req.sandcastle = app.sandcastle.payload(req);
-        payload.start(userMeta, uploads, jsonp(res));
-      });
-    }
-  );
-
-  // app.use(express.bodyParser({ keepExtensions: true, uploadDir: uploadDir }));
   app.post(
     '/v1/device/upload',
     checkToken,
@@ -132,11 +115,6 @@ var jsonp = function(response) {
           } else {
             jsonp(res)("no sandcastle", {msg: 'not ready'});
           }
-          // var payload = req.body || {};
-          // payload.groupId = hashPair.id;
-          // payload.dexcomFile = req.files['dexcom'].path;
-
-          // uploads.upload(payload, jsonp(res));
         }
       );
     }
@@ -193,7 +171,7 @@ var jsonp = function(response) {
 
     var hakken = require('hakken')(config.discovery).client( );
     hakken.start(function ( ) {
-      console.log('hakken started', arguments);
+      log.info('hakken started');
       app.hakken = hakken;
       hakken.publish(serviceDescriptor);
       var createSandcastle = require('./lib/sandcastle');
