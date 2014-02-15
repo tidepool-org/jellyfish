@@ -95,12 +95,15 @@ var jsonp = function(response) {
     '/v1/device/upload',
     checkToken,
     function(req, res) {
+      log.info('start upload authorization');
       async.waterfall(
         [
           function(cb) {
+            log.info('with token');
             userApiClient.withServerToken(cb);
           },
           function(token, cb) {
+            log.info('get private pair');
             seagullClient.getPrivatePair(req._tokendata.userid, 'uploads', token, cb);
           }
         ],
@@ -122,9 +125,13 @@ var jsonp = function(response) {
             return;
           }
 
-          var payload = req.sandcastle = app.sandcastle.payload(req);
-          var meta = { groupId: hashPair.id };
-          payload.start(meta, uploads, jsonp(res));
+          if (app.sandcastle) {
+            var payload = req.sandcastle = app.sandcastle.payload(req);
+            var meta = { groupId: hashPair.id };
+            payload.start(meta, uploads, jsonp(res));
+          } else {
+            jsonp(res)("no sandcastle", {msg: 'not ready'});
+          }
           // var payload = req.body || {};
           // payload.groupId = hashPair.id;
           // payload.dexcomFile = req.files['dexcom'].path;
