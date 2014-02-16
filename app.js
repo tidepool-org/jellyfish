@@ -142,7 +142,7 @@ var jsonp = function(response) {
   app.use(express.static(path.join(__dirname, './static')));
 
   process.on('uncaughtException', function(err){
-    log.error(err, 'Uncaught exception bubbled all the way up!');
+    log.error(err.stack, 'Uncaught exception bubbled all the way up!');
   });
 
   if (config.httpPort != null) {
