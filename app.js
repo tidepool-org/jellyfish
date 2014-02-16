@@ -41,7 +41,7 @@ var jsonp = function(response) {
   };
 
 (function(){
-  var hakken = require('hakken')(config.discovery).client();
+  var hakken = require('hakken')(config.discovery, log).client();
 
   var userApiWatch = hakken.randomWatch(config.userApi.serviceName);
 
@@ -169,7 +169,7 @@ var jsonp = function(response) {
       serviceDescriptor['protocol'] = 'http';
     }
 
-    var hakken = require('hakken')(config.discovery).client( );
+    var hakken = require('hakken')(config.discovery, log).client( );
     hakken.start(function ( ) {
       log.info('hakken started');
       app.hakken = hakken;
