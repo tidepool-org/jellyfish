@@ -44,11 +44,12 @@ var jsonp = function(response) {
   var hakken = require('hakken')(config.discovery, log).client();
 
   var userApiWatch = hakken.watchFromConfig(config.userApi.serviceSpec);
-
   var seagullWatch = hakken.watchFromConfig(config.seagull.serviceSpec);
-  hakken.start(function ( ) {
-    userApiWatch.start(function ( ) { });
-    seagullWatch.start(function ( ) { });
+  var sandcastleWatch = hakken.watchFromConfig(config.sandcastle.serviceSpec);
+  hakken.start(function() {
+    userApiWatch.start();
+    seagullWatch.start();
+    sandcastleWatch.start();
   });
 
   var userApiClientLibrary = require('user-api-client');
@@ -57,6 +58,9 @@ var jsonp = function(response) {
 
   var middleware = userApiClientLibrary.middleware;
   var checkToken = middleware.expressify(middleware.checkToken(userApiClient));
+
+  var uploads = require('./lib/uploads.js')(config);
+  var sandcastle = require('./lib/sandcastle.js')(sandcastleWatch, uploads);
 
   var app = express();
 
@@ -108,13 +112,7 @@ var jsonp = function(response) {
             return;
           }
 
-          if (app.sandcastle) {
-            var payload = req.sandcastle = app.sandcastle.payload(req);
-            var meta = { groupId: hashPair.id };
-            payload.start(meta, uploads, jsonp(res));
-          } else {
-            jsonp(res)("no sandcastle", {msg: 'not ready'});
-          }
+          sandcastle.payload(req, { groupId: hashPair.id }, jsonp(res));
         }
       );
     }
@@ -130,19 +128,10 @@ var jsonp = function(response) {
     }
   );
 
-  app.post('/v1/clientlogs', function(request, response) {
-    var message = request.body;
-    if (typeof message === 'object') {
-      message = JSON.stringify(message);
-    }
-    log.log('CLIENTLOGS:', message);
-    response.send(201);
-  });
-
   app.use(express.static(path.join(__dirname, './static')));
 
   process.on('uncaughtException', function(err){
-    log.error(err.stack, 'Uncaught exception bubbled all the way up!');
+    log.error(err, 'Uncaught exception bubbled all the way up!');
   });
 
   if (config.httpPort != null) {
@@ -169,13 +158,6 @@ var jsonp = function(response) {
       serviceDescriptor['protocol'] = 'http';
     }
 
-    var hakken = require('hakken')(config.discovery, log).client( );
-    hakken.start(function ( ) {
-      log.info('hakken started');
-      app.hakken = hakken;
-      hakken.publish(serviceDescriptor);
-      var createSandcastle = require('./lib/sandcastle');
-      app.sandcastle = createSandcastle(config, app);
-    });
+    hakken.publish(serviceDescriptor);
   }
 })();
