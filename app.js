@@ -46,11 +46,10 @@ var jsonp = function(response) {
   var userApiWatch = hakken.watchFromConfig(config.userApi.serviceSpec);
   var seagullWatch = hakken.watchFromConfig(config.seagull.serviceSpec);
   var sandcastleWatch = hakken.watchFromConfig(config.sandcastle.serviceSpec);
-  hakken.start(function() {
-    userApiWatch.start();
-    seagullWatch.start();
-    sandcastleWatch.start();
-  });
+  hakken.start();
+  userApiWatch.start();
+  seagullWatch.start();
+  sandcastleWatch.start();
 
   var userApiClientLibrary = require('user-api-client');
   var userApiClient = userApiClientLibrary.client(config.userApi, userApiWatch);
@@ -82,15 +81,12 @@ var jsonp = function(response) {
     '/v1/device/upload',
     checkToken,
     function(req, res) {
-      log.info('start upload authorization');
       async.waterfall(
         [
           function(cb) {
-            log.info('with token');
             userApiClient.withServerToken(cb);
           },
           function(token, cb) {
-            log.info('get private pair');
             seagullClient.getPrivatePair(req._tokendata.userid, 'uploads', token, cb);
           }
         ],
@@ -112,7 +108,7 @@ var jsonp = function(response) {
             return;
           }
 
-          sandcastle.payload(req, { groupId: hashPair.id }, jsonp(res));
+          sandcastle.ingest(req, { groupId: hashPair.id }, jsonp(res));
         }
       );
     }
@@ -152,6 +148,7 @@ var jsonp = function(response) {
     var serviceDescriptor = { service: config.serviceName };
     if (config.httpsPort != null) {
       serviceDescriptor['host'] = config.publishHost + ':' + config.httpsPort;
+      serviceDescriptor['protocol'] = 'https';
     }
     else if (config.httpPort != null) {
       serviceDescriptor['host'] = config.publishHost + ':' + config.httpPort;
