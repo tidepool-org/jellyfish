@@ -70,10 +70,15 @@ module.exports = (function(){
     serverSecret: config.fromEnvironment("SERVER_SECRET")
   };
 
-  env.sandcastle = {
-    // The config object to discover sandcastle.  This is just passed through to hakken.watchFromConfig()
-    serviceSpec: JSON.parse(config.fromEnvironment("SANDCASTLE_SERVICE"))
-  };
+  /**
+   * A JSON object that describes where to store intermediate files (data files to be processed)
+   * Known types are 'local' and 'sandcastle'.
+   *
+   * 'local' is the default and just stores files locally
+   * 'sandcastle' connects up with sandcastle and takes a `serviceSpec` parameter which is passed through
+   *   to hakken to create a service watch.
+   */
+  env.storage = JSON.parse(config.fromEnvironment("FILE_STORAGE", '{ "type": "local", "storageDir":"./data" }'));
 
   env.seagull = {
     // The config object to discover seagull.  This is just passed through to hakken.watchFromConfig()

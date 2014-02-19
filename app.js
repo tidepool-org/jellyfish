@@ -20,6 +20,7 @@ var fs = require('fs');
 var async = require('async');
 var express = require('express');
 var path = require('path');
+var except = require('amoeba').except;
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
@@ -45,11 +46,9 @@ var jsonp = function(response) {
 
   var userApiWatch = hakken.watchFromConfig(config.userApi.serviceSpec);
   var seagullWatch = hakken.watchFromConfig(config.seagull.serviceSpec);
-  var sandcastleWatch = hakken.watchFromConfig(config.sandcastle.serviceSpec);
   hakken.start();
   userApiWatch.start();
   seagullWatch.start();
-  sandcastleWatch.start();
 
   var userApiClientLibrary = require('user-api-client');
   var userApiClient = userApiClientLibrary.client(config.userApi, userApiWatch);
@@ -58,8 +57,25 @@ var jsonp = function(response) {
   var middleware = userApiClientLibrary.middleware;
   var checkToken = middleware.expressify(middleware.checkToken(userApiClient));
 
+  var storage = function(storageConfig) {
+    switch(storageConfig.type) {
+      case 'local':
+        log.info('Using local storage with config[%j]', storageConfig);
+        storage = require('./lib/storage/local.js')(storageConfig);
+        break;
+      case 'sandcastle':
+        log.info('Using sandcastle storage with config[%j]', storageConfig);
+        var sandcastleWatch = hakken.watchFromConfig(storageConfig.serviceSpec);
+        sandcastleWatch.start();
+        storage = require('./lib/storage/sandcastle.js')(sandcastleWatch);
+        break;
+      default:
+        throw except.IAE('Unknown storage type[%s], known types are [\'local\', \'sandcastle\']', storageConfig.type);
+    }
+  }(config.storage);
+
   var uploads = require('./lib/uploads.js')(config);
-  var sandcastle = require('./lib/sandcastle.js')(sandcastleWatch, uploads);
+  var uploadFlow = require('./lib/uploadFlow.js')(storage, uploads);
 
   var app = express();
 
@@ -108,7 +124,7 @@ var jsonp = function(response) {
             return;
           }
 
-          sandcastle.ingest(req, { groupId: hashPair.id }, jsonp(res));
+          uploadFlow.ingest(req, { groupId: hashPair.id }, jsonp(res));
         }
       );
     }
