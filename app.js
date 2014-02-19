@@ -41,7 +41,7 @@ var jsonp = function(response) {
   };
 
 (function(){
-  var hakken = require('hakken')(config.discovery).client();
+  var hakken = require('hakken')(config.discovery, log).client();
 
   var userApiWatch = hakken.randomWatch(config.userApi.serviceName);
 
@@ -57,11 +57,6 @@ var jsonp = function(response) {
 
   var middleware = userApiClientLibrary.middleware;
   var checkToken = middleware.expressify(middleware.checkToken(userApiClient));
-
-  var uploadDir = './uploads';
-  if (! fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-  }
 
   var app = express();
 
@@ -80,27 +75,18 @@ var jsonp = function(response) {
   });
 
   app.post(
-    '/uploads',
-    checkToken,
-    function(req, res) {
-      userMetadataClient.getMeta(req.tidepool.user.userhash, function(err, userMeta){
-        var payload = req.sandcastle = app.sandcastle.payload(req);
-        payload.start(userMeta, uploads, jsonp(res));
-      });
-    }
-  );
-
-  // app.use(express.bodyParser({ keepExtensions: true, uploadDir: uploadDir }));
-  app.post(
     '/v1/device/upload',
     checkToken,
     function(req, res) {
+      log.info('start upload authorization');
       async.waterfall(
         [
           function(cb) {
+            log.info('with token');
             userApiClient.withServerToken(cb);
           },
           function(token, cb) {
+            log.info('get private pair');
             seagullClient.getPrivatePair(req._tokendata.userid, 'uploads', token, cb);
           }
         ],
@@ -122,14 +108,13 @@ var jsonp = function(response) {
             return;
           }
 
-          var payload = req.sandcastle = app.sandcastle.payload(req);
-          var meta = { groupId: hashPair.id };
-          payload.start(meta, uploads, jsonp(res));
-          // var payload = req.body || {};
-          // payload.groupId = hashPair.id;
-          // payload.dexcomFile = req.files['dexcom'].path;
-
-          // uploads.upload(payload, jsonp(res));
+          if (app.sandcastle) {
+            var payload = req.sandcastle = app.sandcastle.payload(req);
+            var meta = { groupId: hashPair.id };
+            payload.start(meta, uploads, jsonp(res));
+          } else {
+            jsonp(res)("no sandcastle", {msg: 'not ready'});
+          }
         }
       );
     }
@@ -157,7 +142,7 @@ var jsonp = function(response) {
   app.use(express.static(path.join(__dirname, './static')));
 
   process.on('uncaughtException', function(err){
-    log.error(err, 'Uncaught exception bubbled all the way up!');
+    log.error(err.stack, 'Uncaught exception bubbled all the way up!');
   });
 
   if (config.httpPort != null) {
@@ -184,9 +169,9 @@ var jsonp = function(response) {
       serviceDescriptor['protocol'] = 'http';
     }
 
-    var hakken = require('hakken')(config.discovery).client( );
+    var hakken = require('hakken')(config.discovery, log).client( );
     hakken.start(function ( ) {
-      console.log('hakken started', arguments);
+      log.info('hakken started');
       app.hakken = hakken;
       hakken.publish(serviceDescriptor);
       var createSandcastle = require('./lib/sandcastle');

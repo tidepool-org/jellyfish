@@ -29,6 +29,12 @@ function maybeReplaceWithContentsOfFile(obj, field)
 
 module.exports = (function(){
   var env = {};
+  // Configure logging output, prefer service specific config, over Tidepool
+  // general config, finally failing to stdout as a last resort.
+  env.log_stream = config.fromEnvironment('JELLYFISH_LOG_STREAM',
+                   config.fromEnvironment('TIDEPOOL_LOG_STREAM', process.stdout));
+  env.log_level = config.fromEnvironment('JELLYFISH_LOG_LEVEL',
+                  config.fromEnvironment('TIDEPOOL_LOG_LEVEL', 'info'));
 
   // The port to attach an HTTP listener, if null, no HTTP listener will be attached
   env.httpPort = process.env.PORT || null;
