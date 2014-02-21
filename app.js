@@ -43,9 +43,9 @@ var jsonp = function(response) {
 (function(){
   var hakken = require('hakken')(config.discovery, log).client();
 
-  var userApiWatch = hakken.randomWatch(config.userApi.serviceName);
+  var userApiWatch = hakken.watchFromConfig(config.userApi.serviceSpec);
 
-  var seagullWatch = hakken.randomWatch(config.seagull.serviceName);
+  var seagullWatch = hakken.watchFromConfig(config.seagull.serviceSpec);
   hakken.start(function ( ) {
     userApiWatch.start(function ( ) { });
     seagullWatch.start(function ( ) { });

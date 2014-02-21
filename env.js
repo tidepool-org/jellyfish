@@ -32,9 +32,9 @@ module.exports = (function(){
   // Configure logging output, prefer service specific config, over Tidepool
   // general config, finally failing to stdout as a last resort.
   env.log_stream = config.fromEnvironment('JELLYFISH_LOG_STREAM',
-                   config.fromEnvironment('TIDEPOOL_LOG_STREAM', process.stdout));
+                                          config.fromEnvironment('TIDEPOOL_LOG_STREAM', process.stdout));
   env.log_level = config.fromEnvironment('JELLYFISH_LOG_LEVEL',
-                  config.fromEnvironment('TIDEPOOL_LOG_LEVEL', 'info'));
+                                         config.fromEnvironment('TIDEPOOL_LOG_LEVEL', 'info'));
 
   // The port to attach an HTTP listener, if null, no HTTP listener will be attached
   env.httpPort = process.env.PORT || null;
@@ -60,23 +60,24 @@ module.exports = (function(){
   }
 
   env.userApi = {
-    // Name of the hakken service for user-api discovery
-    serviceName: config.fromEnvironment("USER_API_SERVICE"),
+    // The config object to discover user-api.  This is just passed through to hakken.watchFromConfig()
+    serviceSpec: JSON.parse(config.fromEnvironment("USER_API_SERVICE")),
 
     // Name of this server to pass to user-api when getting a server token
-    serverName: config.fromEnvironment("SERVER_NAME", "seagull"),
+    serverName: config.fromEnvironment("SERVER_NAME", "jellyfish:default"),
 
     // The secret to use when getting a server token from user-api
     serverSecret: config.fromEnvironment("SERVER_SECRET")
   };
 
   env.sandcastle = {
-    discover: config.fromEnvironment("SANDCASTLE_SERVICE", "sandcastle")
+    // The config object to discover sandcastle.  This is just passed through to hakken.watchFromConfig()
+    serviceSpec: JSON.parse(config.fromEnvironment("SANDCASTLE_SERVICE"))
   };
 
   env.seagull = {
-    // Name of the hakken service for seagull discovery
-    serviceName: config.fromEnvironment("SEAGULL_SERVICE")
+    // The config object to discover seagull.  This is just passed through to hakken.watchFromConfig()
+    serviceSpec: JSON.parse(config.fromEnvironment("SEAGULL_SERVICE"))
   };
 
   // A standard Mongo connection string used to connect to Mongo, of all things
@@ -86,7 +87,9 @@ module.exports = (function(){
     host: config.fromEnvironment('DISCOVERY_HOST')
   };
 
-  env.serviceName = config.fromEnvironment('SERVICE_NAME');
+  // The service name to expose to discovery
+  env.serviceName = config.fromEnvironment('SERVICE_NAME', 'jellyfish');
+
   // The local host to expose to discovery
   env.publishHost = config.fromEnvironment('PUBLISH_HOST');
 
