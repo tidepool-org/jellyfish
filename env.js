@@ -98,5 +98,8 @@ module.exports = (function(){
   // The local host to expose to discovery
   env.publishHost = config.fromEnvironment('PUBLISH_HOST');
 
+  // Node environement: "production" or "development" (default)
+  env.nodeEnv = config.fromEnvironment('NODE_ENV', 'development');
+
   return env;
 })();
