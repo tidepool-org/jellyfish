@@ -15,18 +15,31 @@
  * == BSD2 LICENSE ==
  */
 
-@import "less/variables.less";
-@import "less/mixins.less";
-@import "less/fonts.less";
+// Clearfix
+// ====================================
+// Source: http://nicolasgallagher.com/micro-clearfix-hack/
 
-@import "less/normalize.less";
+.clearfix() {
+  &:before,
+  &:after {
+    content: " "; // 1
+    display: table; // 2
+  }
+  &:after {
+    clear: both;
+  }
+}
 
-@import "less/containers.less";
-@import "less/scaffolding.less";
-@import "less/forms.less";
-@import "less/buttons.less";
+// Allow use as a class
+.clearfix {
+  .clearfix();
+}
 
-@import "less/app.less";
+// Box sizing
+// ====================================
 
-@import "notification/notification.less";
-@import "uploadform/uploadform.less";
+.box-sizing(@boxmodel) {
+  -webkit-box-sizing: @boxmodel;
+     -moz-box-sizing: @boxmodel;
+          box-sizing: @boxmodel;
+}
