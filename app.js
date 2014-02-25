@@ -20,6 +20,7 @@ var fs = require('fs');
 var async = require('async');
 var express = require('express');
 var path = require('path');
+var except = require('amoeba').except;
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
@@ -29,7 +30,7 @@ var urlize = require('nurlize');
 var jsonp = function(response) {
     return function(error, data) {
       if(error) {
-        log.log(error, 'an error occurred!?');
+        log.warn(error, 'an error occurred!?');
         response.jsonp(500, {error: error});
         return;
       }
@@ -44,12 +45,10 @@ var jsonp = function(response) {
   var hakken = require('hakken')(config.discovery, log).client();
 
   var userApiWatch = hakken.watchFromConfig(config.userApi.serviceSpec);
-
   var seagullWatch = hakken.watchFromConfig(config.seagull.serviceSpec);
-  hakken.start(function ( ) {
-    userApiWatch.start(function ( ) { });
-    seagullWatch.start(function ( ) { });
-  });
+  hakken.start();
+  userApiWatch.start();
+  seagullWatch.start();
 
   var userApiClientLibrary = require('user-api-client');
   var userApiClient = userApiClientLibrary.client(config.userApi, userApiWatch);
@@ -57,6 +56,26 @@ var jsonp = function(response) {
 
   var middleware = userApiClientLibrary.middleware;
   var checkToken = middleware.expressify(middleware.checkToken(userApiClient));
+
+  var storage = function(storageConfig) {
+    switch(storageConfig.type) {
+      case 'local':
+        log.info('Using local storage with config[%j]', storageConfig);
+        return require('./lib/storage/local.js')(storageConfig);
+        break;
+      case 'sandcastle':
+        log.info('Using sandcastle storage with config[%j]', storageConfig);
+        var sandcastleWatch = hakken.watchFromConfig(storageConfig.serviceSpec);
+        sandcastleWatch.start();
+        return require('./lib/storage/sandcastle.js')(sandcastleWatch);
+        break;
+      default:
+        throw except.IAE('Unknown storage type[%s], known types are [\'local\', \'sandcastle\']', storageConfig.type);
+    }
+  }(config.storage);
+
+  var uploads = require('./lib/uploads.js')(config);
+  var uploadFlow = require('./lib/uploadFlow.js')(storage, uploads);
 
   var app = express();
 
@@ -78,15 +97,12 @@ var jsonp = function(response) {
     '/v1/device/upload',
     checkToken,
     function(req, res) {
-      log.info('start upload authorization');
       async.waterfall(
         [
           function(cb) {
-            log.info('with token');
             userApiClient.withServerToken(cb);
           },
           function(token, cb) {
-            log.info('get private pair');
             seagullClient.getPrivatePair(req._tokendata.userid, 'uploads', token, cb);
           }
         ],
@@ -108,13 +124,7 @@ var jsonp = function(response) {
             return;
           }
 
-          if (app.sandcastle) {
-            var payload = req.sandcastle = app.sandcastle.payload(req);
-            var meta = { groupId: hashPair.id };
-            payload.start(meta, uploads, jsonp(res));
-          } else {
-            jsonp(res)("no sandcastle", {msg: 'not ready'});
-          }
+          uploadFlow.ingest(req, { groupId: hashPair.id }, jsonp(res));
         }
       );
     }
@@ -130,19 +140,10 @@ var jsonp = function(response) {
     }
   );
 
-  app.post('/v1/clientlogs', function(request, response) {
-    var message = request.body;
-    if (typeof message === 'object') {
-      message = JSON.stringify(message);
-    }
-    log.log('CLIENTLOGS:', message);
-    response.send(201);
-  });
-
   app.use(express.static(path.join(__dirname, './static')));
 
   process.on('uncaughtException', function(err){
-    log.error(err.stack, 'Uncaught exception bubbled all the way up!');
+    log.error(err, 'Uncaught exception bubbled all the way up!');
   });
 
   if (config.httpPort != null) {
@@ -163,19 +164,13 @@ var jsonp = function(response) {
     var serviceDescriptor = { service: config.serviceName };
     if (config.httpsPort != null) {
       serviceDescriptor['host'] = config.publishHost + ':' + config.httpsPort;
+      serviceDescriptor['protocol'] = 'https';
     }
     else if (config.httpPort != null) {
       serviceDescriptor['host'] = config.publishHost + ':' + config.httpPort;
       serviceDescriptor['protocol'] = 'http';
     }
 
-    var hakken = require('hakken')(config.discovery, log).client( );
-    hakken.start(function ( ) {
-      log.info('hakken started');
-      app.hakken = hakken;
-      hakken.publish(serviceDescriptor);
-      var createSandcastle = require('./lib/sandcastle');
-      app.sandcastle = createSandcastle(config, app);
-    });
+    hakken.publish(serviceDescriptor);
   }
 })();
