@@ -30,7 +30,7 @@ var urlize = require('nurlize');
 var jsonp = function(response) {
     return function(error, data) {
       if(error) {
-        log.log(error, 'an error occurred!?');
+        log.warn(error, 'an error occurred!?');
         response.jsonp(500, {error: error});
         return;
       }
@@ -61,13 +61,13 @@ var jsonp = function(response) {
     switch(storageConfig.type) {
       case 'local':
         log.info('Using local storage with config[%j]', storageConfig);
-        storage = require('./lib/storage/local.js')(storageConfig);
+        return require('./lib/storage/local.js')(storageConfig);
         break;
       case 'sandcastle':
         log.info('Using sandcastle storage with config[%j]', storageConfig);
         var sandcastleWatch = hakken.watchFromConfig(storageConfig.serviceSpec);
         sandcastleWatch.start();
-        storage = require('./lib/storage/sandcastle.js')(sandcastleWatch);
+        return require('./lib/storage/sandcastle.js')(sandcastleWatch);
         break;
       default:
         throw except.IAE('Unknown storage type[%s], known types are [\'local\', \'sandcastle\']', storageConfig.type);
