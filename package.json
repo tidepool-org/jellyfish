@@ -1,12 +1,15 @@
 {
   "name": "jellyfish",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Jellyfish are known for their user friendliness with uploads",
   "main": "app.js",
   "directories": {
     "lib": "./lib"
   },
-  "files": [ "app.js", "env.js" ],
+  "files": [
+    "app.js",
+    "env.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/tidepool-org/jellyfish.git"
