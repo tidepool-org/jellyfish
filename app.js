@@ -26,6 +26,7 @@ var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
 var uploads = require('./lib/uploads.js')(config);
 var urlize = require('nurlize');
+var webClient = require('./lib/webclient.js');
 
 var jsonp = function(response) {
     return function(error, data) {
@@ -140,7 +141,12 @@ var jsonp = function(response) {
     }
   );
 
-  app.use(express.static(path.join(__dirname, './static')));
+  if (config.nodeEnv === 'production') {
+    webClient.setupForProduction(app);
+  }
+  else {
+    webClient.setupForDevelopment(app);
+  }
 
   process.on('uncaughtException', function(err){
     log.error(err, 'Uncaught exception bubbled all the way up!');
