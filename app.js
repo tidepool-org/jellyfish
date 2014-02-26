@@ -26,20 +26,18 @@ var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
 var uploads = require('./lib/uploads.js')(config);
 var urlize = require('nurlize');
+var webClient = require('./lib/webclient.js');
 
 var jsonp = function(response) {
-    return function(error, data) {
-      if(error) {
-        log.warn(error, 'an error occurred!?');
-        response.jsonp(500, {error: error});
-        return;
-      }
-      if (data && data.url) {
-        data.url = response.urlize(data.url);
-      }
-      response.jsonp(data);
+  return function(error, data) {
+    if(error) {
+      log.warn(error, 'an error occurred!?');
+      response.jsonp(500, {error: error});
+      return;
     }
-  };
+    response.jsonp(data);
+  }
+};
 
 (function(){
   var hakken = require('hakken')(config.discovery, log).client();
@@ -80,14 +78,6 @@ var jsonp = function(response) {
   var app = express();
 
   app.use(express.compress());
-  app.use(function(req, res, next){
-    var scheme = urlize.valid(app.urlize( )).shift( );
-    var url = app.urlize(scheme, req.headers.host, req.url).urlize('.').urlize;
-    req.urlize = url;
-    res.urlize = url('/').urlize;
-    req.tidepool = {};
-    next();
-  });
 
   app.get('/status', function(request, response) {
     response.send(200, 'OK');
@@ -140,7 +130,12 @@ var jsonp = function(response) {
     }
   );
 
-  app.use(express.static(path.join(__dirname, './static')));
+  if (config.nodeEnv === 'production') {
+    webClient.setupForProduction(app);
+  }
+  else {
+    webClient.setupForDevelopment(app);
+  }
 
   process.on('uncaughtException', function(err){
     log.error(err, 'Uncaught exception bubbled all the way up!');
@@ -149,14 +144,12 @@ var jsonp = function(response) {
   if (config.httpPort != null) {
     require('http').createServer(app).listen(config.httpPort, function(){
       log.info("Api server running on port[%s]", config.httpPort);
-      app.urlize = urlize('http://').urlize;
     });
   }
 
   if (config.httpsPort != null) {
     require('https').createServer(config.httpsConfig, app).listen(config.httpsPort, function(){
       log.info("Api server listening for HTTPS on port[%s]", config.httpsPort);
-      app.urlize = urlize('https://').urlize;
     });
   }
 
