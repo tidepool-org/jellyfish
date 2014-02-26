@@ -99,7 +99,7 @@ module.exports = (function(){
   env.publishHost = config.fromEnvironment('PUBLISH_HOST');
 
   // Node environement: "production" or "development" (default)
-  env.nodeEnv = config.fromEnvironment('NODE_ENV', 'development');
+  env.nodeEnv = config.fromEnvironment('NODE_ENV', 'production');
 
   return env;
 })();
