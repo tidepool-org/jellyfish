@@ -21,7 +21,7 @@ var React = window.React;
 var Notification = React.createClass({
   propTypes: {
     type: React.PropTypes.string,
-    message: React.PropTypes.string,
+    message: React.PropTypes.string
   },
 
   getDefaultProps: function() {
