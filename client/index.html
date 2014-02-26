@@ -16,63 +16,7 @@
 
   <body>
 
-    <div id="app">
-        <div class="app-container-outer container-small-outer">
-            <div class="container-small-inner">
-                <div class="app-notification notification notification-error">
-                    Oops! Authentication failed. Did you make sure that you are logged into a Tidepool app, and that you opened this upload screen from that app?
-                </div>
-
-                <form class="upload-form">
-                    <div class="upload-form-group">
-                        <div class="upload-form-group-title">Diasend</div>
-                            <div class="upload-form-group-content">
-                            <div class="upload-form-group-instructions">Please enter your Diasend credentials.</div>
-                            <div class="upload-form-group-help">We need your credentials to fetch your data. We will ask you this every time. We will not store your Diasend username or password.</div>
-                            <input class="upload-form-group-input form-control" type="text" placeholder="Username"/>
-                            <input class="upload-form-group-input form-control" type="password" placeholder="Password"/>
-                        </div>
-                    </div>
-                    <div class="upload-form-group">
-                        <div class="upload-form-group-title">Dexcom</div>
-                        <div class="upload-form-group-content">
-                            <div class="upload-form-group-instructions">Export your data from Dexcom Studio as a tab-delimited file and upload it here.</div>
-                            <div class="upload-form-group-help">If you need help with getting your data into Dexcom Studio, you can try the <a href='http://www.dexcom.com/faq/dexcom-studio/getting-started' target='_blank'>Dexcom help site</a>.</div>
-                            <input class="upload-form-group-input form-control" type="file"/>
-                        </div>
-                    </div>
-                    <div class="upload-form-group">
-                        <div class="upload-form-group-title">Carelink</div>
-                        <div class="upload-form-group-content">
-                            <div class="upload-form-group-instructions">Please enter your Carelink credentials.</div>
-                            <div class="upload-form-group-help">We need your credentials to fetch your data. We will ask you this every time. We will not store your Carelink username or password.</div>
-                            <input class="upload-form-group-input form-control" type="text" placeholder="Username"/>
-                            <input class="upload-form-group-input form-control" type="password" placeholder="Password"/>
-                        </div>
-                    </div>
-                    <div class="upload-form-action">
-                        <button class="btn btn-primary" type="submit">Upload data</button>
-                    </div>
-
-                    <div class="upload-form-notification notification notification-error">
-                        Sorry, we can't process your data yet! You need to provide either Diasend or Carelink credentials.
-                    </div>
-
-                    <div class="upload-form-notification notification notification-info">
-                        We are processing your data. Thank you for being patient, this could take a couple minutes...
-                    </div>
-
-                    <div class="upload-form-notification notification notification-error">
-                        Ouch, something went wrong while processing your data. Are you sure you gave us correct credentials? If you keep experiencing problems, please contact us. Sorry about this!
-                    </div>
-
-                    <div class="upload-form-notification notification notification-success">
-                        You data was successfully uploaded to Tidepool! It is now safe to close this window.
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <div id="app"></div>
 
     <% if (production) { %>
     <script type="text/javascript" src="build/<%= pkg.version %>/all.js"></script>

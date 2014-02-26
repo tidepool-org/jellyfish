@@ -1,3 +1,4 @@
+/** @jsx React.DOM */
 /*
  * == BSD2 LICENSE ==
  * Copyright (c) 2014, Tidepool Project
@@ -15,42 +16,40 @@
  * == BSD2 LICENSE ==
  */
 
-.upload-form-group,
-.upload-form-action {
-  margin-bottom: @spacing-base;
-}
+var React = window.React;
 
-.upload-form-group-title,
-.upload-form-group-content {
-  padding: @spacing-small @spacing-base;
-}
+var Notification = React.createClass({
+  propTypes: {
+    type: React.PropTypes.string,
+    message: React.PropTypes.string,
+  },
 
-.upload-form-group-title {
-  color: #fff;
-  background-color: @gray-dark;
-}
+  getDefaultProps: function() {
+    return {
+      type: 'alert'
+    };
+  },
+  
+  render: function() {
+    var className = this.getClassName();
 
-.upload-form-group-content {
-  background-color: #fff;
-}
+    /* jshint ignore:start */
+    return (
+      <div className={className}>
+        {this.props.message}
+      </div>
+    );
+    /* jshint ignore:end */
+  },
 
-.upload-form-group-instructions,
-.upload-form-group-help,
-.upload-form-group-input {
-  margin-bottom: @spacing-small;
-}
+  getClassName: function() {
+    var type = this.props.type;
+    var className = [
+      'notification',
+      'notification-' + type
+    ].join(' ');
+    return className;
+  }
+});
 
-.upload-form-group-instructions {
-  color: @gray-darkest;
-}
-
-.upload-form-group-help {
-  font-style: italic;
-  color: @gray-dark;
-  font-size: 14px;
-  line-height: 18px;
-}
-
-.upload-form-action {
-  text-align: right;
-}
+module.exports = Notification;

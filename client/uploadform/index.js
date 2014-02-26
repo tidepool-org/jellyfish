@@ -15,42 +15,4 @@
  * == BSD2 LICENSE ==
  */
 
-.upload-form-group,
-.upload-form-action {
-  margin-bottom: @spacing-base;
-}
-
-.upload-form-group-title,
-.upload-form-group-content {
-  padding: @spacing-small @spacing-base;
-}
-
-.upload-form-group-title {
-  color: #fff;
-  background-color: @gray-dark;
-}
-
-.upload-form-group-content {
-  background-color: #fff;
-}
-
-.upload-form-group-instructions,
-.upload-form-group-help,
-.upload-form-group-input {
-  margin-bottom: @spacing-small;
-}
-
-.upload-form-group-instructions {
-  color: @gray-darkest;
-}
-
-.upload-form-group-help {
-  font-style: italic;
-  color: @gray-dark;
-  font-size: 14px;
-  line-height: 18px;
-}
-
-.upload-form-action {
-  text-align: right;
-}
+module.exports = require('./uploadform.js');
