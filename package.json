@@ -16,7 +16,7 @@
   },
   "author": "Tidepool contributors",
   "dependencies": {
-    "amoeba": "0.0.3",
+    "amoeba": "0.0.4",
     "async": "0.2.9",
     "bower": "1.2.8",
     "buffer-crc32": "0.2.1",
