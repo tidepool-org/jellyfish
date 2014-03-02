@@ -27,6 +27,7 @@ var log = require('./lib/log.js')('app.js');
 var uploads = require('./lib/uploads.js')(config);
 var urlize = require('nurlize');
 var webClient = require('./lib/webclient.js');
+var ROOT = __dirname;
 
 var jsonp = function(response) {
   return function(error, data) {
@@ -166,4 +167,5 @@ var jsonp = function(response) {
 
     hakken.publish(serviceDescriptor);
   }
+  app.use('/', express.static(path.join(ROOT, 'client')));
 })();
