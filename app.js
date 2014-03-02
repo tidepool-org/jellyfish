@@ -139,6 +139,7 @@ var jsonp = function(response) {
   }
 
   process.on('uncaughtException', function(err){
+    log.error(err.stack);
     log.error(err, 'Uncaught exception bubbled all the way up!');
   });
 
