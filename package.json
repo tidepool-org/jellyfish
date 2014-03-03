@@ -1,6 +1,6 @@
 {
   "name": "jellyfish",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Jellyfish are known for their user friendliness with uploads",
   "main": "app.js",
   "directories": {
@@ -44,8 +44,8 @@
     "restify": "2.6.1",
     "run-sequence": "0.3.6",
     "tidepool-animas-diasend-data": "0.0.1",
-    "tidepool-dexcom-stream": "0.0.1",
-    "tidepool-mmcsv-carelink-data": "0.0.1",
+    "tidepool-dexcom-stream": "0.0.2",
+    "tidepool-mmcsv-carelink-data": "0.0.2",
     "tidepool-seagull-client": "0.0.2",
     "user-api-client": "0.1.4"
   },
