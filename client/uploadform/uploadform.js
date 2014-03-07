@@ -96,8 +96,9 @@ var UploadForm = React.createClass({
       inputs: [
         {name: 'carelinkUsername', placeholder: 'Username', type: 'text'},
         {name: 'carelinkPassword', placeholder: 'Password', type: 'password'},
+        {name: 'daysAgo', value: '180', type: 'text'}
       ]
-    },
+    }
   ],
   
   render: function() {

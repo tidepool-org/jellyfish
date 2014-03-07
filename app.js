@@ -25,7 +25,6 @@ var except = require('amoeba').except;
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
 var uploads = require('./lib/uploads.js')(config);
-var urlize = require('nurlize');
 var webClient = require('./lib/webclient.js');
 
 var jsonp = function(response) {
