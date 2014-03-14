@@ -36,7 +36,7 @@
     "rx": "2.2.13",
     "tidepool-animas-diasend-data": "0.0.1",
     "tidepool-dexcom-stream": "0.0.2",
-    "tidepool-mmcsv-carelink-data": "0.1.1",
+    "tidepool-mmcsv-carelink-data": "0.1.2",
     "tidepool-seagull-client": "0.0.2",
     "user-api-client": "0.1.4"
   },
