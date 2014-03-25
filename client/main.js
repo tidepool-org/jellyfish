@@ -189,8 +189,9 @@ var AppComponent = React.createClass({
     var hasCarelinkCredentials = (
       formValues.carelinkUsername && formValues.carelinkPassword
     );
+    var hasDexcomFile = formValues.dexcom || false;
 
-    if (!(hasDiasendCredentials || hasCarelinkCredentials)) {
+    if (!(hasDiasendCredentials || hasCarelinkCredentials || hasDexcomFile)) {
       validationError = [
         'Sorry, we can\'t process your data yet!',
         'You need to provide either Diasend or CareLink',
