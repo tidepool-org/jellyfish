@@ -53,19 +53,10 @@ var jsonp = function(response) {
   var checkToken = middleware.expressify(middleware.checkToken(userApiClient));
 
   var mongoClient = require('./lib/mongo/mongoClient.js')(config.mongo);
+  mongoClient.start();
 
   var tasks = require('./lib/tasks.js')(mongoClient);
   var uploadFlow = require('./lib/uploadFlow.js')({ storageDir: config.tempStorage }, tasks);
-
-  mongoClient.start(function(err){
-    log.info('Mongo connected, removing tasks');
-    tasks.deleteAll(function(err){
-      if (err != null) {
-        log.warn(err, 'Problem removing all tasks');
-      }
-    });
-  });
-
 
   var app = express();
 
