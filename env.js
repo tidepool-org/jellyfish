@@ -19,22 +19,15 @@ var fs = require('fs');
 
 var config = require('amoeba').config;
 
-function maybeReplaceWithContentsOfFile(obj, field)
-{
+function maybeReplaceWithContentsOfFile(obj, field) {
   var potentialFile = obj[field];
   if (potentialFile != null && fs.existsSync(potentialFile)) {
     obj[field] = fs.readFileSync(potentialFile).toString();
   }
 }
 
-module.exports = (function(){
+module.exports = (function () {
   var env = {};
-  // Configure logging output, prefer service specific config, over Tidepool
-  // general config, finally failing to stdout as a last resort.
-  env.log_stream = config.fromEnvironment('JELLYFISH_LOG_STREAM',
-                                          config.fromEnvironment('TIDEPOOL_LOG_STREAM', process.stdout));
-  env.log_level = config.fromEnvironment('JELLYFISH_LOG_LEVEL',
-                                         config.fromEnvironment('TIDEPOOL_LOG_LEVEL', 'info'));
 
   // The port to attach an HTTP listener, if null, no HTTP listener will be attached
   env.httpPort = process.env.PORT || null;
@@ -85,8 +78,10 @@ module.exports = (function(){
     serviceSpec: JSON.parse(config.fromEnvironment("SEAGULL_SERVICE"))
   };
 
-  // A standard Mongo connection string used to connect to Mongo, of all things
-  env.mongoConnectionString = config.fromEnvironment('MONGO_CONNECTION_STRING', 'mongodb://localhost/streams');
+  env.mongo = {
+    // A standard Mongo connection string used to connect to Mongo, of all things
+    connectionString: config.fromEnvironment('MONGO_CONNECTION_STRING', 'mongodb://localhost/streams')
+  };
 
   env.discovery = {
     host: config.fromEnvironment('DISCOVERY_HOST')
@@ -98,7 +93,11 @@ module.exports = (function(){
   // The local host to expose to discovery
   env.publishHost = config.fromEnvironment('PUBLISH_HOST');
 
-  // Node environement: "production" or "development" (default)
+  // Location of temporary storage, these are things like uploaded dexcom files and
+  // the files used to communicate errors from child processes back to the main process.
+  env.tempStorage = config.fromEnvironment('TEMP_STORAGE', '/tmp/jellyfish');
+
+  // Node environment: "production" or "development" (default)
   env.nodeEnv = config.fromEnvironment('NODE_ENV', 'production');
 
   return env;

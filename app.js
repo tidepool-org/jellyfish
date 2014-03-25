@@ -24,8 +24,6 @@ var except = require('amoeba').except;
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
-var uploads = require('./lib/uploads.js')(config);
-var webClient = require('./lib/webclient.js');
 
 var jsonp = function(response) {
   return function(error, data) {
@@ -54,25 +52,11 @@ var jsonp = function(response) {
   var middleware = userApiClientLibrary.middleware;
   var checkToken = middleware.expressify(middleware.checkToken(userApiClient));
 
-  var storage = function(storageConfig) {
-    switch(storageConfig.type) {
-      case 'local':
-        log.info('Using local storage with config[%j]', storageConfig);
-        return require('./lib/storage/local.js')(storageConfig);
-        break;
-      case 'sandcastle':
-        log.info('Using sandcastle storage with config[%j]', storageConfig);
-        var sandcastleWatch = hakken.watchFromConfig(storageConfig.serviceSpec);
-        sandcastleWatch.start();
-        return require('./lib/storage/sandcastle.js')(sandcastleWatch);
-        break;
-      default:
-        throw except.IAE('Unknown storage type[%s], known types are [\'local\', \'sandcastle\']', storageConfig.type);
-    }
-  }(config.storage);
+  var mongoClient = require('./lib/mongo/mongoClient.js')(config.mongo);
+  mongoClient.start();
 
-  var uploads = require('./lib/uploads.js')(config);
-  var uploadFlow = require('./lib/uploadFlow.js')(storage, uploads);
+  var tasks = require('./lib/tasks.js')(mongoClient);
+  var uploadFlow = require('./lib/uploadFlow.js')({ storageDir: config.tempStorage }, tasks);
 
   var app = express();
 
@@ -125,10 +109,11 @@ var jsonp = function(response) {
     '/v1/synctasks/:id',
     checkToken,
     function(request, response) {
-      uploads.syncTask(request.params.id, jsonp(response));
+      tasks.get(request.params.id, jsonp(response));
     }
   );
 
+  var webClient = require('./lib/webclient.js');
   if (config.nodeEnv === 'production') {
     webClient.setupForProduction(app);
   }
