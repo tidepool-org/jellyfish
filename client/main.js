@@ -311,7 +311,7 @@ var AppComponent = React.createClass({
       formNotification: {
         type: 'success',
         message: [
-          'You data was successfully uploaded to Tidepool!',
+          'Your data was successfully uploaded to Tidepool!',
           'It is now safe to close this window.'
         ].join(' ')
       }
