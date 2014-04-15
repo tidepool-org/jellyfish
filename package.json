@@ -37,7 +37,7 @@
     "user-api-client": "0.1.4"
   },
   "devDependencies": {
-    "gulp": "3.5.2",
+    "gulp": "3.6.0",
     "gulp-browserify": "0.4.6",
     "gulp-clean": "0.2.4",
     "gulp-concat": "2.1.7",
