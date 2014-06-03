@@ -65,7 +65,8 @@ var UploadForm = React.createClass({
       ].join(' '),
       inputs: [
         {name: 'diasendUsername', placeholder: 'Username', type: 'text'},
-        {name: 'diasendPassword', placeholder: 'Password', type: 'password'}
+        {name: 'diasendPassword', placeholder: 'Password', type: 'password'},
+        {name: 'diasendTimezone', type: 'timezone'}
       ]
     },
     {
@@ -82,7 +83,8 @@ var UploadForm = React.createClass({
         'target="_blank">Dexcom help site</a>.'
       ].join(' '),
       inputs: [
-        {name: 'dexcom', type: 'file'}
+        {name: 'dexcom', type: 'file'},
+        {name: 'dexcomTimezone', type: 'timezone'}
       ]
     },
     {
@@ -100,6 +102,7 @@ var UploadForm = React.createClass({
       inputs: [
         {name: 'carelinkUsername', placeholder: 'Username', type: 'text'},
         {name: 'carelinkPassword', placeholder: 'Password', type: 'password'},
+        {name: 'carelinkTimezone', type: 'timezone'},
         {name: 'daysAgo', value: '180', type: 'hidden'}
       ]
     },

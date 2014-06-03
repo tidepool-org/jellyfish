@@ -19,6 +19,8 @@
 var React = window.React;
 var _ = window._;
 
+var zoneNames = Object.keys(WallTime.zones).sort();
+
 var UploadFormGroup = React.createClass({
   propTypes: {
     title: React.PropTypes.string.isRequired,
@@ -89,6 +91,10 @@ var UploadFormGroup = React.createClass({
   },
 
   renderInput: function(input) {
+    if (input.type === 'timezone') {
+      return this.renderTimezoneSelector(input.name);
+    }
+
     return (
       /* jshint ignore:start */
       <input
@@ -102,6 +108,18 @@ var UploadFormGroup = React.createClass({
         disabled={this.props.disabled}
         onChange={this.props.onChange}/>
       /* jshint ignore:end */
+    );
+  },
+
+  renderTimezoneSelector: function(name) {
+    return (
+      <select name={name}>
+      {
+        zoneNames.map(function (zoneName) {
+          return <option value={zoneName}>{zoneName}</option>
+        })
+      }
+      </select>
     );
   }
 });
