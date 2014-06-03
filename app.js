@@ -113,6 +113,14 @@ var jsonp = function(response) {
     }
   );
 
+  app.post(
+    '/data',
+    checkToken,
+    function(req, res) {
+
+    }
+  );
+
   var webClient = require('./lib/webclient.js');
   if (config.nodeEnv === 'production') {
     webClient.setupForProduction(app);
