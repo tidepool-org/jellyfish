@@ -44,6 +44,7 @@
     "gulp-less": "1.2.1",
     "gulp-minify-css": "0.3.3",
     "gulp-template": "0.1.1",
-    "gulp-uglify": "0.2.1"
+    "gulp-uglify": "0.2.1",
+    "salinity": "0.0.5"
   }
 }
