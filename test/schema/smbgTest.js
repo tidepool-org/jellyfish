@@ -12,13 +12,12 @@ var expect = require('salinity').expect;
 var helper = require('./schemaTestHelper.js');
 
 var goodObject = {
-  type: 'cbg',
+  type: 'smbg',
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
   deviceId: 'test',
   source: 'manual',
   value: 1.12,
-  isig: 24.37,
   _groupId: 'g'
 };
 
@@ -52,14 +51,6 @@ describe('schema/cbg.js', function(){
         expect(val.value).equals(4.440598392836427);
         done(err);
       });
-    });
-  });
-
-  describe('isig', function(){
-    helper.okIfAbsent(goodObject, 'isig');
-
-    it('rejects non-numerical isig', function(done){
-      helper.expectRejection(_.assign({}, goodObject, {isig: '1'}), 'isig', done);
     });
   });
 
