@@ -147,7 +147,7 @@ var jsonp = function(response) {
             async.mapSeries(
               array,
               function(obj) {
-                obj.groupId = groupId;
+                obj._groupId = groupId;
 
                 return function(cb) {
                   return dataBroker.addDatum(obj, cb);

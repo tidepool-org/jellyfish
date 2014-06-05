@@ -40,7 +40,7 @@ describe('streamDAO', function(){
   describe('insert', function(){
     it('should be able to find a value that is there', function(done){
       var now = Date.now();
-      streamDAO.insertDatum({_id: 'abcd', v: 1, groupId: 'g'}, function(err){
+      streamDAO.insertDatum({_id: 'abcd', v: 1, _groupId: 'g'}, function(err){
         if (err != null) {
           return done(err);
         }
@@ -49,7 +49,7 @@ describe('streamDAO', function(){
           expect(datum).to.exist;
           expect(new Date(datum.createdTime).valueOf()).that.is.within(now, Date.now());
           expect(_.omit(datum, 'createdTime')).to.deep.equals(
-            { _id: 'abcd', v: 1, groupId: 'g', _sequenceId: 0, _active: true }
+            { _id: 'abcd', v: 1, _groupId: 'g', _sequenceId: 0, _active: true }
           );
 
           done(err);
@@ -62,7 +62,7 @@ describe('streamDAO', function(){
     var createdTime = '';
 
     beforeEach(function(done){
-      streamDAO.insertDatum({_id: 'abcd', v: 1, f: 'a', groupId: 'g'}, function(err){
+      streamDAO.insertDatum({_id: 'abcd', v: 1, f: 'a', _groupId: 'g'}, function(err){
         if (err != null) {
           return done(err);
         }
@@ -75,8 +75,7 @@ describe('streamDAO', function(){
     });
 
     it('cannot update a value that does not exist', function(done){
-      var now = Date.now();
-      streamDAO.updateDatum({_id: 'abcde', f: 'a', v: 2828, groupId: 'g'}, function(err){
+      streamDAO.updateDatum({_id: 'abcde', f: 'a', v: 2828, _groupId: 'g'}, function(err){
         expect(err).to.exist;
 
         streamDAO.getDatum('abcde', function(err, datum){
@@ -88,7 +87,7 @@ describe('streamDAO', function(){
 
     it('should be able to update a value that is there', function(done){
       var now = Date.now();
-      streamDAO.updateDatum({_id: 'abcd', f: 'a', v: 2828, groupId: 'g'}, function(err){
+      streamDAO.updateDatum({_id: 'abcd', f: 'a', v: 2828, _groupId: 'g'}, function(err){
         if (err != null) {
           return done(err);
         }
@@ -97,14 +96,14 @@ describe('streamDAO', function(){
           expect(datum).to.exist;
           expect(new Date(datum.modifiedTime).valueOf()).that.is.within(now, Date.now());
           expect(_.omit(datum, 'modifiedTime')).to.deep.equals(
-            { _id: 'abcd', f: 'a', v: 2828, groupId: 'g', createdTime: createdTime, _sequenceId: 1, _active: true }
+            { _id: 'abcd', f: 'a', v: 2828, _groupId: 'g', createdTime: createdTime, _sequenceId: 1, _active: true }
           );
 
           mongoClient.withCollection('deviceData', done, function(coll, done){
             coll.find({_id: 'abcd_0'}).toArray(function(err, elements){
               expect(elements).to.have.length(1);
               expect(elements[0]).to.deep.equals(
-                { _id: 'abcd_0', f: 'a', groupId: 'g', v: 1, createdTime: createdTime, _sequenceId: 0, _active: false }
+                { _id: 'abcd_0', f: 'a', _groupId: 'g', v: 1, createdTime: createdTime, _sequenceId: 0, _active: false }
               );
 
               done(err);
@@ -139,8 +138,8 @@ describe('streamDAO', function(){
         });
       }
 
-      streamDAO.updateDatum({_id: 'abcd', f: 'a', v: 2828, groupId: 'g'}, theCallback);
-      streamDAO.updateDatum({_id: 'abcd', f: 'a', v: 2829, groupId: 'g'}, theCallback);
+      streamDAO.updateDatum({_id: 'abcd', f: 'a', v: 2828, _groupId: 'g'}, theCallback);
+      streamDAO.updateDatum({_id: 'abcd', f: 'a', v: 2829, _groupId: 'g'}, theCallback);
     });
   });
 });
