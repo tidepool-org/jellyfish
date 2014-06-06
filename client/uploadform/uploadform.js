@@ -98,6 +98,23 @@ var UploadForm = React.createClass({
         {name: 'carelinkPassword', placeholder: 'Password', type: 'password'},
         {name: 'daysAgo', value: '180', type: 'hidden'}
       ]
+    },
+    {
+      title: 't:connect',
+      instructions: [
+        'Please enter your t:connect user name and password',
+        '(for Tandem pumps).'
+      ].join(' '),
+      help: [
+        'We need your user name and password to fetch your data.',
+        'We will ask you this every time.',
+        'We will not store your t:connect username or password.'
+      ].join(' '),
+      inputs: [
+        {name: 'tconnectUsername', placeholder: 'Username', type: 'text'},
+        {name: 'tconnectPassword', placeholder: 'Password', type: 'password'},
+        {name: 'daysAgo', value: '180', type: 'hidden'}
+      ]
     }
   ],
   

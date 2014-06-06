@@ -189,13 +189,16 @@ var AppComponent = React.createClass({
     var hasCarelinkCredentials = (
       formValues.carelinkUsername && formValues.carelinkPassword
     );
+    var hasTconnectCredentials = (
+      formValues.tconnectUsername && formValues.tconnectPassword
+    );
     var hasDexcomFile = formValues.dexcom || false;
 
-    if (!(hasDiasendCredentials || hasCarelinkCredentials || hasDexcomFile)) {
+    if (!(hasDiasendCredentials || hasCarelinkCredentials || hasTconnectCredentials || hasDexcomFile)) {
       validationError = [
         'Sorry, we can\'t process your data yet!',
-        'Please provide Diasend credentials, CareLink credentials' +
-        'and/or a Dexcom csv file.'
+        'Please provide Diasend credentials, CareLink credentials, ' +
+        't:connect credentials, and/or a Dexcom csv file.'
       ].join(' ');
     }
 
