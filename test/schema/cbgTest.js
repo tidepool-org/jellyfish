@@ -4,8 +4,6 @@
 
 'use strict';
 
-var util = require('util');
-
 var _ = require('lodash');
 var expect = require('salinity').expect;
 
@@ -25,10 +23,7 @@ var goodObject = {
 describe('schema/cbg.js', function(){
   describe('value', function(){
     helper.rejectIfAbsent(goodObject, 'value');
-
-    it('rejects non-numerical value', function(done){
-      helper.expectRejection(_.assign({}, goodObject, {value: '1'}), 'value', done);
-    });
+    helper.expectNumericalField(goodObject, 'value');
 
     it('converts "mmol/l" to "mmol/L"', function(done){
       helper.run(_.assign({}, goodObject, {value: 80, units: 'mmol/l'}), function(err, val){
@@ -57,10 +52,7 @@ describe('schema/cbg.js', function(){
 
   describe('isig', function(){
     helper.okIfAbsent(goodObject, 'isig');
-
-    it('rejects non-numerical isig', function(done){
-      helper.expectRejection(_.assign({}, goodObject, {isig: '1'}), 'isig', done);
-    });
+    helper.expectNumericalField(goodObject, 'isig');
   });
 
   helper.testCommonFields(goodObject);

@@ -43,18 +43,12 @@ describe('schema/basal.js', function(){
 
     describe('value', function(){
       helper.rejectIfAbsent(goodObject, 'value');
-
-      it('rejects non-numerical value', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {value: '1'}), 'value', done);
-      });
+      helper.expectNumericalField(goodObject, 'value');
     });
 
     describe('duration', function(){
       helper.rejectIfAbsent(goodObject, 'duration');
-
-      it('rejects non-numerical duration', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {duration: '1'}), 'duration', done);
-      });
+      helper.expectNumericalField(goodObject, 'duration');
 
       it('rejects duration < 0', function(done){
         helper.expectRejection(_.assign({}, goodObject, {duration: -1}), 'duration', done);
@@ -67,6 +61,7 @@ describe('schema/basal.js', function(){
 
     describe('insulin', function(){
       helper.rejectIfAbsent(goodObject, 'insulin');
+      helper.expectStringField(goodObject, 'insulin');
 
       function acceptsInsulinVals() {
         Array.prototype.slice.call(arguments, 0).forEach(function(val){
@@ -77,10 +72,6 @@ describe('schema/basal.js', function(){
       }
 
       acceptsInsulinVals('novolog', 'levemir', 'lantus', 'humalog');
-
-      it('rejects numerical insulin', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {insulin: 1}), 'insulin', done);
-      });
 
       it('rejects unknown insulin', function(done){
         helper.expectRejection(_.assign({}, goodObject, {insulin: 'unknown'}), 'insulin', done);
@@ -146,18 +137,12 @@ describe('schema/basal.js', function(){
 
     describe('rate', function(){
       helper.rejectIfAbsent(goodObject, 'rate');
-
-      it('rejects non-numerical rate', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {rate: '1'}), 'rate', done);
-      });
+      helper.expectNumericalField(goodObject, 'rate');
     });
 
     describe('duration', function(){
       helper.rejectIfAbsent(goodObject, 'duration');
-
-      it('rejects non-numerical duration', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {duration: '1'}), 'duration', done);
-      });
+      helper.expectNumericalField(goodObject, 'duration');
 
       it('rejects duration < 0', function(done){
         helper.expectRejection(_.assign({}, goodObject, {duration: -1}), 'duration', done);
@@ -185,10 +170,7 @@ describe('schema/basal.js', function(){
 
     describe('scheduleName', function(){
       helper.rejectIfAbsent(goodObject, 'scheduleName');
-
-      it('rejects non-string scheduleName', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {scheduleName: 1}), 'scheduleName', done);
-      });
+      helper.expectStringField(goodObject, 'scheduleName');
     });
 
     helper.testCommonFields(goodObject);
@@ -251,19 +233,12 @@ describe('schema/basal.js', function(){
 
     describe('rate', function(){
       helper.okIfAbsent(goodObject, 'rate');
-
-      it('rejects non-numerical rate', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {rate: '1'}), 'rate', done);
-      });
-
+      helper.expectNumericalField(goodObject, 'rate');
     });
 
     describe('percent', function(){
       helper.okIfAbsent(goodObject, 'percent');
-
-      it('rejects non-numerical percent', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {percent: '1'}), 'percent', done);
-      });
+      helper.expectNumericalField(goodObject, 'percent');
 
       it('generates rate based on percent if rate absent', function(done){
         var localGoodObject = _.omit(goodObject, 'rate');
@@ -278,10 +253,7 @@ describe('schema/basal.js', function(){
 
     describe('duration', function(){
       helper.rejectIfAbsent(goodObject, 'duration');
-
-      it('rejects non-numerical duration', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {duration: '1'}), 'duration', done);
-      });
+      helper.expectNumericalField(goodObject, 'duration');
 
       it('rejects duration < 0', function(done){
         helper.expectRejection(_.assign({}, goodObject, {duration: -1}), 'duration', done);
@@ -309,10 +281,7 @@ describe('schema/basal.js', function(){
 
     describe('suppressed', function(){
       helper.rejectIfAbsent(goodObject, 'suppressed');
-
-      it('rejects non-object suppressed', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {suppressed: '1'}), 'suppressed', done);
-      });
+      helper.expectObjectField(goodObject, 'suppressed');
     });
 
     helper.testCommonFields(goodObject);

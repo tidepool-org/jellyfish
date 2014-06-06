@@ -44,6 +44,48 @@ exports.okIfAbsent = function(goodObject, field) {
   });
 };
 
+exports.expectStringField = function(goodObject, field) {
+  it('rejects numerical value', function(done){
+    var toAdjust = {};
+    toAdjust[field] = 1;
+    exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
+  });
+
+  it('rejects object value', function(done){
+    var toAdjust = {};
+    toAdjust[field] = { howdy: 'honda' };
+    exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
+  });
+};
+
+exports.expectNumericalField = function(goodObject, field) {
+  it('rejects string value', function(done){
+    var toAdjust = {};
+    toAdjust[field] = '1';
+    exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
+  });
+
+  it('rejects object value', function(done){
+    var toAdjust = {};
+    toAdjust[field] = { howdy: 'honda' };
+    exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
+  });
+};
+
+exports.expectObjectField = function(goodObject, field) {
+  it('rejects string value', function(done){
+    var toAdjust = {};
+    toAdjust[field] = '1';
+    exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
+  });
+
+  it('rejects numerical value', function(done){
+    var toAdjust = {};
+    toAdjust[field] = 1;
+    exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
+  });
+};
+
 exports.testCommonFields = function(goodObject) {
   describe('time', function(){
     exports.rejectIfAbsent(goodObject, 'time');

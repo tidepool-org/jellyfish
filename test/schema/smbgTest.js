@@ -24,10 +24,7 @@ var goodObject = {
 describe('schema/cbg.js', function(){
   describe('value', function(){
     helper.rejectIfAbsent(goodObject, 'value');
-
-    it('rejects non-numerical value', function(done){
-      helper.expectRejection(_.assign({}, goodObject, {value: '1'}), 'value', done);
-    });
+    helper.expectNumericalField(goodObject, 'value');
 
     it('converts "mmol/l" to "mmol/L"', function(done){
       helper.run(_.assign({}, goodObject, {value: 80, units: 'mmol/l'}), function(err, val){
