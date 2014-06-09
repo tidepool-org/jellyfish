@@ -14,18 +14,6 @@ var sinon = salinity.sinon;
 
 var helper = require('./schemaTestHelper.js');
 
-function rejectIfAbsent(field) {
-  it(util.format('rejects if field %s is not present', field), function(done){
-    helper.expectRejection(_.omit(goodObject, field), field, done);
-  });
-}
-
-function okIfAbsent(field) {
-  it(util.format('allows the field %s to be absent', field), function(done){
-    helper.run(_.omit(goodObject, field), done);
-  });
-}
-
 describe('schema/basal.js', function(){
   describe('injected', function(){
     var goodObject = {
