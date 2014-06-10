@@ -21,7 +21,7 @@ describe('schema/basal.js', function(){
       deliveryType: 'injected',
       value: 3.0,
       duration: 14400000,
-      insulin: 'novolog',
+      insulin: 'levemir',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
@@ -59,7 +59,7 @@ describe('schema/basal.js', function(){
         })
       }
 
-      acceptsInsulinVals('novolog', 'levemir', 'lantus', 'humalog');
+      acceptsInsulinVals('levemir', 'lantus');
 
       it('rejects unknown insulin', function(done){
         helper.expectRejection(_.assign({}, goodObject, {insulin: 'unknown'}), 'insulin', done);
