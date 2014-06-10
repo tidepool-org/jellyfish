@@ -57,6 +57,27 @@ var jsonp = function(response) {
 
   var tasks = require('./lib/tasks.js')(mongoClient);
   var uploadFlow = require('./lib/uploadFlow.js')({ storageDir: config.tempStorage }, tasks);
+  var dataBroker = require('./lib/dataBroker.js')(require('./lib/streamDAO.js')(mongoClient));
+
+  function lookupGroupId(userid, callback) {
+    async.waterfall(
+      [
+        function(cb) {
+          userApiClient.withServerToken(cb);
+        },
+        function(token, cb) {
+          seagullClient.getPrivatePair(userid, 'uploads', token, cb);
+        }
+      ],
+      function(err, hashPair) {
+        if (err != null) {
+          return callback(err);
+        }
+
+        callback(null, hashPair == null ? null : hashPair.id);
+      }
+    );
+  }
 
   var app = express();
 
@@ -70,38 +91,28 @@ var jsonp = function(response) {
     '/v1/device/upload',
     checkToken,
     function(req, res) {
-      async.waterfall(
-        [
-          function(cb) {
-            userApiClient.withServerToken(cb);
-          },
-          function(token, cb) {
-            seagullClient.getPrivatePair(req._tokendata.userid, 'uploads', token, cb);
+      lookupGroupId(req._tokendata.userid, function(err, groupId) {
+        if (err != null) {
+          if (err.statusCode == null) {
+            log.warn(err, 'Failed to get private pair for user[%s]', req._tokendata.userid);
+            res.send(500);
+          } else {
+            res.send(err.statusCode, err);
           }
-        ],
-        function(err, hashPair) {
-          if (err != null) {
-            if (err.statusCode === undefined) {
-              log.warn(err, 'Failed to get private pair for user[%s]', req._tokendata.userid);
-              res.send(500);
-            }
-            else {
-              res.send(err.statusCode, err.message);
-            }
-            return;
-          }
-
-          if (hashPair == null) {
-            log.warn('Unable to get hashPair, something is broken...');
-            res.send(503);
-            return;
-          }
-
-          uploadFlow.ingest(req, { groupId: hashPair.id }, jsonp(res));
+          return;
         }
-      );
+
+        if (groupId == null) {
+          log.warn('Unable to get hashPair, something is broken...');
+          res.send(503);
+          return;
+        }
+        uploadFlow.ingest(req, { groupId: groupId }, jsonp(res));
+      });
     }
   );
+
+  app.use(express.json());
 
   // This is actually a potential leak because it allows *any* logged in user to see the status of any task.
   // It's just the status though, and this whole thing needs to get redone at some point anyway, so I'm leaving it.
@@ -110,6 +121,55 @@ var jsonp = function(response) {
     checkToken,
     function(request, response) {
       tasks.get(request.params.id, jsonp(response));
+    }
+  );
+
+  app.post(
+    '/data',
+    checkToken,
+    function(req, res) {
+      var userid = req._tokendata.userid;
+
+      var array = req.body;
+
+      if (typeof(array) !== 'object') {
+        return res.send(400, 'Expect an object body');
+      }
+
+      if (! Array.isArray(array)) {
+        array = [array];
+      }
+
+      async.waterfall(
+        [
+          lookupGroupId.bind(null, userid),
+          function(groupId, cb) {
+            async.mapSeries(
+              array,
+              function(obj) {
+                obj._groupId = groupId;
+
+                return function(cb) {
+                  return dataBroker.addDatum(obj, cb);
+                };
+              },
+              cb
+            );
+          }
+        ],
+        function(err) {
+          if (err != null) {
+            if (err.statusCode != null) {
+              res.send(err.statusCode, err);
+            } else {
+              log.warn(err, 'Problem uploading for user[%s].', userid);
+              res.send(500);
+            }
+          } else {
+            res.send(200);
+          }
+        }
+      );
     }
   );
 
