@@ -82,8 +82,7 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       source: 'manual',
-      _groupId: 'g',
-      previous: {}
+      _groupId: 'g'
     };
 
     var previousCutShort = {
@@ -98,8 +97,7 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       source: 'manual',
-      _groupId: 'g',
-      previous: {}
+      _groupId: 'g'
     };
 
     var goodObject = {
@@ -147,9 +145,13 @@ describe('schema/basal.js', function(){
           expect(objs).length(2);
 
           expect(objs[0]).deep.equals(
-            _.assign({}, previousCutShort, {duration: 3600000, expectedDuration: previousCutShort.duration})
+            _.assign(
+              {},
+              _.omit(previousCutShort, 'previous'),
+              { duration: 3600000, expectedDuration: previousCutShort.duration }
+            )
           );
-          expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(localGoodObject);
+          expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
 
           return done(err);
         })
@@ -177,8 +179,7 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       source: 'manual',
-      _groupId: 'g',
-      previous: {}
+      _groupId: 'g'
     };
 
     var previousCutShort = {
@@ -193,8 +194,7 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       source: 'manual',
-      _groupId: 'g',
-      previous: {}
+      _groupId: 'g'
     };
 
     var goodObject = {
@@ -231,9 +231,10 @@ describe('schema/basal.js', function(){
       it('generates rate based on percent if rate absent', function(done){
         var localGoodObject = _.omit(goodObject, 'rate');
         helper.run(localGoodObject, function(err, obj) {
-          expect(obj).length(1);
-          expect(obj[0].rate).equals(0.5);
-          expect(_.pick(obj[0], Object.keys(localGoodObject))).deep.equals(localGoodObject);
+          var expectedObject = _.omit(localGoodObject, 'previous');
+
+          expect(obj.rate).equals(0.5);
+          expect(_.pick(obj, Object.keys(expectedObject))).deep.equals(expectedObject);
           done(err);
         });
       });
@@ -258,9 +259,13 @@ describe('schema/basal.js', function(){
           expect(objs).length(2);
 
           expect(objs[0]).deep.equals(
-            _.assign({}, previousCutShort, {duration: 3600000, expectedDuration: previousCutShort.duration})
+            _.assign(
+              {},
+              _.omit(previousCutShort, 'previous'),
+              { duration: 3600000, expectedDuration: previousCutShort.duration }
+            )
           );
-          expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(localGoodObject);
+          expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
 
           return done(err);
         });
