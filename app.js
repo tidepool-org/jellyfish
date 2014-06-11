@@ -20,6 +20,8 @@ var fs = require('fs');
 var async = require('async');
 var express = require('express');
 var path = require('path');
+var util = require('util');
+
 var except = require('amoeba').except;
 
 var config = require('./env.js');
@@ -82,6 +84,7 @@ var jsonp = function(response) {
   var app = express();
 
   app.use(express.compress());
+  app.use(express.json());
 
   app.get('/status', function(request, response) {
     response.send(200, 'OK');
@@ -112,8 +115,6 @@ var jsonp = function(response) {
     }
   );
 
-  app.use(express.json());
-
   // This is actually a potential leak because it allows *any* logged in user to see the status of any task.
   // It's just the status though, and this whole thing needs to get redone at some point anyway, so I'm leaving it.
   app.get(
@@ -133,25 +134,29 @@ var jsonp = function(response) {
       var array = req.body;
 
       if (typeof(array) !== 'object') {
-        return res.send(400, 'Expect an object body');
+        return res.send(400, util.format('Expect an object body, got[%s]', typeof(array)));
       }
 
       if (! Array.isArray(array)) {
         array = [array];
       }
 
+      var count = 0;
       async.waterfall(
         [
           lookupGroupId.bind(null, userid),
           function(groupId, cb) {
             async.mapSeries(
               array,
-              function(obj) {
+              function(obj, cb) {
                 obj._groupId = groupId;
-
-                return function(cb) {
-                  return dataBroker.addDatum(obj, cb);
-                };
+                dataBroker.addDatum(obj, function(err){
+                  if (err != null && err.errorCode === 'duplicate') {
+                    err.index = count;
+                  }
+                  ++count;
+                  cb(err);
+                });
               },
               cb
             );
