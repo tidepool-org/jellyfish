@@ -121,7 +121,7 @@ var UploadForm = React.createClass({
       inputs: [
         {name: 'tconnectUsername', placeholder: 'Username', type: 'text'},
         {name: 'tconnectPassword', placeholder: 'Password', type: 'password'},
-        {name: 'daysAgo', value: '180', type: 'hidden'}
+        {name: 'tconnectTimezone', type: 'timezone'}
       ]
     }
   ],
