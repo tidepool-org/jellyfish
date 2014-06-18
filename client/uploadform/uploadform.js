@@ -25,7 +25,8 @@ var UploadForm = React.createClass({
   propTypes: {
     disabled: React.PropTypes.bool,
     submitButtonText: React.PropTypes.string,
-    onSubmit: React.PropTypes.func
+    onSubmit: React.PropTypes.func,
+    showTConnect: React.PropTypes.bool
   },
 
   getInitialState: function() {
@@ -63,14 +64,14 @@ var UploadForm = React.createClass({
       ].join(' '),
       inputs: [
         {name: 'diasendUsername', placeholder: 'Username', type: 'text'},
-        {name: 'diasendPassword', placeholder: 'Password', type: 'password'},
+        {name: 'diasendPassword', placeholder: 'Password', type: 'password'}
       ]
     },
     {
       title: 'Dexcom',
       instructions: [
         'Export your data from Dexcom Studio as a tab-delimited file',
-        'and upload it here.',
+        'and upload it here.'
       ].join(' '),
       help: [
         'If you need help with getting your data into Dexcom Studio,',
@@ -98,23 +99,6 @@ var UploadForm = React.createClass({
         {name: 'carelinkPassword', placeholder: 'Password', type: 'password'},
         {name: 'daysAgo', value: '180', type: 'hidden'}
       ]
-    },
-    {
-      title: 't:connect',
-      instructions: [
-        'Please enter your t:connect user name and password',
-        '(for Tandem pumps).'
-      ].join(' '),
-      help: [
-        'We need your user name and password to fetch your data.',
-        'We will ask you this every time.',
-        'We will not store your t:connect username or password.'
-      ].join(' '),
-      inputs: [
-        {name: 'tconnectUsername', placeholder: 'Username', type: 'text'},
-        {name: 'tconnectPassword', placeholder: 'Password', type: 'password'},
-        {name: 'daysAgo', value: '180', type: 'hidden'}
-      ]
     }
   ],
   
@@ -133,6 +117,28 @@ var UploadForm = React.createClass({
   },
 
   renderFormGroups: function() {
+    if (this.props.showTConnect) {
+      this.formGroups.push(
+        {
+          title: 't:connect',
+          instructions: [
+            'Please enter your t:connect user name and password',
+            '(for Tandem pumps).'
+          ].join(' '),
+          help: [
+            'We need your user name and password to fetch your data.',
+            'We will ask you this every time.',
+            'We will not store your t:connect username or password.'
+          ].join(' '),
+          inputs: [
+            {name: 'tconnectUsername', placeholder: 'Username', type: 'text'},
+            {name: 'tconnectPassword', placeholder: 'Password', type: 'password'},
+            {name: 'daysAgo', value: '180', type: 'hidden'}
+          ]
+        }
+      );
+    }
+
     return _.map(this.formGroups, this.renderFormGroup);
   },
 
