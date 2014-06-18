@@ -106,6 +106,7 @@ var AppComponent = React.createClass({
         disabled={this.isDisabledForm()}
         submitButtonText={this.getFormSubmitButtonText()}
         onSubmit={this.handleFormSubmit}
+        showTConnect={purl().param('tconnect') != null}
         ref="uploadForm"/>
     );
     /* jshint ignore:end */
