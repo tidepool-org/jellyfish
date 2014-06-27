@@ -2,15 +2,15 @@
 /*
  * == BSD2 LICENSE ==
  * Copyright (c) 2014, Tidepool Project
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the associated License, which is identical to the BSD 2-Clause
  * License as published by the Open Source Initiative at opensource.org.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the License for more details.
- * 
+ *
  * You should have received a copy of the License along with this program; if
  * not, you can obtain one from Tidepool Project at tidepool.org.
  * == BSD2 LICENSE ==
@@ -26,7 +26,7 @@ var UploadForm = React.createClass({
     disabled: React.PropTypes.bool,
     submitButtonText: React.PropTypes.string,
     onSubmit: React.PropTypes.func,
-    showTConnect: React.PropTypes.bool
+    providers: React.PropTypes.object
   },
 
   getInitialState: function() {
@@ -47,11 +47,12 @@ var UploadForm = React.createClass({
   },
 
   getAllInputs: function() {
-    return _.flatten(_.pluck(this.formGroups, 'inputs'));
+    return _.flatten(_.pluck(this.getFormGroups(), 'inputs'));
   },
 
   formGroups: [
     {
+      name: 'diasend',
       title: 'Diasend',
       instructions: [
         'Please enter your Diasend user name and password',
@@ -68,6 +69,7 @@ var UploadForm = React.createClass({
       ]
     },
     {
+      name: 'dexcom',
       title: 'Dexcom',
       instructions: [
         'Export your data from Dexcom Studio as a tab-delimited file',
@@ -84,6 +86,7 @@ var UploadForm = React.createClass({
       ]
     },
     {
+      name: 'carelink',
       title: 'CareLink',
       instructions: [
         'Please enter your CareLink user name and password',
@@ -99,9 +102,35 @@ var UploadForm = React.createClass({
         {name: 'carelinkPassword', placeholder: 'Password', type: 'password'},
         {name: 'daysAgo', value: '180', type: 'hidden'}
       ]
+    },
+    {
+      name: 'tconnect',
+      title: 't:connect',
+      instructions: [
+        'Please enter your t:connect user name and password',
+        '(for Tandem pumps).'
+      ].join(' '),
+      help: [
+        'We need your user name and password to fetch your data.',
+        'We will ask you this every time.',
+        'We will not store your t:connect username or password.'
+      ].join(' '),
+      inputs: [
+        {name: 'tconnectUsername', placeholder: 'Username', type: 'text'},
+        {name: 'tconnectPassword', placeholder: 'Password', type: 'password'},
+        {name: 'daysAgo', value: '180', type: 'hidden'}
+      ]
     }
   ],
-  
+
+  getFormGroups: function() {
+    var providers = this.props.providers;
+
+    return _.filter(this.formGroups, function(formGroup) {
+      return Boolean(providers[formGroup.name]);
+    });
+  },
+
   render: function() {
     var formGroups = this.renderFormGroups();
     var submitButton = this.renderSubmitButton();
@@ -117,29 +146,7 @@ var UploadForm = React.createClass({
   },
 
   renderFormGroups: function() {
-    if (this.props.showTConnect) {
-      this.formGroups.push(
-        {
-          title: 't:connect',
-          instructions: [
-            'Please enter your t:connect user name and password',
-            '(for Tandem pumps).'
-          ].join(' '),
-          help: [
-            'We need your user name and password to fetch your data.',
-            'We will ask you this every time.',
-            'We will not store your t:connect username or password.'
-          ].join(' '),
-          inputs: [
-            {name: 'tconnectUsername', placeholder: 'Username', type: 'text'},
-            {name: 'tconnectPassword', placeholder: 'Password', type: 'password'},
-            {name: 'daysAgo', value: '180', type: 'hidden'}
-          ]
-        }
-      );
-    }
-
-    return _.map(this.formGroups, this.renderFormGroup);
+    return _.map(this.getFormGroups(), this.renderFormGroup);
   },
 
   renderFormGroup: function(group) {
