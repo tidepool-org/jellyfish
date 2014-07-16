@@ -15,18 +15,7 @@
  * == BSD2 LICENSE ==
  */
 
-// Some files used by the client web app
-
-var files = {
-  js: {
-    vendor: [
-      'bower_components/bows/dist/bows.js',
-      'bower_components/jquery/dist/jquery.js',
-      'bower_components/lodash/dist/lodash.js',
-      'bower_components/purl/purl.js',
-      'bower_components/react/react.js'
-    ]
-  }
+// For now just default to US Pacific Time
+module.exports = function() {
+  return 'America/Los_Angeles';
 };
-
-module.exports = files;

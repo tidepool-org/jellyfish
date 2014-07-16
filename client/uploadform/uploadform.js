@@ -20,6 +20,7 @@ var React = window.React;
 var _ = window._;
 
 var UploadFormGroup = require('./uploadformgroup');
+var getTimezoneDefaultValue = require('../timezone/timezonedetect');
 
 var UploadForm = React.createClass({
   propTypes: {
@@ -39,8 +40,13 @@ var UploadForm = React.createClass({
   // Make sure all inputs have a defined form value
   getInitialFormValues: function() {
     var allInputs = this.getAllInputs();
+    var timezoneDefaultValue = getTimezoneDefaultValue();
     var formValues = _.reduce(allInputs, function(result, input) {
-      result[input.name] = '';
+      var value = '';
+      if (input.type === 'timezone') {
+        value = timezoneDefaultValue;
+      }
+      result[input.name] = value;
       return result;
     }, {});
     return formValues;
@@ -66,7 +72,7 @@ var UploadForm = React.createClass({
       inputs: [
         {name: 'diasendUsername', placeholder: 'Username', type: 'text'},
         {name: 'diasendPassword', placeholder: 'Password', type: 'password'},
-        {name: 'diasendTimezone', type: 'timezone'}
+        {name: 'diasendTimezone', label: 'Select data timezone:', type: 'timezone'}
       ]
     },
     {
@@ -84,7 +90,7 @@ var UploadForm = React.createClass({
       ].join(' '),
       inputs: [
         {name: 'dexcom', type: 'file'},
-        {name: 'dexcomTimezone', type: 'timezone'}
+        {name: 'dexcomTimezone', label: 'Select data timezone:', type: 'timezone'}
       ]
     },
     {
@@ -102,7 +108,7 @@ var UploadForm = React.createClass({
       inputs: [
         {name: 'carelinkUsername', placeholder: 'Username', type: 'text'},
         {name: 'carelinkPassword', placeholder: 'Password', type: 'password'},
-        {name: 'carelinkTimezone', type: 'timezone'},
+        {name: 'carelinkTimezone', label: 'Select data timezone:', type: 'timezone'},
         {name: 'daysAgo', value: '180', type: 'hidden'}
       ]
     },
@@ -121,7 +127,7 @@ var UploadForm = React.createClass({
       inputs: [
         {name: 'tconnectUsername', placeholder: 'Username', type: 'text'},
         {name: 'tconnectPassword', placeholder: 'Password', type: 'password'},
-        {name: 'tconnectTimezone', type: 'timezone'}
+        {name: 'tconnectTimezone', label: 'Select data timezone:', type: 'timezone'}
       ]
     }
   ],

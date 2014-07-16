@@ -2,15 +2,15 @@
 /*
  * == BSD2 LICENSE ==
  * Copyright (c) 2014, Tidepool Project
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the associated License, which is identical to the BSD 2-Clause
  * License as published by the Open Source Initiative at opensource.org.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the License for more details.
- * 
+ *
  * You should have received a copy of the License along with this program; if
  * not, you can obtain one from Tidepool Project at tidepool.org.
  * == BSD2 LICENSE ==
@@ -19,7 +19,8 @@
 var React = window.React;
 var _ = window._;
 
-var zoneNames = Object.keys(WallTime.zones).sort();
+var timezones = require('../timezone/timezones');
+var getTimezoneDefaultValue = require('../timezone/timezonedetect');
 
 var UploadFormGroup = React.createClass({
   propTypes: {
@@ -31,7 +32,7 @@ var UploadFormGroup = React.createClass({
     disabled: React.PropTypes.bool,
     onChange: React.PropTypes.func
   },
-  
+
   render: function() {
     var instructions = this.renderInstructions();
     var help = this.renderHelp();
@@ -59,7 +60,7 @@ var UploadFormGroup = React.createClass({
       return (
         <div className="upload-form-group-instructions">{text}</div>
       );
-      /* jshint ignore:end */      
+      /* jshint ignore:end */
     }
 
     return null;
@@ -75,7 +76,7 @@ var UploadFormGroup = React.createClass({
           className="upload-form-group-help"
           dangerouslySetInnerHTML={{__html: text}}></div>
       );
-      /* jshint ignore:end */      
+      /* jshint ignore:end */
     }
 
     return null;
@@ -92,7 +93,11 @@ var UploadFormGroup = React.createClass({
 
   renderInput: function(input) {
     if (input.type === 'timezone') {
-      return this.renderTimezoneSelector(input.name);
+      return this.renderTimezoneSelector({
+        name: input.name,
+        label: input.label,
+        defaultValue: getTimezoneDefaultValue()
+      });
     }
 
     return (
@@ -111,16 +116,37 @@ var UploadFormGroup = React.createClass({
     );
   },
 
-  renderTimezoneSelector: function(name) {
+  renderTimezoneSelector: function(options) {
+    var inputName = options.name;
+    var label;
+    if (options.label) {
+      /* jshint ignore:start */
+      label = <label htmlFor={inputName}>{options.label}</label>
+      /* jshint ignore:end */
+    }
+
+    var selectOptions = _.map(timezones, function(timezone) {
+      /* jshint ignore:start */
+      return <option value={timezone.name}>{timezone.label}</option>;
+      /* jshint ignore:end */
+    });
+
+    /* jshint ignore:start */
     return (
-      <select name={name}>
-      {
-        zoneNames.map(function (zoneName) {
-          return <option value={zoneName}>{zoneName}</option>
-        })
-      }
-      </select>
+      <div key={inputName}>
+        {label}
+        <select
+          className="upload-form-group-input form-control"
+          id={inputName}
+          name={inputName}
+          defaultValue={options.defaultValue}
+          disabled={this.props.disabled}
+          onChange={this.props.onChange}>
+          {selectOptions}
+        </select>
+      </div>
     );
+    /* jshint ignore:end */
   }
 });
 
