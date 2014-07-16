@@ -1,5 +1,4 @@
-/*
- * == BSD2 LICENSE ==
+/**
  * Copyright (c) 2014, Tidepool Project
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -12,10 +11,13 @@
  *
  * You should have received a copy of the License along with this program; if
  * not, you can obtain one from Tidepool Project at tidepool.org.
- * == BSD2 LICENSE ==
  */
 
-// For now just default to US Pacific Time
-module.exports = function() {
-  return 'America/Los_Angeles';
-};
+// Expose Tidepool sundial datetime functions
+// Deprecate when sundial introduces a distribution bundle
+
+var sundial = require('../bower_components/sundial/sundial');
+
+window.sundial = sundial;
+
+module.exports = sundial;

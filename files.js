@@ -24,7 +24,8 @@ var files = {
       'bower_components/jquery/dist/jquery.js',
       'bower_components/lodash/dist/lodash.js',
       'bower_components/purl/purl.js',
-      'bower_components/react/react.js'
+      'bower_components/react/react.js',
+      'bower_components/moment/moment.js'
     ]
   }
 };

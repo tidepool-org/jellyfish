@@ -19,8 +19,8 @@
 var React = window.React;
 var _ = window._;
 
+var sundial = require('../sundial');
 var UploadFormGroup = require('./uploadformgroup');
-var getTimezoneDefaultValue = require('../timezone/timezonedetect');
 
 var UploadForm = React.createClass({
   propTypes: {
@@ -40,7 +40,7 @@ var UploadForm = React.createClass({
   // Make sure all inputs have a defined form value
   getInitialFormValues: function() {
     var allInputs = this.getAllInputs();
-    var timezoneDefaultValue = getTimezoneDefaultValue();
+    var timezoneDefaultValue = sundial.getDeviceTimezone().name;
     var formValues = _.reduce(allInputs, function(result, input) {
       var value = '';
       if (input.type === 'timezone') {
