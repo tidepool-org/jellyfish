@@ -19,6 +19,7 @@
 var React = window.React;
 var _ = window._;
 
+var sundial = require('../sundial');
 var UploadFormGroup = require('./uploadformgroup');
 
 var UploadForm = React.createClass({
@@ -39,8 +40,13 @@ var UploadForm = React.createClass({
   // Make sure all inputs have a defined form value
   getInitialFormValues: function() {
     var allInputs = this.getAllInputs();
+    var timezoneDefaultValue = sundial.getDeviceTimezone().name;
     var formValues = _.reduce(allInputs, function(result, input) {
-      result[input.name] = '';
+      var value = '';
+      if (input.type === 'timezone') {
+        value = timezoneDefaultValue;
+      }
+      result[input.name] = value;
       return result;
     }, {});
     return formValues;
@@ -65,7 +71,8 @@ var UploadForm = React.createClass({
       ].join(' '),
       inputs: [
         {name: 'diasendUsername', placeholder: 'Username', type: 'text'},
-        {name: 'diasendPassword', placeholder: 'Password', type: 'password'}
+        {name: 'diasendPassword', placeholder: 'Password', type: 'password'},
+        {name: 'diasendTimezone', label: 'Select data timezone:', type: 'timezone'}
       ]
     },
     {
@@ -82,7 +89,8 @@ var UploadForm = React.createClass({
         'target="_blank">Dexcom help site</a>.'
       ].join(' '),
       inputs: [
-        {name: 'dexcom', type: 'file'}
+        {name: 'dexcom', type: 'file'},
+        {name: 'dexcomTimezone', label: 'Select data timezone:', type: 'timezone'}
       ]
     },
     {
@@ -100,6 +108,7 @@ var UploadForm = React.createClass({
       inputs: [
         {name: 'carelinkUsername', placeholder: 'Username', type: 'text'},
         {name: 'carelinkPassword', placeholder: 'Password', type: 'password'},
+        {name: 'carelinkTimezone', label: 'Select data timezone:', type: 'timezone'},
         {name: 'daysAgo', value: '180', type: 'hidden'}
       ]
     },
@@ -118,7 +127,7 @@ var UploadForm = React.createClass({
       inputs: [
         {name: 'tconnectUsername', placeholder: 'Username', type: 'text'},
         {name: 'tconnectPassword', placeholder: 'Password', type: 'password'},
-        {name: 'daysAgo', value: '180', type: 'hidden'}
+        {name: 'tconnectTimezone', label: 'Select data timezone:', type: 'timezone'}
       ]
     }
   ],

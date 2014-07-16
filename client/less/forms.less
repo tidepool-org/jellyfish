@@ -21,6 +21,7 @@
 label,
 .form-label {
   display: block;
+  font-size: @font-size-text;
 }
 
 // Help text under form controls
@@ -46,13 +47,9 @@ label,
   padding: ((@form-control-height - @line-height-base)/2 - @form-control-border-size) @spacing-tiny;
 
   border: @form-control-border-size solid @form-control-border-color;
-  border-radius: 0px;
+  border-radius: 4px;
 
-  color: @gray-dark;
   background: #fff;
-
-  // Remove inset shadow in iOS
-  -webkit-appearance: none;
 
   &:hover {
     border-color: darken(@form-control-border-color, 15%);
@@ -73,6 +70,7 @@ label,
 
 // Special styles for file input. Center text horizontally
 input[type="file"] {
+  color: #000;
   line-height: 0px;
 }
 
