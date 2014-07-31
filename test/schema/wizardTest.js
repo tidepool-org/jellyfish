@@ -16,6 +16,9 @@ var goodObject = {
   deviceId: 'test',
   source: 'manual',
   recommended: 5.0,
+  carbInput: 45,
+  bgInput: 6.2,
+  activeInsulin: 1.3,
   payload: { howdy: 'bob' },
   bolus: {
     type: 'bolus',
@@ -30,6 +33,22 @@ describe('schema/wizard.js', function(){
   describe('recommended', function(){
     helper.rejectIfAbsent(goodObject, 'recommended');
     helper.expectNumericalField(goodObject, 'recommended');
+  });
+
+  describe('carbInput', function(){
+    helper.okIfAbsent(goodObject, 'carbInput');
+    helper.expectNumericalField(goodObject, 'carbInput');
+  });
+
+  describe('bgInput', function(){
+    helper.okIfAbsent(goodObject, 'bgInput');
+    helper.expectNumericalField(goodObject, 'bgInput');
+    helper.expectUnitConversion(goodObject, 'bgInput');
+  });
+
+  describe('activeInsulin', function(){
+    helper.okIfAbsent(goodObject, 'activeInsulin');
+    helper.expectNumericalField(goodObject, 'activeInsulin');
   });
 
   describe('payload', function(){
