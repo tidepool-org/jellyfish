@@ -142,4 +142,81 @@ describe('streamDAO', function(){
       streamDAO.updateDatum({_id: 'abcd', f: 'a', v: 2829, _groupId: 'g'}, theCallback);
     });
   });
+
+  describe('getDatumBefore', function(){
+    var events = [
+      { time: '2014-01-01T00:00:00.000Z', type: 'none', deviceId: 'a', source: 's', _groupId: 'g', val: 0 },
+      { time: '2014-01-01T01:00:00.000Z', type: 'none', deviceId: 'a', source: 's', _groupId: 'g', val: 1 },
+      { time: '2014-01-01T02:00:00.000Z', type: 'none', deviceId: 'a', source: 's', _groupId: 'g', val: 2 }
+    ];
+
+    beforeEach(function(done){
+      async.map(events, streamDAO.insertDatum, done)
+    });
+
+    it('returns null if nothing before', function(done){
+      streamDAO.getDatumBefore(
+        { time: '2014-01-01T00:00:00.000Z', type: 'none', deviceId: 'a', source: 's', _groupId: 'g' },
+        function(err, datum){
+          expect(datum).to.equal.null;
+          done(err);
+        }
+      );
+    });
+
+    describe('find previous', function(){
+      var matchingEvent = { time: '2014-01-01T01:30:00.000Z', type: 'none', deviceId: 'a', source: 's', _groupId: 'g' };
+
+      it('returns the previous event', function(done){
+        streamDAO.getDatumBefore(
+          matchingEvent,
+          function(err, datum){
+            expect(datum).to.exist;
+            expect(_.pick(datum, Object.keys(events[1]))).to.deep.equal(events[1]);
+            done(err);
+          }
+        );
+      });
+
+      it('previous event must share a deviceId', function(done){
+        streamDAO.getDatumBefore(
+          _.assign({}, matchingEvent, {deviceId: 'b'}),
+          function(err, datum){
+            expect(datum).to.equal.null;
+            done(err);
+          }
+        );
+      });
+
+      it('previous event must share a source', function(done){
+        streamDAO.getDatumBefore(
+          _.assign({}, matchingEvent, {source: 'r'}),
+          function(err, datum){
+            expect(datum).to.equal.null;
+            done(err);
+          }
+        );
+      });
+
+      it('previous event must share a _groupId', function(done){
+        streamDAO.getDatumBefore(
+          _.assign({}, matchingEvent, {_groupId: 'h'}),
+          function(err, datum){
+            expect(datum).to.equal.null;
+            done(err);
+          }
+        );
+      });
+
+      it('previous event must share a type', function(done){
+        streamDAO.getDatumBefore(
+          _.assign({}, matchingEvent, {type: 'some'}),
+          function(err, datum){
+            expect(datum).to.equal.null;
+            done(err);
+          }
+        );
+      });
+    })
+  });
 });
