@@ -58,7 +58,7 @@ describe('schema/wizard.js', function(){
 
   describe('bolus', function(){
     helper.okIfAbsent(goodObject, 'bolus');
-    helper.expectObjectField(goodObject, 'bolus');
+    helper.expectNotNumberField(goodObject, 'bolus');
   });
 
   helper.testCommonFields(goodObject);

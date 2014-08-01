@@ -12,7 +12,9 @@ var salinity = require('salinity');
 var expect = salinity.expect;
 var sinon = salinity.sinon;
 
+var deviceMeta = require('../../lib/schema/deviceMeta.js');
 var helper = require('./schemaTestHelper.js');
+var schema = require('../../lib/schema/schema.js');
 
 describe('schema/deviceMeta.js', function(){
   describe('calibration', function(){
@@ -61,8 +63,6 @@ describe('schema/deviceMeta.js', function(){
 
   describe('status', function(){
     var previousMatches = {
-      _id: '_prevMatches',
-      id: 'prevMatches',
       type: 'deviceMeta',
       subType: 'status',
       status: 'suspended',
@@ -75,8 +75,6 @@ describe('schema/deviceMeta.js', function(){
     };
 
     var previousNoMatch = {
-      _id: '_prevCutShort',
-      id: 'prevCutShort',
       type: 'deviceMeta',
       subType: 'status',
       status: 'suspended',
@@ -103,8 +101,9 @@ describe('schema/deviceMeta.js', function(){
     beforeEach(function(){
       helper.resetMocks();
       sinon.stub(helper.streamDAO, 'getDatum');
-      helper.streamDAO.getDatum.withArgs(previousMatches._id, sinon.match.func).callsArgWith(1, null, previousMatches);
-      helper.streamDAO.getDatum.withArgs(previousNoMatch._id, sinon.match.func).callsArgWith(1, null, null);
+      helper.streamDAO.getDatum
+        .withArgs(schema.generateId(previousMatches, deviceMeta.idFields), goodObject._groupId, sinon.match.func)
+        .callsArgWith(2, null, previousMatches);
     });
 
     describe('status', function(){
@@ -152,25 +151,22 @@ describe('schema/deviceMeta.js', function(){
       helper.okIfAbsent(goodObject, 'previous');
       helper.expectObjectField(goodObject, 'previous');
 
-      it('assign previous an id if it matches', function(done){
-        var localGoodObject = _.assign({}, goodObject, {previous: previousMatches});
-
-        helper.run(localGoodObject, function(err, objs){
-          expect(_.pick(objs, Object.keys(goodObject))).deep.equals(goodObject);
-          expect(objs.previous).equals(previousMatches.id);
-
-          return done(err);
-        });
-      });
-
       it('includes previous if it doesn\'t match', function(done){
+        var prevId = schema.generateId(previousNoMatch, deviceMeta.idFields);
+
+        helper.resetMocks();
+        sinon.stub(helper.streamDAO, 'getDatum');
+        helper.streamDAO.getDatum
+          .withArgs(prevId, goodObject._groupId, sinon.match.func)
+          .callsArgWith(2, null, null);
+
         var localGoodObject = _.assign({}, goodObject, {previous: previousNoMatch});
 
         helper.run(localGoodObject, function(err, objs){
           expect(objs).length(2);
           expect(_.pick(objs[0], Object.keys(previousNoMatch))).deep.equals(previousNoMatch);
           expect(_.pick(objs[1], Object.keys(goodObject))).deep.equals(goodObject);
-          expect(objs[1].previous).equals(previousNoMatch.id);
+          expect(objs[1].previous).equals(prevId);
 
           return done(err);
         });
