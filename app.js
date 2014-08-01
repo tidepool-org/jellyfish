@@ -142,6 +142,7 @@ var jsonp = function(response) {
       }
 
       var count = 0;
+      var duplicates = [];
       async.waterfall(
         [
           lookupGroupId.bind(null, userid),
@@ -151,8 +152,13 @@ var jsonp = function(response) {
               function(obj, cb) {
                 obj._groupId = groupId;
                 dataBroker.addDatum(obj, function(err){
-                  if (err != null && err.errorCode === 'duplicate') {
-                    err.index = count;
+                  if (err != null) {
+                    if (err.errorCode === 'duplicate') {
+                      duplicates.push(count);
+                      err = null;
+                    } else {
+                      err.dataIndex = count;
+                    }
                   }
                   ++count;
                   cb(err);
@@ -171,7 +177,7 @@ var jsonp = function(response) {
               res.send(500);
             }
           } else {
-            res.send(200);
+            res.send(200, duplicates);
           }
         }
       );
