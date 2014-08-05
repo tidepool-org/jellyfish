@@ -84,7 +84,7 @@ var jsonp = function(response) {
   var app = express();
 
   app.use(express.compress());
-  app.use(express.json());
+  app.use(express.json({ limit: '4mb' }));
 
   app.get('/status', function(request, response) {
     response.send(200, 'OK');
