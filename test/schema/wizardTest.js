@@ -15,7 +15,10 @@ var goodObject = {
   timezoneOffset: 120,
   deviceId: 'test',
   source: 'manual',
-  recommended: 5.0,
+  recommended: {
+    carb: 4.0,
+    correction: 1.0
+  },
   carbInput: 45,
   bgInput: 6.2,
   activeInsulin: 1.3,
@@ -32,7 +35,7 @@ var goodObject = {
 describe('schema/wizard.js', function(){
   describe('recommended', function(){
     helper.rejectIfAbsent(goodObject, 'recommended');
-    helper.expectNumericalField(goodObject, 'recommended');
+    helper.expectObjectField(goodObject, 'recommended');
   });
 
   describe('carbInput', function(){
@@ -46,9 +49,9 @@ describe('schema/wizard.js', function(){
     helper.expectUnitConversion(goodObject, 'bgInput');
   });
 
-  describe('activeInsulin', function(){
-    helper.okIfAbsent(goodObject, 'activeInsulin');
-    helper.expectNumericalField(goodObject, 'activeInsulin');
+  describe('insulinOnBoard', function(){
+    helper.okIfAbsent(goodObject, 'insulinOnBoard');
+    helper.expectNumericalField(goodObject, 'insulinOnBoard');
   });
 
   describe('payload', function(){
