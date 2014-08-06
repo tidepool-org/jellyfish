@@ -142,39 +142,150 @@ describe('schema/settings.js', function () {
     helper.rejectIfAbsent(goodObject, 'bgTarget');
     helper.expectObjectField(goodObject, 'bgTarget');
 
-    it('rejects a schedule with a negative start', function(done){
-      var localGood = _.cloneDeep(goodObject);
-      localGood.bgTarget[0].start = -1;
-      helper.expectRejection(localGood, 'bgTarget', done);
+    describe('(Target) + High/Low', function(){
+      var localGood = {};
+      beforeEach(function(){
+        localGood = _.cloneDeep(goodObject);
+      });
+
+      it('rejects a bgTarget with a negative start', function(done){
+        localGood.bgTarget[0].start = -1;
+        helper.expectRejection(localGood, 'bgTarget', done);
+      });
+
+      it('accepts a bgTarget with a start of 23:59:59.999', function(done){
+        localGood.bgTarget[1].start = (24 * 60 * 60 * 1000) - 1;
+        helper.run(localGood, done);
+      });
+
+      it('rejects a bgTarget with a start of 24 hours', function(done){
+        localGood.bgTarget[1].start = (24 * 60 * 60 * 1000);
+        helper.expectRejection(localGood, 'bgTarget', done);
+      });
+
+      it('accepts a bgTarget with a target', function(done){
+        localGood.bgTarget[1].target = 4.5;
+        helper.run(localGood, done);
+      });
+
+      it('converts units', function(done){
+        localGood.units.bg = 'mg/dL';
+        localGood.bgTarget = [
+          { low: 80, high: 100, target: 90, start: 0 },
+          { low: 90, high: 110, target: 100, start: 10800000 }
+        ];
+
+        helper.run(localGood, function(err, converted) {
+          if (err != null) {
+            return done(err);
+          }
+
+          expect(converted.bgTarget).deep.equals(
+            [
+              { low: 4.440598392836427, high: 5.550747991045533, target: 4.9956731919409805, start: 0 },
+              { low: 4.9956731919409805, high: 6.1058227901500866, target: 5.550747991045533, start: 10800000 }
+            ]
+          );
+          done();
+        });
+      });
     });
 
-    it('accepts a schedule with a start of 23:59:59.999', function(done){
-      var localGood = _.cloneDeep(goodObject);
-      localGood.bgTarget[1].start = (24 * 60 * 60 * 1000) - 1;
-      helper.run(localGood, done);
+    describe('Target + Range', function(){
+      var localGood = {};
+
+      beforeEach(function(){
+        localGood = _.cloneDeep(goodObject);
+        localGood.bgTarget = [
+          { target: 4.5, range: 0.5, start: 0 },
+          { target: 4.0, range: 0.5, start: 43200000 }
+        ];
+      });
+
+      it('accepts the good', function(done){
+        helper.run(localGood, done);
+      });
+
+      it('rejects a bgTarget with a negative start', function(done){
+        localGood.bgTarget[0].start = -1;
+        helper.expectRejection(localGood, 'bgTarget', done);
+      });
+
+      it('accepts a bgTarget with a start of 23:59:59.999', function(done){
+        localGood.bgTarget[1].start = (24 * 60 * 60 * 1000) - 1;
+        helper.run(localGood, done);
+      });
+
+      it('rejects a bgTarget with a start of 24 hours', function(done){
+        localGood.bgTarget[1].start = (24 * 60 * 60 * 1000);
+        helper.expectRejection(localGood, 'bgTarget', done);
+      });
+
+      it('converts units', function(done){
+        localGood.units.bg = 'mg/dL';
+        localGood.bgTarget = [
+          { target: 80, range: 10 , start: 0 },
+          { target: 90, range: 10 , start: 43200000 }
+        ];
+
+        helper.run(localGood, function(err, converted) {
+          expect(converted.bgTarget).deep.equals(
+            [
+              { target: 4.440598392836427, range: 0.5550747991045534, start: 0 },
+              { target: 4.9956731919409805, range: 0.5550747991045534, start: 43200000 }
+            ]
+          );
+          done(err);
+        });
+      });
     });
 
-    it('rejects a schedule with a start of 24 hours', function(done){
-      var localGood = _.cloneDeep(goodObject);
-      localGood.bgTarget[1].start = (24 * 60 * 60 * 1000);
-      helper.expectRejection(localGood, 'bgTarget', done);
-    });
+    describe('Target + High', function(){
+      var localGood = {};
 
-    it('converts units', function(done){
-      var localGood = _.cloneDeep(goodObject);
-      localGood.units.bg = 'mg/dL';
-      localGood.bgTarget[0].low = 80;
-      localGood.bgTarget[0].high = 100;
+      beforeEach(function(){
+        localGood = _.cloneDeep(goodObject);
+        localGood.bgTarget = [
+          { target: 4.5, high: 6.0, start: 0 },
+          { target: 4.0, high: 5.0, start: 43200000 }
+        ];
+      });
 
-      localGood.bgTarget[1].low = 90;
-      localGood.bgTarget[1].high = 110;
+      it('accepts the good', function(done){
+        helper.run(localGood, done);
+      });
 
-      helper.run(localGood, function(err, converted) {
-        expect(converted.bgTarget[0].low).equals(4.440598392836427);
-        expect(converted.bgTarget[0].high).equals(5.550747991045533);
-        expect(converted.bgTarget[1].low).equals(4.9956731919409805);
-        expect(converted.bgTarget[1].high).equals(6.1058227901500866);
-        done(err);
+      it('rejects a bgTarget with a negative start', function(done){
+        localGood.bgTarget[0].start = -1;
+        helper.expectRejection(localGood, 'bgTarget', done);
+      });
+
+      it('accepts a bgTarget with a start of 23:59:59.999', function(done){
+        localGood.bgTarget[1].start = (24 * 60 * 60 * 1000) - 1;
+        helper.run(localGood, done);
+      });
+
+      it('rejects a bgTarget with a start of 24 hours', function(done){
+        localGood.bgTarget[1].start = (24 * 60 * 60 * 1000);
+        helper.expectRejection(localGood, 'bgTarget', done);
+      });
+
+      it('converts units', function(done){
+        localGood.units.bg = 'mg/dL';
+        localGood.bgTarget = [
+          { target: 100, high: 140, start: 0 },
+          { target: 90, high: 110, start: 43200000 }
+        ];
+
+        helper.run(localGood, function(err, converted) {
+          expect(converted.bgTarget).deep.equals(
+            [
+              { target: 5.550747991045533, high: 7.771047187463747, start: 0 },
+              { target: 4.9956731919409805, high: 6.1058227901500866, start: 43200000 }
+            ]
+          );
+          done(err);
+        });
       });
     });
   });
