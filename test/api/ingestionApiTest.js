@@ -52,7 +52,7 @@ describe('ingestion API', function () {
               }
 
               mongoClient.withCollection('deviceData', done, function(coll, cb){
-                coll.find().sort({"time": 1, "id": 1, "_sequenceId": 1}).toArray(function(err, results){
+                coll.find().sort({"time": 1, "id": 1, "_version": 1}).toArray(function(err, results){
                   expect(results.map(function(e){ return _.omit(e, "createdTime", "modifiedTime", "_id") }))
                     .deep.equals(output.map(function(e){ e._groupId = groupId; return e; }));
                   cb(err);

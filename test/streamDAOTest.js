@@ -50,7 +50,7 @@ describe('streamDAO', function(){
           expect(datum).to.exist;
           expect(new Date(datum.createdTime).valueOf()).that.is.within(now, Date.now());
           expect(_.omit(datum, 'createdTime', '_id')).to.deep.equals(
-            { id: 'abcd', v: 1, _groupId: 'g', _sequenceId: 0, _active: true }
+            { id: 'abcd', v: 1, _groupId: 'g', _version: 0, _active: true }
           );
 
           done(err);
@@ -97,7 +97,7 @@ describe('streamDAO', function(){
           expect(datum).to.exist;
           expect(new Date(datum.modifiedTime).valueOf()).that.is.within(now, Date.now());
           expect(_.omit(datum, 'modifiedTime', '_id')).to.deep.equals(
-            { id: 'abcd', f: 'a', v: 2828, _groupId: 'g', createdTime: createdTime, _sequenceId: 1, _active: true }
+            { id: 'abcd', f: 'a', v: 2828, _groupId: 'g', createdTime: createdTime, _version: 1, _active: true }
           );
 
           var overwrittenId = datum._id + '_0';
@@ -105,7 +105,7 @@ describe('streamDAO', function(){
             coll.find({_id: overwrittenId}).toArray(function(err, elements){
               expect(elements).to.have.length(1);
               expect(elements[0]).to.deep.equals(
-                { _id: overwrittenId, id: 'abcd', f: 'a', _groupId: 'g', v: 1, createdTime: createdTime, _sequenceId: 0, _active: false }
+                { _id: overwrittenId, id: 'abcd', f: 'a', _groupId: 'g', v: 1, createdTime: createdTime, _version: 0, _active: false }
               );
 
               done(err);
