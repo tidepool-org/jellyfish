@@ -171,6 +171,8 @@ var jsonp = function(response) {
         function(err) {
           if (err != null) {
             if (err.statusCode != null) {
+              // err.message appears to not get serialized if it's an Error, so store it as err.reason
+              err.reason = err.message;
               res.send(err.statusCode, err);
             } else {
               log.warn(err, 'Problem uploading for user[%s].', userid);
