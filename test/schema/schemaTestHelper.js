@@ -44,45 +44,74 @@ exports.okIfAbsent = function(goodObject, field) {
   });
 };
 
-exports.expectStringField = function(goodObject, field) {
+exports.expectNotNumberField = function(goodObject, field) {
   it('rejects numerical value', function(done){
     var toAdjust = {};
     toAdjust[field] = 1;
     exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
   });
+};
 
+exports.expectNotObjectField = function(goodObject, field) {
   it('rejects object value', function(done){
     var toAdjust = {};
     toAdjust[field] = { howdy: 'honda' };
     exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
   });
+};
+
+exports.expectNotStringField = function(goodObject, field) {
+  it('rejects string value', function(done){
+    var toAdjust = {};
+    toAdjust[field] = '1';
+    exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
+  });
+};
+
+exports.expectStringField = function(goodObject, field) {
+  exports.expectNotNumberField(goodObject, field);
+  exports.expectNotObjectField(goodObject, field);
 };
 
 exports.expectNumericalField = function(goodObject, field) {
-  it('rejects string value', function(done){
-    var toAdjust = {};
-    toAdjust[field] = '1';
-    exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
-  });
-
-  it('rejects object value', function(done){
-    var toAdjust = {};
-    toAdjust[field] = { howdy: 'honda' };
-    exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
-  });
+  exports.expectNotStringField(goodObject, field);
+  exports.expectNotObjectField(goodObject, field);
 };
 
 exports.expectObjectField = function(goodObject, field) {
-  it('rejects string value', function(done){
-    var toAdjust = {};
-    toAdjust[field] = '1';
-    exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
+  exports.expectNotStringField(goodObject, field);
+  exports.expectNotNumberField(goodObject, field);
+};
+
+exports.expectUnitConversion = function(goodObject, field) {
+  it('converts "mmol/l" to "mmol/L"', function(done){
+    var splatMe = { units: 'mmol/l' };
+    splatMe[field] = 80;
+    exports.run(_.assign({}, goodObject, splatMe), function(err, val){
+      expect(val.units).equals('mmol/L');
+      expect(val[field]).equals(80);
+      done(err);
+    });
   });
 
-  it('rejects numerical value', function(done){
-    var toAdjust = {};
-    toAdjust[field] = 1;
-    exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
+  it('converts units from mg/dL to mmol/L', function(done){
+    var splatMe = { units: 'mg/dL' };
+    splatMe[field] = 80;
+    exports.run(_.assign({}, goodObject, splatMe), function(err, val){
+      expect(val.units).equals('mg/dL');
+      expect(val[field]).equals(4.440598392836427);
+      done(err);
+    });
+  });
+
+  it('converts units from mg/dl to mmol/L', function(done){
+    var splatMe = { units: 'mg/dl' };
+    splatMe[field] = 80;
+    exports.run(_.assign({}, goodObject, splatMe), function(err, val){
+      expect(val.units).equals('mg/dL');
+      expect(val[field]).equals(4.440598392836427);
+      done(err);
+    });
   });
 };
 

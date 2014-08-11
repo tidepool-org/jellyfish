@@ -84,7 +84,7 @@ var jsonp = function(response) {
   var app = express();
 
   app.use(express.compress());
-  app.use(express.json());
+  app.use(express.json({ limit: '4mb' }));
 
   app.get('/status', function(request, response) {
     response.send(200, 'OK');
@@ -142,6 +142,7 @@ var jsonp = function(response) {
       }
 
       var count = 0;
+      var duplicates = [];
       async.waterfall(
         [
           lookupGroupId.bind(null, userid),
@@ -151,8 +152,13 @@ var jsonp = function(response) {
               function(obj, cb) {
                 obj._groupId = groupId;
                 dataBroker.addDatum(obj, function(err){
-                  if (err != null && err.errorCode === 'duplicate') {
-                    err.index = count;
+                  if (err != null) {
+                    if (err.errorCode === 'duplicate') {
+                      duplicates.push(count);
+                      err = null;
+                    } else {
+                      err.dataIndex = count;
+                    }
                   }
                   ++count;
                   cb(err);
@@ -165,13 +171,15 @@ var jsonp = function(response) {
         function(err) {
           if (err != null) {
             if (err.statusCode != null) {
+              // err.message appears to not get serialized if it's an Error, so store it as err.reason
+              err.reason = err.message;
               res.send(err.statusCode, err);
             } else {
               log.warn(err, 'Problem uploading for user[%s].', userid);
               res.send(500);
             }
           } else {
-            res.send(200);
+            res.send(200, duplicates);
           }
         }
       );

@@ -12,7 +12,9 @@ var salinity = require('salinity');
 var expect = salinity.expect;
 var sinon = salinity.sinon;
 
+var bolus = require('../../lib/schema/bolus.js');
 var helper = require('./schemaTestHelper.js');
+var schema = require('../../lib/schema/schema.js');
 
 describe('schema/bolus.js', function(){
   describe('injected', function(){
@@ -67,11 +69,14 @@ describe('schema/bolus.js', function(){
       source: 'manual',
       _groupId: 'g'
     };
+    var objId = schema.generateId(goodObject, bolus.idFields);
 
     beforeEach(function(){
       helper.resetMocks();
       sinon.stub(helper.streamDAO, 'getDatum');
-      helper.streamDAO.getDatum.withArgs(goodObject._id, sinon.match.func).callsArgWith(1, null, goodObject);
+      helper.streamDAO.getDatum
+        .withArgs(objId, goodObject._groupId, sinon.match.func)
+        .callsArgWith(2, null, goodObject);
     });
 
     describe('normal', function(){
@@ -88,6 +93,24 @@ describe('schema/bolus.js', function(){
 
         it('updates normal if no match', function(done){
           helper.run(_.assign({}, goodObject, {previous: goodObject, normal: 0.5}), function(err, obj){
+            expect(obj.normal).equals(0.5);
+            expect(obj.expectedNormal).equals(goodObject.normal);
+            expect(_.omit(_.pick(obj, Object.keys(goodObject)), 'normal', 'expectedNormal')).deep.equals(
+              _.omit(goodObject, 'normal')
+            );
+            done(err);
+          });
+        });
+
+        it('id-only, returns nothing if completion matches', function(done){
+          helper.run(_.assign({}, goodObject, {previous: objId}), function(err, objs){
+            expect(objs).length(0);
+            done(err);
+          });
+        });
+
+        it('id-only, updates normal if no match', function(done){
+          helper.run(_.assign({}, goodObject, {previous: objId, normal: 0.5}), function(err, obj){
             expect(obj.normal).equals(0.5);
             expect(obj.expectedNormal).equals(goodObject.normal);
             expect(_.omit(_.pick(obj, Object.keys(goodObject)), 'normal', 'expectedNormal')).deep.equals(
@@ -115,11 +138,14 @@ describe('schema/bolus.js', function(){
       source: 'manual',
       _groupId: 'g'
     };
+    var objId = schema.generateId(goodObject, bolus.idFields);
 
     beforeEach(function(){
       helper.resetMocks();
       sinon.stub(helper.streamDAO, 'getDatum');
-      helper.streamDAO.getDatum.withArgs(goodObject._id, sinon.match.func).callsArgWith(1, null, goodObject);
+      helper.streamDAO.getDatum
+        .withArgs(objId, goodObject._groupId, sinon.match.func)
+        .callsArgWith(2, null, goodObject);
     });
 
     describe('extended', function(){
@@ -136,6 +162,24 @@ describe('schema/bolus.js', function(){
 
         it('updates extended if no match', function(done){
           helper.run(_.assign({}, goodObject, {previous: goodObject, extended: 0.5}), function(err, obj){
+            expect(obj.extended).equals(0.5);
+            expect(obj.expectedExtended).equals(goodObject.extended);
+            expect(_.omit(_.pick(obj, Object.keys(goodObject)), 'extended', 'expectedExtended')).deep.equals(
+              _.omit(goodObject, 'extended')
+            );
+            done(err);
+          });
+        });
+
+        it('id-only, returns nothing if completion matches', function(done){
+          helper.run(_.assign({}, goodObject, {previous: objId}), function(err, objs){
+            expect(objs).length(0);
+            done(err);
+          });
+        });
+
+        it('id-only, updates extended if no match', function(done){
+          helper.run(_.assign({}, goodObject, {previous: objId, extended: 0.5}), function(err, obj){
             expect(obj.extended).equals(0.5);
             expect(obj.expectedExtended).equals(goodObject.extended);
             expect(_.omit(_.pick(obj, Object.keys(goodObject)), 'extended', 'expectedExtended')).deep.equals(
@@ -205,11 +249,14 @@ describe('schema/bolus.js', function(){
       source: 'manual',
       _groupId: 'g'
     };
+    var objId = schema.generateId(goodObject, bolus.idFields);
 
     beforeEach(function(){
       helper.resetMocks();
       sinon.stub(helper.streamDAO, 'getDatum');
-      helper.streamDAO.getDatum.withArgs(goodObject._id, sinon.match.func).callsArgWith(1, null, goodObject);
+      helper.streamDAO.getDatum
+        .withArgs(objId, goodObject._groupId, sinon.match.func)
+        .callsArgWith(2, null, goodObject);
     });
 
     describe('normal', function(){
@@ -226,6 +273,24 @@ describe('schema/bolus.js', function(){
 
         it('updates normal if no match', function(done){
           helper.run(_.assign({}, goodObject, {subType: 'normal', previous: goodObject, normal: 0.5}), function(err, obj){
+            expect(obj.normal).equals(0.5);
+            expect(obj.expectedNormal).equals(goodObject.normal);
+            expect(_.omit(_.pick(obj, Object.keys(goodObject)), 'normal', 'expectedNormal')).deep.equals(
+              _.omit(goodObject, 'normal')
+            );
+            done(err);
+          });
+        });
+
+        it('id-only, returns nothing if completion matches', function(done){
+          helper.run(_.assign({}, goodObject, {subType: 'normal', previous: objId}), function(err, objs){
+            expect(objs).length(0);
+            done(err);
+          });
+        });
+
+        it('id-only, updates normal if no match', function(done){
+          helper.run(_.assign({}, goodObject, {subType: 'normal', previous: objId, normal: 0.5}), function(err, obj){
             expect(obj.normal).equals(0.5);
             expect(obj.expectedNormal).equals(goodObject.normal);
             expect(_.omit(_.pick(obj, Object.keys(goodObject)), 'normal', 'expectedNormal')).deep.equals(
@@ -251,6 +316,24 @@ describe('schema/bolus.js', function(){
 
         it('updates extended if no match', function(done){
           helper.run(_.assign({}, goodObject, {subType: 'square', previous: goodObject, extended: 0.5}), function(err, obj){
+            expect(obj.extended).equals(0.5);
+            expect(obj.expectedExtended).equals(goodObject.extended);
+            expect(_.omit(_.pick(obj, Object.keys(goodObject)), 'extended', 'expectedExtended')).deep.equals(
+              _.omit(goodObject, 'extended')
+            );
+            done(err);
+          });
+        });
+
+        it('id-only, returns nothing if completion matches', function(done){
+          helper.run(_.assign({}, goodObject, {subType: 'square', previous: objId}), function(err, objs){
+            expect(objs).length(0);
+            done(err);
+          });
+        });
+
+        it('id-only, updates extended if no match', function(done){
+          helper.run(_.assign({}, goodObject, {subType: 'square', previous: objId, extended: 0.5}), function(err, obj){
             expect(obj.extended).equals(0.5);
             expect(obj.expectedExtended).equals(goodObject.extended);
             expect(_.omit(_.pick(obj, Object.keys(goodObject)), 'extended', 'expectedExtended')).deep.equals(
@@ -289,6 +372,35 @@ describe('schema/bolus.js', function(){
         it('updates duration and extended if no match', function(done){
           helper.run(
             _.assign({}, goodObject, {subType: 'square', previous: goodObject, duration: 1800000, extended: 0.6}),
+            function(err, obj){
+              expect(obj.duration).equals(1800000);
+              expect(obj.expectedDuration).equals(goodObject.duration);
+              expect(obj.extended).equals(0.6);
+              expect(obj.expectedExtended).equals(goodObject.extended);
+              expect(
+                _.omit(_.pick(obj, Object.keys(goodObject)), 'duration', 'expectedDuration', 'extended', 'expectedExtended')
+              ).deep.equals(
+                _.omit(goodObject, 'duration', 'extended')
+              );
+              done(err);
+            }
+          );
+        });
+
+        it('id-only, updates duration if no match', function(done){
+          helper.run(_.assign({}, goodObject, {subType: 'square', previous: objId, duration: 1800000}), function(err, obj){
+            expect(obj.duration).equals(1800000);
+            expect(obj.expectedDuration).equals(goodObject.duration);
+            expect(_.omit(_.pick(obj, Object.keys(goodObject)), 'duration', 'expectedDuration')).deep.equals(
+              _.omit(goodObject, 'duration')
+            );
+            done(err);
+          });
+        });
+
+        it('id-only, updates duration and extended if no match', function(done){
+          helper.run(
+            _.assign({}, goodObject, {subType: 'square', previous: objId, duration: 1800000, extended: 0.6}),
             function(err, obj){
               expect(obj.duration).equals(1800000);
               expect(obj.expectedDuration).equals(goodObject.duration);

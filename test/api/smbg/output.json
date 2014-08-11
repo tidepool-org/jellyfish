@@ -1,0 +1,4 @@
+[
+  { "time": "2014-06-11T11:12:43.029Z", "type": "smbg", "value": 5.550747991045533, "units": "mg/dL", "deviceId": "tools", "source": "tools", "_active": true, "_version": 0, "id": "id1qieiujoteb9g352qm2m2u8atmhit0" },
+  { "time": "2014-06-11T17:57:01.703Z", "type": "smbg", "value": 4.5, "deviceId": "tools", "source": "tools", "_active": true, "_version": 0, "id": "q1hg0c9q7qpd0v4v6a93vl2kgsotlspl" }
+]

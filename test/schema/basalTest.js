@@ -12,7 +12,9 @@ var salinity = require('salinity');
 var expect = salinity.expect;
 var sinon = salinity.sinon;
 
+var basal = require('../../lib/schema/basal.js');
 var helper = require('./schemaTestHelper.js');
+var schema = require('../../lib/schema/schema.js');
 
 describe('schema/basal.js', function(){
   describe('injected', function(){
@@ -71,8 +73,6 @@ describe('schema/basal.js', function(){
 
   describe('scheduled', function(){
     var previousMatches = {
-      _id: '_prevMatches',
-      id: 'prevMatches',
       type: 'basal',
       deliveryType: 'scheduled',
       scheduleName: 'Pattern A',
@@ -81,13 +81,10 @@ describe('schema/basal.js', function(){
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
-      source: 'manual',
-      _groupId: 'g'
+      source: 'manual'
     };
 
     var previousCutShort = {
-      _id: '_prevCutShort',
-      id: 'prevCutShort',
       type: 'basal',
       deliveryType: 'scheduled',
       scheduleName: 'Pattern A',
@@ -96,8 +93,7 @@ describe('schema/basal.js', function(){
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
-      source: 'manual',
-      _groupId: 'g'
+      source: 'manual'
     };
 
     var goodObject = {
@@ -117,8 +113,9 @@ describe('schema/basal.js', function(){
     beforeEach(function(){
       helper.resetMocks();
       sinon.stub(helper.streamDAO, 'getDatum');
-      helper.streamDAO.getDatum.withArgs(previousMatches._id, sinon.match.func).callsArgWith(1, null, previousMatches);
-      helper.streamDAO.getDatum.withArgs(previousCutShort._id, sinon.match.func).callsArgWith(1, null, previousCutShort);
+      helper.streamDAO.getDatum
+        .withArgs(schema.generateId(previousMatches, basal.idFields), goodObject._groupId, sinon.match.func)
+        .callsArgWith(2, null, previousMatches);
     });
 
     describe('rate', function(){
@@ -138,23 +135,44 @@ describe('schema/basal.js', function(){
         helper.expectRejection(_.assign({}, goodObject, {duration: 0}), 'duration', done);
       });
 
-      it('updates the duration of previous events if they no longer align', function(done){
-        var localGoodObject = _.assign({}, goodObject, {previous: previousCutShort});
+      describe('previous', function(){
+        var prevId = schema.generateId(previousCutShort, basal.idFields);
 
-        helper.run(localGoodObject, function(err, objs){
-          expect(objs).length(2);
+        beforeEach(function(){
+          helper.resetMocks();
+          sinon.stub(helper.streamDAO, 'getDatum');
+          helper.streamDAO.getDatum
+            .withArgs(prevId, goodObject._groupId, sinon.match.func)
+            .callsArgWith(2, null, previousCutShort);
+        });
 
-          expect(objs[0]).deep.equals(
-            _.assign(
-              {},
-              _.omit(previousCutShort, 'previous'),
-              { duration: 3600000, expectedDuration: previousCutShort.duration }
-            )
-          );
-          expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+        it('updates the duration of previous events if they no longer align', function(done){
+          var localGoodObject = _.assign({}, goodObject, {previous: previousCutShort});
+          var expectedPrevious = _.assign({}, previousCutShort, {duration: 3600000, expectedDuration: previousCutShort.duration});
 
-          return done(err);
-        })
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+
+        it('updates the duration of previous events even when passed only an id for previous', function(done){
+          var localGoodObject = _.assign({}, goodObject, {previous: prevId});
+          var expectedPrevious = _.assign({}, previousCutShort, {duration: 3600000, expectedDuration: previousCutShort.duration});
+
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
       })
     });
 
@@ -168,8 +186,6 @@ describe('schema/basal.js', function(){
 
   describe('temp', function(){
     var previousMatches = {
-      _id: '_prevMatches',
-      id: 'prevMatches',
       type: 'basal',
       deliveryType: 'scheduled',
       scheduleName: 'Pattern A',
@@ -178,13 +194,10 @@ describe('schema/basal.js', function(){
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
-      source: 'manual',
-      _groupId: 'g'
+      source: 'manual'
     };
 
     var previousCutShort = {
-      _id: '_prevCutShort',
-      id: 'prevCutShort',
       type: 'basal',
       deliveryType: 'scheduled',
       scheduleName: 'Pattern A',
@@ -193,8 +206,7 @@ describe('schema/basal.js', function(){
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
-      source: 'manual',
-      _groupId: 'g'
+      source: 'manual'
     };
 
     var goodObject = {
@@ -215,8 +227,9 @@ describe('schema/basal.js', function(){
     beforeEach(function(){
       helper.resetMocks();
       sinon.stub(helper.streamDAO, 'getDatum');
-      helper.streamDAO.getDatum.withArgs(previousMatches._id, sinon.match.func).callsArgWith(1, null, previousMatches);
-      helper.streamDAO.getDatum.withArgs(previousCutShort._id, sinon.match.func).callsArgWith(1, null, previousCutShort);
+      helper.streamDAO.getDatum
+        .withArgs(schema.generateId(previousMatches, basal.idFields), goodObject._groupId, sinon.match.func)
+        .callsArgWith(2, null, previousMatches);
     });
 
     describe('rate', function(){
@@ -252,24 +265,45 @@ describe('schema/basal.js', function(){
         helper.expectRejection(_.assign({}, goodObject, {duration: 0}), 'duration', done);
       });
 
-      it('updates the duration of previous events if they no longer align', function(done){
-        var localGoodObject = _.assign({}, goodObject, {previous: previousCutShort});
+      describe('previous', function(){
+        var prevId = schema.generateId(previousCutShort, basal.idFields);
 
-        helper.run(localGoodObject, function(err, objs){
-          expect(objs).length(2);
-
-          expect(objs[0]).deep.equals(
-            _.assign(
-              {},
-              _.omit(previousCutShort, 'previous'),
-              { duration: 3600000, expectedDuration: previousCutShort.duration }
-            )
-          );
-          expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
-
-          return done(err);
+        beforeEach(function(){
+          helper.resetMocks();
+          sinon.stub(helper.streamDAO, 'getDatum');
+          helper.streamDAO.getDatum
+            .withArgs(prevId, goodObject._groupId, sinon.match.func)
+            .callsArgWith(2, null, previousCutShort);
         });
-      });
+
+        it('updates the duration of previous events if they no longer align', function(done){
+          var localGoodObject = _.assign({}, goodObject, {previous: previousCutShort});
+          var expectedPrevious = _.assign({}, previousCutShort, {duration: 3600000, expectedDuration: previousCutShort.duration});
+
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+
+        it('updates the duration of previous events even when passed only an id for previous', function(done){
+          var localGoodObject = _.assign({}, goodObject, {previous: prevId});
+          var expectedPrevious = _.assign({}, previousCutShort, {duration: 3600000, expectedDuration: previousCutShort.duration});
+
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+      })
     });
 
     describe('suppressed', function(){
