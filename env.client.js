@@ -1,5 +1,4 @@
-/*
- * == BSD2 LICENSE ==
+/**
  * Copyright (c) 2014, Tidepool Project
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -12,22 +11,10 @@
  *
  * You should have received a copy of the License along with this program; if
  * not, you can obtain one from Tidepool Project at tidepool.org.
- * == BSD2 LICENSE ==
  */
 
-// Some files used by the client web app
+var pkg = require('./package.json');
 
-var files = {
-  js: {
-    vendor: [
-      'bower_components/bows/dist/bows.js',
-      'bower_components/jquery/dist/jquery.js',
-      'bower_components/lodash/dist/lodash.js',
-      'bower_components/purl/purl.js',
-      'bower_components/react/react.js',
-      'bower_components/moment/moment.js'
-    ]
-  }
+module.exports = {
+  VERSION: pkg.version
 };
-
-module.exports = files;

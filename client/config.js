@@ -1,11 +1,11 @@
 /*
  * == BSD2 LICENSE ==
  * Copyright (c) 2014, Tidepool Project
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the associated License, which is identical to the BSD 2-Clause
  * License as published by the Open Source Initiative at opensource.org.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the License for more details.
@@ -15,8 +15,10 @@
  * == BSD2 LICENSE ==
  */
 
-// NOTE: This is a Lodash template
+var config = window.config;
 
-window.config = {
-  VERSION: '<%= pkg.version %>' || ''
-};
+if (!config) {
+  throw new Error('Expected `config` on the global `window` object');
+}
+
+module.exports = config;

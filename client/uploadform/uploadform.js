@@ -16,10 +16,10 @@
  * == BSD2 LICENSE ==
  */
 
-var React = window.React;
-var _ = window._;
+var React = require('react');
+var _ = require('lodash');
 
-var sundial = require('../sundial');
+var sundial = require('sundial');
 var UploadFormGroup = require('./uploadformgroup');
 
 var UploadForm = React.createClass({
