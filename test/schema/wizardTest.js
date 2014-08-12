@@ -111,6 +111,10 @@ describe('schema/wizard.js', function(){
     helper.okIfAbsent(goodObject, 'bgTarget');
     helper.expectObjectField(goodObject, 'bgTarget');
 
+    it('is ok if it is absent and units need conversion', function(done){
+      helper.run(_.assign(_.omit(goodObject, 'bgTarget'), {units: 'mg/dL'}), done);
+    });
+
     describe('(Target) + High/Low', function(){
       var localGood = {};
       beforeEach(function(){
