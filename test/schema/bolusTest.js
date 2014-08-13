@@ -69,7 +69,7 @@ describe('schema/bolus.js', function(){
       source: 'manual',
       _groupId: 'g'
     };
-    var objId = schema.generateId(goodObject, bolus.idFields);
+    var objId = schema.generateId(goodObject, schema.idFields('bolus'));
 
     beforeEach(function(){
       helper.resetMocks();
@@ -138,7 +138,7 @@ describe('schema/bolus.js', function(){
       source: 'manual',
       _groupId: 'g'
     };
-    var objId = schema.generateId(goodObject, bolus.idFields);
+    var objId = schema.generateId(goodObject, schema.idFields('bolus'));
 
     beforeEach(function(){
       helper.resetMocks();
@@ -249,7 +249,7 @@ describe('schema/bolus.js', function(){
       source: 'manual',
       _groupId: 'g'
     };
-    var objId = schema.generateId(goodObject, bolus.idFields);
+    var objId = schema.generateId(goodObject, schema.idFields('bolus'));
 
     beforeEach(function(){
       helper.resetMocks();

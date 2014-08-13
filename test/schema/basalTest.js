@@ -114,7 +114,7 @@ describe('schema/basal.js', function(){
       helper.resetMocks();
       sinon.stub(helper.streamDAO, 'getDatum');
       helper.streamDAO.getDatum
-        .withArgs(schema.generateId(previousMatches, basal.idFields), goodObject._groupId, sinon.match.func)
+        .withArgs(schema.generateId(previousMatches, schema.idFields('basal')), goodObject._groupId, sinon.match.func)
         .callsArgWith(2, null, previousMatches);
     });
 
@@ -136,7 +136,7 @@ describe('schema/basal.js', function(){
       });
 
       describe('previous', function(){
-        var prevId = schema.generateId(previousCutShort, basal.idFields);
+        var prevId = schema.generateId(previousCutShort, schema.idFields('basal'));
 
         beforeEach(function(){
           helper.resetMocks();
@@ -228,7 +228,7 @@ describe('schema/basal.js', function(){
       helper.resetMocks();
       sinon.stub(helper.streamDAO, 'getDatum');
       helper.streamDAO.getDatum
-        .withArgs(schema.generateId(previousMatches, basal.idFields), goodObject._groupId, sinon.match.func)
+        .withArgs(schema.generateId(previousMatches, schema.idFields('basal')), goodObject._groupId, sinon.match.func)
         .callsArgWith(2, null, previousMatches);
     });
 
@@ -266,7 +266,7 @@ describe('schema/basal.js', function(){
       });
 
       describe('previous', function(){
-        var prevId = schema.generateId(previousCutShort, basal.idFields);
+        var prevId = schema.generateId(previousCutShort, schema.idFields('basal'));
 
         beforeEach(function(){
           helper.resetMocks();

@@ -102,7 +102,7 @@ describe('schema/deviceMeta.js', function(){
       helper.resetMocks();
       sinon.stub(helper.streamDAO, 'getDatum');
       helper.streamDAO.getDatum
-        .withArgs(schema.generateId(previousMatches, deviceMeta.idFields), goodObject._groupId, sinon.match.func)
+        .withArgs(schema.generateId(previousMatches, schema.idFields('deviceMeta')), goodObject._groupId, sinon.match.func)
         .callsArgWith(2, null, previousMatches);
     });
 
@@ -152,7 +152,7 @@ describe('schema/deviceMeta.js', function(){
       helper.expectObjectField(goodObject, 'previous');
 
       it('includes previous if it doesn\'t match', function(done){
-        var prevId = schema.generateId(previousNoMatch, deviceMeta.idFields);
+        var prevId = schema.generateId(previousNoMatch, schema.idFields('deviceMeta'));
 
         helper.resetMocks();
         sinon.stub(helper.streamDAO, 'getDatum');
