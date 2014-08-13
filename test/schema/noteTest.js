@@ -19,6 +19,7 @@ var goodObject = {
   type: 'note',
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
+  displayTime: '2014-01-01T07:00:00.000Z',
   deviceId: 'test',
   source: 'manual',
   _groupId: 'g',
@@ -62,11 +63,31 @@ describe('schema/cbg.js', function(){
     helper.expectStringField(goodObject, 'creatorId');
   });
 
+  describe('displayTime', function(){
+    helper.okIfAbsent(goodObject, 'displayTime');
+    helper.expectStringField(goodObject, 'displayTime');
+  });
+
   describe('reference', function(){
     helper.expectNotNumberField(goodObject, 'reference');
 
-    it('Updates the time and displayTime based on the reference', function(done){
+    it('Updates the time based on the reference', function(done){
       var localGood = _.assign({}, goodObject, {reference: reference});
+
+      helper.run(localGood, function(err, datum) {
+        if (err != null) {
+          return done(err);
+        }
+
+        expect(datum.reference).equals(schema.makeId(reference));
+        expect(datum.time).equals(reference.time);
+        expect(datum.displayTime).equals(goodObject.displayTime);
+        done();
+      });
+    });
+
+    it('Also updates the displayTime, if not defined', function(done){
+      var localGood = _.assign(_.omit(goodObject, 'displayTime'), {reference: reference});
 
       helper.run(localGood, function(err, datum) {
         if (err != null) {
