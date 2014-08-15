@@ -15,7 +15,8 @@
  * == BSD2 LICENSE ==
  */
 
-// NOTE: `window.config` is bundled separately
+// NOTE: Unlike in `main.js`, `window.config` is bundled separately
+// for production, so no need to `require` it here
 
 var app = window.app = require('./app');
 

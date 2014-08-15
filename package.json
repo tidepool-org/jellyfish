@@ -52,7 +52,7 @@
     "rx": "2.2.13",
     "shelljs": "0.3.0",
     "style-loader": "0.6.5",
-    "sundial": "git://github.com/tidepool-org/sundial",
+    "sundial": "0.1.6",
     "tidepool-seagull-client": "0.0.2",
     "url-loader": "0.5.5",
     "user-api-client": "0.1.4",

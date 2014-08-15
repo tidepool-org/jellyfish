@@ -46,3 +46,5 @@ You can also build everything at once locally by simply running:
 $ npm run build
 $ NODE_ENV=production npm start
 ```
+
+**NOTE**: `shelljs` used in the build scripts is known to sometimes cause an infinite loop using the synchronous version of `exec`. If a build script seems to take too long or hang, please kill the process and try again.
