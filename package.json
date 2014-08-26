@@ -3,6 +3,12 @@
   "version": "0.2.3",
   "description": "Jellyfish are known for their user friendliness with uploads",
   "main": "app.js",
+  "scripts": {
+    "start": "node app",
+    "build": "npm run build-app && npm run build-config",
+    "build-app": "node buildapp",
+    "build-config": "node buildconfig"
+  },
   "directories": {
     "lib": "./lib"
   },
@@ -18,33 +24,42 @@
   "dependencies": {
     "amoeba": "0.0.8",
     "async": "0.2.9",
+    "autoprefixer-loader": "0.1.1",
     "bower": "1.3.8",
+    "bows": "0.5.0",
     "bunyan": "0.22.1",
     "busboy": "0.0.14",
     "connect-busboy": "0.0.1",
-    "event-stream": "3.0.16",
+    "css-loader": "0.7.1",
+    "envify": "1.2.1",
+    "envify-loader": "0.1.0",
     "express": "3.4.8",
+    "file-loader": "0.6.1",
     "hakken": "0.1.3",
     "in-d-gestion": "0.2.1",
+    "jquery": "2.1.1",
+    "json-loader": "0.5.1",
+    "jsx-loader": "0.11.0",
+    "less": "1.7.4",
+    "less-loader": "0.7.7",
     "lodash": "2.4.1",
     "moment": "2.4.0",
     "mongodb": "1.4.0",
-    "reactify": "0.8.1",
+    "ms": "0.6.2",
+    "purl-parser": "git://github.com/CodeYellowBV/purl#4314dced8fce07437db276b7650c100228790f91",
+    "react": "0.9.0",
     "request": "2.33.0",
-    "run-sequence": "0.3.6",
     "rx": "2.2.13",
+    "shelljs": "0.3.0",
+    "style-loader": "0.6.5",
+    "sundial": "0.1.6",
     "tidepool-seagull-client": "0.0.2",
-    "user-api-client": "0.1.4"
+    "url-loader": "0.5.5",
+    "user-api-client": "0.1.4",
+    "webpack": "1.3.3-beta1"
   },
   "devDependencies": {
-    "gulp": "3.6.0",
-    "gulp-browserify": "0.4.6",
-    "gulp-clean": "0.2.4",
-    "gulp-concat": "2.1.7",
-    "gulp-less": "1.2.1",
-    "gulp-minify-css": "0.3.3",
-    "gulp-template": "0.1.1",
-    "gulp-uglify": "0.2.1",
-    "salinity": "0.0.5"
+    "salinity": "0.0.5",
+    "webpack-dev-middleware": "1.0.10"
   }
 }

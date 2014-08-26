@@ -16,7 +16,7 @@
  * == BSD2 LICENSE ==
  */
 
-var React = window.React;
+var React = require('react');
 
 var Notification = React.createClass({
   propTypes: {

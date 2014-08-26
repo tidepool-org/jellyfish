@@ -1,4 +1,5 @@
-/**
+/*
+ * == BSD2 LICENSE ==
  * Copyright (c) 2014, Tidepool Project
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -11,13 +12,12 @@
  *
  * You should have received a copy of the License along with this program; if
  * not, you can obtain one from Tidepool Project at tidepool.org.
+ * == BSD2 LICENSE ==
  */
 
-// Expose Tidepool sundial datetime functions
-// Deprecate when sundial introduces a distribution bundle
+// NOTE: Unlike in `main.js`, `window.config` is bundled separately
+// for production, so no need to `require` it here
 
-var sundial = require('../bower_components/sundial/sundial');
+var app = window.app = require('./app');
 
-window.sundial = sundial;
-
-module.exports = sundial;
+app.start();
