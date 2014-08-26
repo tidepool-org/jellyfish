@@ -15,7 +15,7 @@ $ npm install
 Start the development server with:
 
 ```bash
-$ NODE_ENV=development npm start
+$ npm start
 ```
 
 ## Building the client
@@ -34,17 +34,17 @@ Shio's `start.sh` script then builds the config from environment variables as a 
 $ npm run build-config
 ```
 
-After that, the client app is ready to be served by the production server:
+After that, the client app is ready to be served from the `dist/` directory by the production server:
 
 ```bash
-$ NODE_ENV=production npm start
+$ SERVE_STATIC=dist npm start
 ```
 
 You can also build everything at once locally by simply running:
 
 ```bash
 $ npm run build
-$ NODE_ENV=production npm start
+$ SERVE_STATIC=dist npm start
 ```
 
 **NOTE**: `shelljs` used in the build scripts is known to sometimes cause an infinite loop using the synchronous version of `exec`. If a build script seems to take too long or hang, please kill the process and try again.
