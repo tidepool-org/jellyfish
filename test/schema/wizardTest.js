@@ -76,6 +76,19 @@ describe('schema/wizard.js', function(){
   describe('insulinSensitivity', function(){
     helper.okIfAbsent(goodObject, 'insulinSensitivity');
     helper.expectNumericalField(goodObject, 'insulinSensitivity');
+
+    it("converts units", function(done){
+      var localGood = _.assign({}, goodObject, { insulinSensitivity: 50, units: 'mg/dl' });
+      helper.run(localGood, function(err, converted){
+        if (err != null) {
+          return done(err);
+        }
+
+        expect(converted.units).to.equal('mg/dL');
+        expect(converted.insulinSensitivity).to.equal(2.7753739955227665);
+        done();
+      })
+    });
   });
 
   describe('bgInput', function(){

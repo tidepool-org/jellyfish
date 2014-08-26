@@ -12,7 +12,6 @@ var salinity = require('salinity');
 var expect = salinity.expect;
 var sinon = salinity.sinon;
 
-var bolus = require('../../lib/schema/bolus.js');
 var helper = require('./schemaTestHelper.js');
 var schema = require('../../lib/schema/schema.js');
 
@@ -69,7 +68,7 @@ describe('schema/bolus.js', function(){
       source: 'manual',
       _groupId: 'g'
     };
-    var objId = schema.generateId(goodObject, bolus.idFields);
+    var objId = schema.makeId(goodObject);
 
     beforeEach(function(){
       helper.resetMocks();
@@ -138,7 +137,7 @@ describe('schema/bolus.js', function(){
       source: 'manual',
       _groupId: 'g'
     };
-    var objId = schema.generateId(goodObject, bolus.idFields);
+    var objId = schema.makeId(goodObject);
 
     beforeEach(function(){
       helper.resetMocks();
@@ -249,7 +248,7 @@ describe('schema/bolus.js', function(){
       source: 'manual',
       _groupId: 'g'
     };
-    var objId = schema.generateId(goodObject, bolus.idFields);
+    var objId = schema.makeId(goodObject);
 
     beforeEach(function(){
       helper.resetMocks();
