@@ -207,7 +207,7 @@ describe('schema/deviceMeta.js', function(){
         });
       });
 
-      it('updates duration when previous exists', function(done){
+      it('updates duration when previous exists, throws away resumed event', function(done){
         var prevId = schema.makeId(previousMatches);
 
         helper.resetMocks();
@@ -219,6 +219,23 @@ describe('schema/deviceMeta.js', function(){
         var localGoodObject = _.assign({}, goodObject, { status: 'resumed' });
         helper.run(_.assign({}, localGoodObject, {previous: previousMatches}), done, function(objs) {
           helper.expectSubsetEqual(objs, _.assign({}, previousMatches, {duration: 60 * 60 * 1000}));
+        });
+      });
+
+      it('updates duration when previous exists, maintains suspended event', function(done){
+        var prevId = schema.makeId(previousMatches);
+
+        helper.resetMocks();
+        sinon.stub(helper.streamDAO, 'getDatum');
+        helper.streamDAO.getDatum
+          .withArgs(prevId, goodObject._groupId, sinon.match.func)
+          .callsArgWith(2, null, _.clone(previousMatches));
+
+        var localGoodObject = _.assign({}, goodObject, { status: 'suspended' });
+        helper.run(_.assign({}, localGoodObject, {previous: previousMatches}), done, function(objs) {
+          expect(objs).length(2);
+          helper.expectSubsetEqual(objs[0], _.assign({}, previousMatches, {duration: 60 * 60 * 1000}));
+          helper.expectSubsetEqual(objs[1], _.assign({}, localGoodObject, {annotations: [{ code: "status/incomplete-tuple" }]}));
         });
       });
     });
