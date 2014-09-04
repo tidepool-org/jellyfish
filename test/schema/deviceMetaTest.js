@@ -114,6 +114,11 @@ describe('schema/deviceMeta.js', function(){
       });
     });
 
+    describe('duration', function(){
+      helper.okIfAbsent(goodObject, 'duration');
+      helper.expectNumericalField(goodObject, 'duration');
+    });
+
     describe('reason', function(){
       helper.rejectIfAbsent(goodObject, 'reason');
       helper.expectStringField(goodObject, 'reason');
@@ -150,7 +155,25 @@ describe('schema/deviceMeta.js', function(){
       helper.okIfAbsent(goodObject, 'previous');
       helper.expectObjectField(goodObject, 'previous');
 
-      it('includes previous if it doesn\'t match', function(done){
+      it('annotates resumed if no previous', function(done){
+        var localGoodObject = _.assign({}, goodObject, { status: 'resumed' });
+        helper.run(localGoodObject, done, function(objs) {
+          helper.expectSubsetEqual(
+            objs, _.assign({}, localGoodObject, {annotations: [{ code: "status/unknown-previous" }]})
+          );
+        });
+      });
+
+      it('annotates suspends if no previous', function(done){
+        var localGoodObject = _.assign({}, goodObject, { status: 'suspended' });
+        helper.run(localGoodObject, done, function(objs) {
+          helper.expectSubsetEqual(
+            objs, _.assign({}, localGoodObject, {annotations: [{ code: "status/incomplete-tuple" }]})
+          );
+        });
+      });
+
+      it('annotates resumed if previous doesn\'t exist', function(done){
         var prevId = schema.makeId(previousNoMatch);
 
         helper.resetMocks();
@@ -159,15 +182,43 @@ describe('schema/deviceMeta.js', function(){
           .withArgs(prevId, goodObject._groupId, sinon.match.func)
           .callsArgWith(2, null, null);
 
-        var localGoodObject = _.assign({}, goodObject, {previous: previousNoMatch});
+        var localGoodObject = _.assign({}, goodObject, { status: 'resumed', previous: previousNoMatch });
+        helper.run(localGoodObject, done, function(objs) {
+          expect(_.pick(objs, 'annotations', Object.keys(localGoodObject))).deep.equals(
+            _.assign({}, localGoodObject, {annotations: [{ code: "status/unknown-previous", id: prevId }]})
+          );
+        });
+      });
 
-        helper.run(localGoodObject, function(err, objs){
-          expect(objs).length(2);
-          expect(_.pick(objs[0], Object.keys(previousNoMatch))).deep.equals(previousNoMatch);
-          expect(_.pick(objs[1], Object.keys(goodObject))).deep.equals(goodObject);
-          expect(objs[1].previous).equals(prevId);
+      it('annotates suspended if previous doesn\'t exist', function(done){
+        var prevId = schema.makeId(previousNoMatch);
 
-          return done(err);
+        helper.resetMocks();
+        sinon.stub(helper.streamDAO, 'getDatum');
+        helper.streamDAO.getDatum
+          .withArgs(prevId, goodObject._groupId, sinon.match.func)
+          .callsArgWith(2, null, null);
+
+        var localGoodObject = _.assign({}, goodObject, { previous: previousNoMatch });
+        helper.run(localGoodObject, done, function(objs) {
+          helper.expectSubsetEqual(
+            objs, _.assign({}, localGoodObject, {annotations: [{ code: "status/unknown-previous", id: prevId }]})
+          );
+        });
+      });
+
+      it('updates duration when previous exists', function(done){
+        var prevId = schema.makeId(previousMatches);
+
+        helper.resetMocks();
+        sinon.stub(helper.streamDAO, 'getDatum');
+        helper.streamDAO.getDatum
+          .withArgs(prevId, goodObject._groupId, sinon.match.func)
+          .callsArgWith(2, null, _.clone(previousMatches));
+
+        var localGoodObject = _.assign({}, goodObject, { status: 'resumed' });
+        helper.run(_.assign({}, localGoodObject, {previous: previousMatches}), done, function(objs) {
+          helper.expectSubsetEqual(objs, _.assign({}, previousMatches, {duration: 60 * 60 * 1000}));
         });
       });
     });
