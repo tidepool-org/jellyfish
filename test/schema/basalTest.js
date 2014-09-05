@@ -123,7 +123,7 @@ describe('schema/basal.js', function(){
     });
 
     describe('duration', function(){
-      helper.rejectIfAbsent(goodObject, 'duration');
+      helper.okIfAbsent(goodObject, 'duration');
       helper.expectNumericalField(goodObject, 'duration');
 
       it('rejects duration < 0', function(done){

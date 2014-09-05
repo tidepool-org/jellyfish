@@ -198,8 +198,8 @@ describe('schema/bolus.js', function(){
         helper.expectRejection(_.assign({}, goodObject, {duration: -1}), 'duration', done);
       });
 
-      it('rejects duration == 0', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {duration: 0}), 'duration', done);
+      it('accepts duration == 0', function(done){
+        helper.run(_.assign({}, goodObject, {duration: 0}), done);
       });
 
       describe('on completion', function(){
@@ -234,7 +234,7 @@ describe('schema/bolus.js', function(){
     helper.testCommonFields(goodObject);
   });
 
-  describe('square', function(){
+  describe('dual/square', function(){
     var goodObject = {
       _id: 'good',
       type: 'bolus',
@@ -352,8 +352,8 @@ describe('schema/bolus.js', function(){
         helper.expectRejection(_.assign({}, goodObject, {duration: -1}), 'duration', done);
       });
 
-      it('rejects duration == 0', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {duration: 0}), 'duration', done);
+      it('accepts duration == 0', function(done){
+        helper.run(_.assign({}, goodObject, {duration: 0}), done);
       });
 
       describe('on completion', function(){
