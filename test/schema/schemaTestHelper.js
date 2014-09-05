@@ -19,8 +19,18 @@ exports.resetMocks = function(){
   mockableObject.reset(exports.streamDAO);
 };
 
-exports.run = function(datum, cb) {
-  return exports.schema[datum.type](datum, cb);
+exports.run = function(datum, cb, expectation) {
+  return exports.schema[datum.type](datum, function(err){
+    if (expectation == null) {
+      return cb.apply(null, Array.prototype.slice.call(arguments, 0));
+    }
+
+    if (err != null) {
+      return cb(err);
+    }
+    expectation.apply(null, Array.prototype.slice.call(arguments, 1));
+    cb();
+  });
 };
 
 exports.expectRejection = function(object, field, cb) {
@@ -81,6 +91,10 @@ exports.expectNumericalField = function(goodObject, field) {
 exports.expectObjectField = function(goodObject, field) {
   exports.expectNotStringField(goodObject, field);
   exports.expectNotNumberField(goodObject, field);
+};
+
+exports.expectSubsetEqual = function(lhs, rhs) {
+  expect(_.pick(lhs, Object.keys(rhs))).deep.equals(rhs);
 };
 
 exports.expectUnitConversion = function(goodObject, field) {
