@@ -96,7 +96,7 @@ describe('streamDAO', function(){
         streamDAO.getDatum('abcd', 'g', function(err, datum){
           expect(datum).to.exist;
           expect(new Date(datum.modifiedTime).valueOf()).that.is.within(now, Date.now());
-          expect(_.omit(datum, 'modifiedTime', '_id')).to.deep.equals(
+          expect(_.omit(datum, 'modifiedTime', '_archivedTime', '_id')).to.deep.equals(
             { id: 'abcd', f: 'a', v: 2828, _groupId: 'g', createdTime: createdTime, _version: 1, _active: true }
           );
 
@@ -104,7 +104,8 @@ describe('streamDAO', function(){
           mongoClient.withCollection('deviceData', done, function(coll, done){
             coll.find({_id: overwrittenId}).toArray(function(err, elements){
               expect(elements).to.have.length(1);
-              expect(elements[0]).to.deep.equals(
+              expect(elements[0]._archivedTime).that.is.within(now, Date.now());
+              expect(_.omit(elements[0], '_archivedTime')).to.deep.equals(
                 { _id: overwrittenId, id: 'abcd', f: 'a', _groupId: 'g', v: 1, createdTime: createdTime, _version: 0, _active: false }
               );
 
