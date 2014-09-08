@@ -1,6 +1,6 @@
 # Jellyfish
 
-Jellyfish are known for their user friendliness and uploads.
+Jellyfish are known for their user friendliness and uploads, sometimes.
 
 ## Install
 
