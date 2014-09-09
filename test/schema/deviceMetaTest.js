@@ -207,14 +207,14 @@ describe('schema/deviceMeta.js', function(){
         });
       });
 
-      it('updates duration when previous exists, throws away resumed event', function(done){
+      it('updates duration when previous exists, throws away resumed event and removes annotation', function(done){
         var prevId = schema.makeId(previousMatches);
 
         helper.resetMocks();
         sinon.stub(helper.streamDAO, 'getDatum');
         helper.streamDAO.getDatum
           .withArgs(prevId, goodObject._groupId, sinon.match.func)
-          .callsArgWith(2, null, _.clone(previousMatches));
+          .callsArgWith(2, null, schema.annotateEvent(previousMatches, 'status/incomplete-tuple'));
 
         var localGoodObject = _.assign({}, goodObject, { status: 'resumed' });
         helper.run(_.assign({}, localGoodObject, {previous: previousMatches}), done, function(objs) {

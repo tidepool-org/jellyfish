@@ -143,7 +143,7 @@ describe('streamDAO', function(){
         });
       }
 
-      var expectedId = misc.generateId('abcd', 'g');
+      var expectedId = misc.generateId(['abcd', 'g']);
       streamDAO.updateDatum({id: 'abcd', f: 'a', v: 2828, _groupId: 'g'}, theCallback);
       streamDAO.updateDatum({id: 'abcd', f: 'a', v: 2829, _groupId: 'g'}, theCallback);
     });
