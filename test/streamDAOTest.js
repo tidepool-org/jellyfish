@@ -88,7 +88,7 @@ describe('streamDAO', function(){
 
     it('should be able to update a value that is there', function(done){
       var now = Date.now();
-      streamDAO.updateDatum({id: 'abcd', f: 'a', v: 2828, _groupId: 'g'}, function(err){
+      streamDAO.updateDatum({id: 'abcd', f: 'a', v: 2828, _groupId: 'g', createdTime: createdTime}, function(err){
         if (err != null) {
           return done(err);
         }
