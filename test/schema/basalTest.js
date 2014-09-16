@@ -172,6 +172,30 @@ describe('schema/basal.js', function(){
             return done(err);
           });
         });
+
+        it('updates and annotates the previous event when no previous provided', function(done){
+          var localGoodObject = _.omit(goodObject, "previous");
+          var expectedPrevious = _.assign({}, previousCutShort, {
+            annotations: [{ code: 'basal/mismatched-series', nextId: '2d3ij3nslb9rjsp6e6bantvr61tavpkk' }],
+            duration: 3600000,
+            expectedDuration: previousCutShort.duration
+          });
+
+          sinon.stub(helper.streamDAO, 'getDatumBefore');
+          helper.streamDAO.getDatumBefore
+            .withArgs(localGoodObject, sinon.match.func)
+            .callsArgWith(1, null, previousCutShort);
+
+
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
       })
     });
 
