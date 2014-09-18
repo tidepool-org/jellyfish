@@ -16,6 +16,8 @@
  */
 
 var bows = require('bows');
+var config = require('../config.js');
+var platformClient = require('tidepool-platform-client');
 var purl = require('purl-parser');
 var $ = require('jquery');
 
@@ -28,11 +30,24 @@ var api = {
     // No-op, override to listen to change
     this.onAuthenticationChange = function() {};
     this.log('Initialized');
-    callback();
+
+    var localStore = require('tidepool-platform-client/lib/inMemoryStorage.js')();
+    if (this.token != null) {
+      localStore.setItem('authToken', this.token);
+    }
+    this.tidepool = platformClient(
+      {
+        host: config.API_HOST,
+        metricsSource: config.SERVICE_NAME,
+        metricsVersion: config.VERSION,
+        localStore: localStore
+      }
+    );
+    tidepool.init(callback);
   },
 
   isAuthenticated: function() {
-    return Boolean(this.token);
+    return this.tidepool.isLoggedIn();
   },
 
   _getTokenFromUrl: function() {

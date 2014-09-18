@@ -16,5 +16,7 @@
 var pkg = require('./package.json');
 
 module.exports = {
-  VERSION: pkg.version
+  VERSION: pkg.version,
+  API_HOST: process.env.API_HOST || 'http://localhost:8009',
+  SERVICE_NAME: process.env.SERVICE_NAME || 'jellyfish'
 };

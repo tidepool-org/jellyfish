@@ -46,6 +46,7 @@
     "moment": "2.4.0",
     "mongodb": "1.4.0",
     "ms": "0.6.2",
+    "platform-client": "0.7.0",
     "purl-parser": "git://github.com/CodeYellowBV/purl#4314dced8fce07437db276b7650c100228790f91",
     "react": "0.9.0",
     "request": "2.33.0",
