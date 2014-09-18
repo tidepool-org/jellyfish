@@ -244,6 +244,7 @@ var AppComponent = React.createClass({
       }
     });
 
+    app.api.tidepool.trackMetric('Upload Started');
     app.api.upload.postFormData(formData, function(err, syncTask) {
       if (err) {
         return self.handleFormPostError(err);
@@ -253,6 +254,7 @@ var AppComponent = React.createClass({
   },
 
   handleFormPostError: function(err) {
+    app.api.tidepool.trackMetric('Upload Fail');
     this.setState({
       isSyncTaskInProgress: false,
       formNotification: {
@@ -321,10 +323,12 @@ var AppComponent = React.createClass({
   },
 
   handleSyncTaskError: function(err) {
+    app.api.tidepool.trackMetric('Upload Fail');
     return this.handleFormPostError(err);
   },
 
   handleSyncTaskSuccess: function(syncTask) {
+    app.api.tidepool.trackMetric('Upload Success');
     this.setState({
       isSyncTaskInProgress: false,
       formNotification: {
