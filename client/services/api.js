@@ -43,7 +43,7 @@ var api = {
         localStore: localStore
       }
     );
-    tidepool.init(callback);
+    this.tidepool.initialize(callback);
   },
 
   isAuthenticated: function() {
