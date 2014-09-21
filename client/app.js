@@ -279,7 +279,7 @@ var AppComponent = React.createClass({
 
     this.waitForSyncTaskWithIdToFinish(syncTaskId, function(err, task) {
       if (err) {
-        return self.handleSyncTaskError(err);
+        return self.handleFormPostError(err);
       }
       self.handleSyncTaskSuccess(task);
     });
@@ -320,11 +320,6 @@ var AppComponent = React.createClass({
         });
       }, pollingInterval);
     }(callback));
-  },
-
-  handleSyncTaskError: function(err) {
-    app.api.tidepool.trackMetric('Upload Fail');
-    return this.handleFormPostError(err);
   },
 
   handleSyncTaskSuccess: function(syncTask) {
