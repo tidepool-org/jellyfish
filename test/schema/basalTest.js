@@ -130,8 +130,8 @@ describe('schema/basal.js', function(){
         helper.expectRejection(_.assign({}, goodObject, {duration: -1}), 'duration', done);
       });
 
-      it('rejects duration == 0', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {duration: 0}), 'duration', done);
+      it('accepts duration == 0', function(done){
+        helper.run(_.assign({}, goodObject, {duration: 0}), done);
       });
 
       describe('previous', function(){
@@ -202,6 +202,113 @@ describe('schema/basal.js', function(){
     describe('scheduleName', function(){
       helper.rejectIfAbsent(goodObject, 'scheduleName');
       helper.expectStringField(goodObject, 'scheduleName');
+    });
+
+    helper.testCommonFields(goodObject);
+  });
+
+  describe('suspend', function(){
+    var previousMatches = {
+      type: 'basal',
+      deliveryType: 'scheduled',
+      scheduleName: 'Pattern A',
+      rate: 1.0,
+      duration: 3600000,
+      time: '2014-01-01T00:00:00.000Z',
+      timezoneOffset: 120,
+      deviceId: 'test',
+      source: 'manual'
+    };
+
+    var previousCutShort = {
+      type: 'basal',
+      deliveryType: 'scheduled',
+      scheduleName: 'Pattern A',
+      rate: 1.0,
+      duration: 7200000,
+      time: '2014-01-01T00:00:00.000Z',
+      timezoneOffset: 120,
+      deviceId: 'test',
+      source: 'manual'
+    };
+
+    var goodObject = {
+      type: 'basal',
+      deliveryType: 'suspend',
+      duration: 1800000,
+      time: '2014-01-01T01:00:00.000Z',
+      timezoneOffset: 120,
+      deviceId: 'test',
+      source: 'manual',
+      _groupId: 'g',
+      previous: previousMatches,
+      suppressed: previousCutShort
+    };
+
+    beforeEach(function(){
+      helper.resetMocks();
+      sinon.stub(helper.streamDAO, 'getDatum');
+      helper.streamDAO.getDatum
+        .withArgs(schema.makeId(previousMatches), goodObject._groupId, sinon.match.func)
+        .callsArgWith(2, null, previousMatches);
+    });
+
+    describe('duration', function(){
+      helper.okIfAbsent(goodObject, 'duration');
+      helper.expectNumericalField(goodObject, 'duration');
+
+      it('rejects duration < 0', function(done){
+        helper.expectRejection(_.assign({}, goodObject, {duration: -1}), 'duration', done);
+      });
+
+      it('accepts duration == 0', function(done){
+        helper.run(_.assign({}, goodObject, {duration: 0}), done);
+      });
+
+      describe('previous', function(){
+        var prevId = schema.makeId(previousCutShort);
+
+        beforeEach(function(){
+          helper.resetMocks();
+          sinon.stub(helper.streamDAO, 'getDatum');
+          helper.streamDAO.getDatum
+            .withArgs(prevId, goodObject._groupId, sinon.match.func)
+            .callsArgWith(2, null, previousCutShort);
+        });
+
+        it('updates the duration of previous events if they no longer align', function(done){
+          var localGoodObject = _.assign({}, goodObject, {previous: previousCutShort});
+          var expectedPrevious = _.assign({}, previousCutShort, {duration: 3600000, expectedDuration: previousCutShort.duration});
+
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+
+        it('updates the duration of previous events even when passed only an id for previous', function(done){
+          var localGoodObject = _.assign({}, goodObject, {previous: prevId});
+          var expectedPrevious = _.assign({}, previousCutShort, {duration: 3600000, expectedDuration: previousCutShort.duration});
+
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+      })
+    });
+
+    describe('suppressed', function(){
+      helper.okIfAbsent(goodObject, 'suppressed');
+      helper.expectObjectField(goodObject, 'suppressed');
     });
 
     helper.testCommonFields(goodObject);
@@ -284,8 +391,8 @@ describe('schema/basal.js', function(){
         helper.expectRejection(_.assign({}, goodObject, {duration: -1}), 'duration', done);
       });
 
-      it('rejects duration == 0', function(done){
-        helper.expectRejection(_.assign({}, goodObject, {duration: 0}), 'duration', done);
+      it('accepts duration == 0', function(done){
+        helper.run(_.assign({}, goodObject, {duration: 0}), done);
       });
 
       describe('previous', function(){
