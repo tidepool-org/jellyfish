@@ -145,7 +145,7 @@ describe('schema/basal.js', function(){
             .callsArgWith(2, null, previousCutShort);
         });
 
-        it('updates the duration of previous events if they no longer align', function(done){
+        it('updates the duration of previous events if the new event cuts off the older one', function(done){
           var localGoodObject = _.assign({}, goodObject, {previous: previousCutShort});
           var expectedPrevious = _.assign({}, previousCutShort, {duration: 3600000, expectedDuration: previousCutShort.duration});
 
@@ -154,6 +154,16 @@ describe('schema/basal.js', function(){
 
             expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
             expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+
+        it('maintains the duration of previous events if the new event happens after the older one', function(done){
+          var localGoodObject = _.assign({}, goodObject, {time: '2014-01-01T02:00:00.000Z', previous: previousMatches});
+
+          helper.run(localGoodObject, function(err, obj){
+            expect(_.pick(obj, Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
 
             return done(err);
           });
@@ -173,7 +183,29 @@ describe('schema/basal.js', function(){
           });
         });
 
-        it('updates and annotates the previous event when no previous provided', function(done){
+        it('annotates the previous event when no previous provided and new event happens after old event', function(done){
+          var localGoodObject = _.omit(goodObject, "previous");
+          var expectedPrevious = _.assign({}, previousMatches, {
+            annotations: [{ code: 'basal/mismatched-series', nextId: '2d3ij3nslb9rjsp6e6bantvr61tavpkk' }]
+          });
+
+          sinon.stub(helper.streamDAO, 'getDatumBefore');
+          helper.streamDAO.getDatumBefore
+            .withArgs(localGoodObject, sinon.match.func)
+            .callsArgWith(1, null, previousCutShort);
+
+
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+
+        it('updates and annotates the previous event when no previous provided and new event cuts off old event', function(done){
           var localGoodObject = _.omit(goodObject, "previous");
           var expectedPrevious = _.assign({}, previousCutShort, {
             annotations: [{ code: 'basal/mismatched-series', nextId: '2d3ij3nslb9rjsp6e6bantvr61tavpkk' }],
@@ -276,7 +308,7 @@ describe('schema/basal.js', function(){
             .callsArgWith(2, null, previousCutShort);
         });
 
-        it('updates the duration of previous events if they no longer align', function(done){
+        it('updates the duration of previous events if the new event cuts off the older one', function(done){
           var localGoodObject = _.assign({}, goodObject, {previous: previousCutShort});
           var expectedPrevious = _.assign({}, previousCutShort, {duration: 3600000, expectedDuration: previousCutShort.duration});
 
@@ -285,6 +317,16 @@ describe('schema/basal.js', function(){
 
             expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
             expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+
+        it('maintains the duration of previous events if the new event happens after the older one', function(done){
+          var localGoodObject = _.assign({}, goodObject, {time: '2014-01-01T02:00:00.000Z', previous: previousMatches});
+
+          helper.run(localGoodObject, function(err, obj){
+            expect(_.pick(obj, Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
 
             return done(err);
           });
@@ -406,7 +448,7 @@ describe('schema/basal.js', function(){
             .callsArgWith(2, null, previousCutShort);
         });
 
-        it('updates the duration of previous events if they no longer align', function(done){
+        it('updates the duration of previous events if the new event cuts off the older one', function(done){
           var localGoodObject = _.assign({}, goodObject, {previous: previousCutShort});
           var expectedPrevious = _.assign({}, previousCutShort, {duration: 3600000, expectedDuration: previousCutShort.duration});
 
@@ -415,6 +457,16 @@ describe('schema/basal.js', function(){
 
             expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
             expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+
+        it('maintains the duration of previous events if the new event happens after the older one', function(done){
+          var localGoodObject = _.assign({}, goodObject, {time: '2014-01-01T02:00:00.000Z', previous: previousMatches});
+
+          helper.run(localGoodObject, function(err, obj){
+            expect(_.pick(obj, Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
 
             return done(err);
           });
