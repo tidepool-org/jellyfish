@@ -1,5 +1,7 @@
 # Jellyfish
 
+[![Build Status](https://travis-ci.org/tidepool-org/jellyfish.png)](https://travis-ci.org/tidepool-org/jellyfish)
+
 Jellyfish are known for their user friendliness and uploads, sometimes.
 
 ## Install

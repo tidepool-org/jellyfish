@@ -489,7 +489,7 @@ describe('schema/basal.js', function(){
     });
 
     describe('suppressed', function(){
-      helper.rejectIfAbsent(goodObject, 'suppressed');
+      helper.okIfAbsent(goodObject, 'suppressed');
       helper.expectObjectField(goodObject, 'suppressed');
     });
 
