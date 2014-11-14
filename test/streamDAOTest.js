@@ -15,6 +15,8 @@
  * == BSD2 LICENSE ==
  */
 
+ /* global describe, before, beforeEach, it, after */
+
 'use strict';
 
 var async = require('async');
@@ -95,7 +97,7 @@ describe('streamDAO', function(){
         streamDAO.getDatum('abcde', 'g', function(err, datum){
           expect(datum).to.not.exist;
           return done(err);
-        })
+        });
       });
     });
 
@@ -137,7 +139,7 @@ describe('streamDAO', function(){
           return done(err);
         }
 
-        if (count == 0) {
+        if (count === 0) {
           ++count;
           return;
         }
@@ -170,7 +172,7 @@ describe('streamDAO', function(){
     ];
 
     beforeEach(function(done){
-      async.map(events, streamDAO.insertDatum, done)
+      async.map(events, streamDAO.insertDatum, done);
     });
 
     it('returns null if nothing before', function(done){
@@ -236,6 +238,6 @@ describe('streamDAO', function(){
           }
         );
       });
-    })
+    });
   });
 });

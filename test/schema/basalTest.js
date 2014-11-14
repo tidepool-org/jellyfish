@@ -15,6 +15,8 @@
  * == BSD2 LICENSE ==
  */
 
+ /* global describe, before, beforeEach, it, after */
+
 'use strict';
 
 var util = require('util');
@@ -70,7 +72,7 @@ describe('schema/basal.js', function(){
           it(util.format('accepts insulin: %s', val), function(done){
             helper.run(_.assign({}, goodObject, {insulin: val}), done);
           });
-        })
+        });
       }
 
       acceptsInsulinVals('levemir', 'lantus');
@@ -241,7 +243,7 @@ describe('schema/basal.js', function(){
             return done(err);
           });
         });
-      })
+      });
     });
 
     describe('scheduleName', function(){
@@ -358,7 +360,7 @@ describe('schema/basal.js', function(){
             return done(err);
           });
         });
-      })
+      });
     });
 
     describe('suppressed', function(){
@@ -508,7 +510,7 @@ describe('schema/basal.js', function(){
             return done(err);
           });
         });
-      })
+      });
     });
 
     describe('suppressed', function(){

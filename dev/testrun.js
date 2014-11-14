@@ -54,7 +54,7 @@ if (!fs.existsSync(taskStorageDir)) {
 }
 
 var mongoClient = require('../lib/mongo/mongoClient.js')(config.mongo);
-var testDAO = require('./testRunDAO.js')((require('../lib/streamDAO.js')(mongoClient)))
+var testDAO = require('./testRunDAO.js')((require('../lib/streamDAO.js')(mongoClient)));
 var streamDAO = require('../lib/jellyfishStreamDAO.js')(testDAO.DAO);
 var storage = require('../lib/storage')(config.storage);
 
@@ -108,7 +108,7 @@ function go(config) {
           if (resultsArray.length === 0) {
             fail('No results', new Error('No results'));
           }
-          log.info('Persisting[%s] events to db.', resultsArray.length)
+          log.info('Persisting[%s] events to db.', resultsArray.length);
           streamDAO.storeData(resultsArray, function (err) {
             if (err != null) {
               fail('Problem with DB, Oh Noes!', err);
@@ -124,7 +124,7 @@ function go(config) {
         });
 
     }
-  )
+  );
 }
 
 function fail(reason, error) {

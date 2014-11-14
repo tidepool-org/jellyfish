@@ -15,6 +15,8 @@
  * == BSD2 LICENSE ==
  */
 
+ /* global describe, before, beforeEach, it, after */
+
 'use strict';
 
 var util = require('util');
@@ -56,7 +58,7 @@ describe('schema/bolus.js', function(){
           it(util.format('accepts insulin: %s', val), function(done){
             helper.run(_.assign({}, goodObject, {insulin: val}), done);
           });
-        })
+        });
       }
 
       acceptsInsulinVals('novolog', 'humalog');

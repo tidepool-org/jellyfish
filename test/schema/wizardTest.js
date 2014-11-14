@@ -15,6 +15,8 @@
  * == BSD2 LICENSE ==
  */
 
+ /* global describe, before, beforeEach, it, after */
+
 'use strict';
 
 var _ = require('lodash');
@@ -72,7 +74,7 @@ describe('schema/wizard.js', function(){
         expect(converted.units).to.equal('mg/dL');
         expect(converted.bgInput).to.equal(5.550747991045533);
         done();
-      })
+      });
     });
   });
 
@@ -100,7 +102,7 @@ describe('schema/wizard.js', function(){
         expect(converted.units).to.equal('mg/dL');
         expect(converted.insulinSensitivity).to.equal(2.7753739955227665);
         done();
-      })
+      });
     });
   });
 
@@ -119,7 +121,7 @@ describe('schema/wizard.js', function(){
         expect(converted.units).to.equal('mg/dL');
         expect(converted.bgInput).to.equal(5.550747991045533);
         done();
-      })
+      });
     });
   });
 

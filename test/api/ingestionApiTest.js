@@ -15,6 +15,8 @@
  * == BSD2 LICENSE ==
  */
 
+ /* global describe, before, beforeEach, it, after */
+
 'use strict';
 
 var fs = require('fs');
@@ -44,37 +46,38 @@ describe('ingestion API', function () {
   });
 
   var files = fs.readdirSync(__dirname);
+  function testDir(dir) {
+    var path = __dirname + '/' + dir;
+    it(dir, function (done) {
+      var input = JSON.parse(fs.readFileSync(path + '/input.json'));
+      var output = JSON.parse(fs.readFileSync(path + '/output.json'));
+
+      async.mapSeries(
+        input,
+        function(e, cb){
+          e._groupId = groupId;
+          dataBroker.addDatum(e, cb);
+        },
+        function(err){
+          if (err != null) {
+            return done(err);
+          }
+
+          mongoClient.withCollection('deviceData', done, function(coll, cb){
+            coll.find().sort({"time": 1, "id": 1, "_version": 1}).toArray(function(err, results){
+              expect(results.map(function(e){ return _.omit(e, 'createdTime', 'modifiedTime', "_id", '_archivedTime'); }))
+                .deep.equals(output.map(function(e){ e._groupId = groupId; return e; }));
+              cb(err);
+            });
+          });
+        }
+      );
+    });
+  }
   for (var i = 0; i < files.length; ++i) {
     var path = __dirname + '/' + files[i];
     if (fs.lstatSync(path).isDirectory()) {
-      (function (dir) {
-        var path = __dirname + '/' + dir;
-        it(dir, function (done) {
-          var input = JSON.parse(fs.readFileSync(path + '/input.json'));
-          var output = JSON.parse(fs.readFileSync(path + '/output.json'));
-
-          async.mapSeries(
-            input,
-            function(e, cb){
-              e._groupId = groupId;
-              dataBroker.addDatum(e, cb);
-            },
-            function(err){
-              if (err != null) {
-                return done(err);
-              }
-
-              mongoClient.withCollection('deviceData', done, function(coll, cb){
-                coll.find().sort({"time": 1, "id": 1, "_version": 1}).toArray(function(err, results){
-                  expect(results.map(function(e){ return _.omit(e, 'createdTime', 'modifiedTime', "_id", '_archivedTime') }))
-                    .deep.equals(output.map(function(e){ e._groupId = groupId; return e; }));
-                  cb(err);
-                });
-              });
-            }
-          );
-        });
-      })(files[i]);
+      (testDir)(files[i]);
     }
   }
 });

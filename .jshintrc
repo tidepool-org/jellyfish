@@ -1,0 +1,6 @@
+{
+    "browser": true,
+    "eqnull": true,
+    "globalstrict": true,
+    "node": true
+}

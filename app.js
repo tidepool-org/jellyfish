@@ -15,6 +15,8 @@
  * == BSD2 LICENSE ==
  */
 
+'use strict';
+
 var fs = require('fs');
 
 var async = require('async');
@@ -35,7 +37,7 @@ var jsonp = function(response) {
       return;
     }
     response.jsonp(data);
-  }
+  };
 };
 
 (function(){
@@ -213,12 +215,12 @@ var jsonp = function(response) {
   if (config.discovery != null) {
     var serviceDescriptor = { service: config.serviceName };
     if (config.httpsPort != null) {
-      serviceDescriptor['host'] = config.publishHost + ':' + config.httpsPort;
-      serviceDescriptor['protocol'] = 'https';
+      serviceDescriptor.host = config.publishHost + ':' + config.httpsPort;
+      serviceDescriptor.protocol = 'https';
     }
     else if (config.httpPort != null) {
-      serviceDescriptor['host'] = config.publishHost + ':' + config.httpPort;
-      serviceDescriptor['protocol'] = 'http';
+      serviceDescriptor.host = config.publishHost + ':' + config.httpPort;
+      serviceDescriptor.protocol = 'http';
     }
 
     hakken.publish(serviceDescriptor);
