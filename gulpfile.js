@@ -4,8 +4,10 @@ var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 
 var jsFiles = [
-  'app/**/*.js',
-  'mock/**/*.js',
+  'client/**/*.js',
+  'dev/**/*.js',
+  'lib/**/*.js',
+  'scripts/**/*.js',
   'test/**/*.js',
   '*.js'
 ];

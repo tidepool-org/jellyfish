@@ -15,6 +15,8 @@
  * == BSD2 LICENSE ==
  */
 
+'use strict';
+
 var config = window.config;
 
 if (!config) {

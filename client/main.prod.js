@@ -15,6 +15,8 @@
  * == BSD2 LICENSE ==
  */
 
+'use strict';
+
 // NOTE: Unlike in `main.js`, `window.config` is bundled separately
 // for production, so no need to `require` it here
 

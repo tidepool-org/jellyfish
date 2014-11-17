@@ -16,6 +16,8 @@
  * == BSD2 LICENSE ==
  */
 
+'use strict';
+
 var React = require('react');
 var bows = require('bows');
 var $ = require('jquery');
@@ -157,7 +159,7 @@ var AppComponent = React.createClass({
   },
 
   getFormSubmitButtonText: function() {
-    text = 'Upload data';
+    var text = 'Upload data';
     if (this.state.isSyncTaskInProgress) {
       text = 'Uploading...';
     }

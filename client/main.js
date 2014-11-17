@@ -15,6 +15,8 @@
  * == BSD2 LICENSE ==
  */
 
+'use strict';
+
 window.config = require('../env.client.js');
 
 var app = window.app = require('./app');

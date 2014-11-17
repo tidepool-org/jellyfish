@@ -15,6 +15,8 @@
  * == BSD2 LICENSE ==
  */
 
+'use strict';
+
 var syncTaskService = {
   isSuccessful: function(task) {
     if (!task) {
