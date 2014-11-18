@@ -15,6 +15,8 @@
  * == BSD2 LICENSE ==
  */
 
+'use strict';
+
 var bows = require('bows');
 var config = require('../config.js');
 var platformClient = require('tidepool-platform-client');

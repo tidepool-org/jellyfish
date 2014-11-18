@@ -1,6 +1,21 @@
 /*
  * == BSD2 LICENSE ==
+ * Copyright (c) 2014, Tidepool Project
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the associated License, which is identical to the BSD 2-Clause
+ * License as published by the Open Source Initiative at opensource.org.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the License for more details.
+ * 
+ * You should have received a copy of the License along with this program; if
+ * not, you can obtain one from Tidepool Project at tidepool.org.
+ * == BSD2 LICENSE ==
  */
+
+ /* global describe, before, beforeEach, it, after */
 
 'use strict';
 
@@ -59,7 +74,7 @@ describe('schema/wizard.js', function(){
         expect(converted.units).to.equal('mg/dL');
         expect(converted.bgInput).to.equal(5.550747991045533);
         done();
-      })
+      });
     });
   });
 
@@ -87,7 +102,7 @@ describe('schema/wizard.js', function(){
         expect(converted.units).to.equal('mg/dL');
         expect(converted.insulinSensitivity).to.equal(2.7753739955227665);
         done();
-      })
+      });
     });
   });
 
@@ -106,7 +121,7 @@ describe('schema/wizard.js', function(){
         expect(converted.units).to.equal('mg/dL');
         expect(converted.bgInput).to.equal(5.550747991045533);
         done();
-      })
+      });
     });
   });
 

@@ -1,0 +1,7 @@
+{
+    "browser": true,
+    "eqnull": true,
+    "expr": true,
+    "globalstrict": true,
+    "node": true
+}

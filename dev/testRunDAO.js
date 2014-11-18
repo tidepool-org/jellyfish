@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 /*
  * == BSD2 LICENSE ==
  * Copyright (c) 2014, Tidepool Project
@@ -18,40 +17,18 @@
 
 'use strict';
 
-var React = require('react');
+var _ = require('lodash');
 
-var Notification = React.createClass({
-  propTypes: {
-    type: React.PropTypes.string,
-    message: React.PropTypes.string
-  },
+var retVal = {data: []};
 
-  getDefaultProps: function() {
-    return {
-      type: 'alert'
-    };
-  },
-  
-  render: function() {
-    var className = this.getClassName();
+module.exports = function(baseDAO) {
 
-    /* jshint ignore:start */
-    return (
-      <div className={className}>
-        {this.props.message}
-      </div>
-    );
-    /* jshint ignore:end */
-  },
+  retVal.DAO = _.clone(baseDAO);
 
-  getClassName: function() {
-    var type = this.props.type;
-    var className = [
-      'notification',
-      'notification-' + type
-    ].join(' ');
-    return className;
-  }
-});
+  retVal.DAO.addOrUpdateDatum = function(datum, cb) {
+    retVal.data.push(datum);
+    baseDAO.addOrUpdateDatum(datum, cb);
+  };
 
-module.exports = Notification;
+  return retVal;
+};

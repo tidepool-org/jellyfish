@@ -7,7 +7,9 @@
     "start": "node app",
     "build": "npm run build-app && npm run build-config",
     "build-app": "node buildapp",
-    "build-config": "node buildconfig"
+    "build-config": "node buildconfig",
+    "jshint": "gulp jshint",
+    "jshint-watch": "gulp jshint-watch"
   },
   "directories": {
     "lib": "./lib"
@@ -61,6 +63,9 @@
     "webpack-dev-middleware": "1.0.10"
   },
   "devDependencies": {
+    "gulp": "^3.8.10",
+    "gulp-jshint": "^1.9.0",
+    "jshint-stylish": "^1.0.0",
     "mocha": "1.21.4",
     "salinity": "0.0.5"
   }

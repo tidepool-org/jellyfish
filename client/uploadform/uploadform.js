@@ -16,6 +16,8 @@
  * == BSD2 LICENSE ==
  */
 
+'use strict';
+
 var React = require('react');
 var _ = require('lodash');
 
