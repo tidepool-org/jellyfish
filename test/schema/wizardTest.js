@@ -36,7 +36,7 @@ var goodObject = {
   },
   carbInput: 45,
   bgInput: 6.2,
-  activeInsulin: 1.3,
+  insulinOnBoard: 1.3,
   bgTarget: { high: 6.0, low: 4.0 },
   payload: { howdy: 'bob' },
   bolus: {
@@ -49,22 +49,13 @@ var goodObject = {
 };
 
 describe('schema/wizard.js', function(){
-  describe('recommended', function(){
-    helper.rejectIfAbsent(goodObject, 'recommended');
-    helper.expectObjectField(goodObject, 'recommended');
-  });
-
-  describe('carbInput', function(){
-    helper.okIfAbsent(goodObject, 'carbInput');
-    helper.expectNumericalField(goodObject, 'carbInput');
-  });
 
   describe('bgInput', function(){
     helper.okIfAbsent(goodObject, 'bgInput');
     helper.expectNumericalField(goodObject, 'bgInput');
     helper.expectUnitConversion(goodObject, 'bgInput');
 
-    it("converts units", function(done){
+    it('converts units', function(done){
       var localGood = _.assign({}, goodObject, { bgInput: 100, units: 'mg/dl' });
       helper.run(localGood, function(err, converted){
         if (err != null) {
@@ -76,63 +67,18 @@ describe('schema/wizard.js', function(){
         done();
       });
     });
-  });
 
-  describe('insulinOnBoard', function(){
-    helper.okIfAbsent(goodObject, 'insulinOnBoard');
-    helper.expectNumericalField(goodObject, 'insulinOnBoard');
-  });
-
-  describe('insulinCarbRatio', function(){
-    helper.okIfAbsent(goodObject, 'insulinCarbRatio');
-    helper.expectNumericalField(goodObject, 'insulinCarbRatio');
-  });
-
-  describe('insulinSensitivity', function(){
-    helper.okIfAbsent(goodObject, 'insulinSensitivity');
-    helper.expectNumericalField(goodObject, 'insulinSensitivity');
-
-    it("converts units", function(done){
-      var localGood = _.assign({}, goodObject, { insulinSensitivity: 50, units: 'mg/dl' });
+    it('does not produce an NaN value if it is absent and units need conversion', function(done){
+      var localGood = _.assign({}, _.omit(goodObject, 'bgInput'), {units: 'mg/dL'});
       helper.run(localGood, function(err, converted){
         if (err != null) {
           return done(err);
         }
 
-        expect(converted.units).to.equal('mg/dL');
-        expect(converted.insulinSensitivity).to.equal(2.7753739955227665);
+        expect(converted.bgInput).not.to.exist;
         done();
       });
     });
-  });
-
-  describe('bgInput', function(){
-    helper.okIfAbsent(goodObject, 'bgInput');
-    helper.expectNumericalField(goodObject, 'bgInput');
-    helper.expectUnitConversion(goodObject, 'bgInput');
-
-    it("converts units", function(done){
-      var localGood = _.assign({}, goodObject, { bgInput: 100, units: 'mg/dl' });
-      helper.run(localGood, function(err, converted){
-        if (err != null) {
-          return done(err);
-        }
-
-        expect(converted.units).to.equal('mg/dL');
-        expect(converted.bgInput).to.equal(5.550747991045533);
-        done();
-      });
-    });
-  });
-
-  describe('payload', function(){
-    helper.okIfAbsent(goodObject, 'payload');
-    helper.expectObjectField(goodObject, 'payload');
-  });
-
-  describe('bolus', function(){
-    helper.okIfAbsent(goodObject, 'bolus');
-    helper.expectNotNumberField(goodObject, 'bolus');
   });
 
   describe('bgTarget', function () {
@@ -220,6 +166,66 @@ describe('schema/wizard.js', function(){
         });
       });
     });
+  });
+
+  describe('bolus', function(){
+    helper.okIfAbsent(goodObject, 'bolus');
+    helper.expectNotNumberField(goodObject, 'bolus');
+  });
+
+  describe('carbInput', function(){
+    helper.okIfAbsent(goodObject, 'carbInput');
+    helper.expectNumericalField(goodObject, 'carbInput');
+  });
+
+  describe('insulinCarbRatio', function(){
+    helper.okIfAbsent(goodObject, 'insulinCarbRatio');
+    helper.expectNumericalField(goodObject, 'insulinCarbRatio');
+  });
+
+  describe('insulinOnBoard', function(){
+    helper.okIfAbsent(goodObject, 'insulinOnBoard');
+    helper.expectNumericalField(goodObject, 'insulinOnBoard');
+  });
+
+  describe('insulinSensitivity', function(){
+    helper.okIfAbsent(goodObject, 'insulinSensitivity');
+    helper.expectNumericalField(goodObject, 'insulinSensitivity');
+
+    it('converts units', function(done){
+      var localGood = _.assign({}, goodObject, { insulinSensitivity: 50, units: 'mg/dl' });
+      helper.run(localGood, function(err, converted){
+        if (err != null) {
+          return done(err);
+        }
+
+        expect(converted.units).to.equal('mg/dL');
+        expect(converted.insulinSensitivity).to.equal(2.7753739955227665);
+        done();
+      });
+    });
+
+    it('does not produce an NaN value if it is absent and units need conversion', function(done){
+      var localGood = _.assign({}, _.omit(goodObject, 'insulinSensitivity'), {units: 'mg/dL'});
+      helper.run(localGood, function(err, converted){
+        if (err != null) {
+          return done(err);
+        }
+
+        expect(converted.insulinSensitivity).not.to.exist;
+        done();
+      });
+    });
+  });
+
+  describe('payload', function(){
+    helper.okIfAbsent(goodObject, 'payload');
+    helper.expectObjectField(goodObject, 'payload');
+  });
+
+  describe('recommended', function(){
+    helper.rejectIfAbsent(goodObject, 'recommended');
+    helper.expectObjectField(goodObject, 'recommended');
   });
 
   helper.testCommonFields(goodObject);
