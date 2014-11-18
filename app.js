@@ -59,6 +59,7 @@ var jsonp = function(response) {
 
   var tasks = require('./lib/tasks.js')(mongoClient);
   var uploadFlow = require('./lib/uploadFlow.js')({ storageDir: config.tempStorage }, tasks);
+  var carelinkUploadFlow = require('./lib/carelinkUploadFlow.js')({ storageDir: config.tempStorage }, tasks);
   var dataBroker = require('./lib/dataBroker.js')(require('./lib/streamDAO.js')(mongoClient));
 
   function lookupGroupId(userid, callback) {
@@ -90,6 +91,9 @@ var jsonp = function(response) {
     response.send(200, 'OK');
   });
 
+  /*
+    used to process the form data, now that is just for uploading and processing of the carelink csv
+  */
   app.post(
     '/v1/device/upload',
     checkToken,
@@ -115,6 +119,35 @@ var jsonp = function(response) {
     }
   );
 
+  /*
+    used to process the carelink form data, now that is just for uploading and processing of the carelink csv
+  */
+  app.post(
+    '/v1/device/upload/cl',
+    checkToken,
+    function(req, res) {
+      lookupGroupId(req._tokendata.userid, function(err, groupId) {
+        if (err != null) {
+          if (err.statusCode == null) {
+            log.warn(err, 'Failed to get private pair for user[%s]', req._tokendata.userid);
+            res.send(500);
+          } else {
+            res.send(err.statusCode, err);
+          }
+          return;
+        }
+
+        if (groupId == null) {
+          log.warn('Unable to get hashPair, something is broken...');
+          res.send(503);
+          return;
+        }
+        //get the form then
+        carelinkUploadFlow.ingest(req, { groupId: groupId }, jsonp(res));
+      });
+    }
+  );
+
   // This is actually a potential leak because it allows *any* logged in user to see the status of any task.
   // It's just the status though, and this whole thing needs to get redone at some point anyway, so I'm leaving it.
   app.get(
@@ -125,6 +158,9 @@ var jsonp = function(response) {
     }
   );
 
+  /*
+    send the actual ingested data to the platform
+  */
   app.post(
     '/data',
     checkToken,
@@ -185,14 +221,6 @@ var jsonp = function(response) {
       );
     }
   );
-
-  var webClient = require('./lib/webclient.js');
-  if (config.serveStatic != null) {
-    webClient.setupForProduction(app);
-  }
-  else {
-    webClient.setupForDevelopment(app);
-  }
 
   process.on('uncaughtException', function(err){
     log.error(err, 'Uncaught exception bubbled all the way up!');

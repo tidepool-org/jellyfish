@@ -1,13 +1,10 @@
 {
   "name": "jellyfish",
-  "version": "0.3.22",
+  "version": "0.4.0",
   "description": "Jellyfish are known for their user friendliness with uploads",
   "main": "app.js",
   "scripts": {
-    "start": "node app",
-    "build": "npm run build-app && npm run build-config",
-    "build-app": "node buildapp",
-    "build-config": "node buildconfig"
+    "start": "node app"
   },
   "directories": {
     "lib": "./lib"
@@ -39,9 +36,6 @@
     "in-d-gestion": "0.3.11",
     "jquery": "2.1.1",
     "json-loader": "0.5.1",
-    "jsx-loader": "0.11.0",
-    "less": "1.7.4",
-    "less-loader": "0.7.7",
     "lodash": "2.4.1",
     "moment": "2.4.0",
     "mongodb": "1.4.0",
@@ -51,14 +45,11 @@
     "request": "2.33.0",
     "rx": "2.2.13",
     "shelljs": "0.3.0",
-    "style-loader": "0.6.5",
     "sundial": "0.1.6",
     "tidepool-platform-client": "0.7.0",
     "tidepool-seagull-client": "0.0.2",
     "url-loader": "0.5.5",
-    "user-api-client": "0.1.4",
-    "webpack": "1.4.9",
-    "webpack-dev-middleware": "1.0.10"
+    "user-api-client": "0.1.4"
   },
   "devDependencies": {
     "mocha": "1.21.4",
