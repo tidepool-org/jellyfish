@@ -162,15 +162,28 @@ var jsonp = function(response) {
     '/v1/device/data/:id',
     checkToken,
     function(request, response) {
-      tasks.get(request.params.id, function(task){
-
-        if(tasks.filePath){
-          response.send(200,readFileSync(dataFile,'utf8'));
-          return;
+      tasks.get(request.params.id, function(err, task){
+        if (err) {
+          return response.send(500, 'Error getting sync task');
         }
-        log.warn('Task did not have a file',task);
-        response.send(404, 'No data found');
-        return;
+
+        if (!task) {
+          return response.send(404, 'No sync task found');
+        }
+
+        if (!task.filePath){
+          log.warn('Task did not have a file', task);
+          return response.send(404, 'No data file for sync task');
+        }
+
+        fs.readFile(task.filePath, function(err, data) {
+          if (err) {
+            log.error('Error reading file', task.filePath);
+            return response.send(500, 'Error reading data file');
+          }
+
+          return response.send(200, data);
+        });
       });
     }
   );
