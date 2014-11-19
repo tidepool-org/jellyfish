@@ -158,6 +158,23 @@ var jsonp = function(response) {
     }
   );
 
+  app.get(
+    '/v1/device/data/:id',
+    checkToken,
+    function(request, response) {
+      tasks.get(request.params.id, function(task){
+
+        if(tasks.filePath){
+          response.send(200,readFileSync(dataFile,'utf8'));
+          return;
+        }
+        log.warn('Task did not have a file',task);
+        response.send(404, 'No data found');
+        return;
+      });
+    }
+  );
+
   /*
     send the actual ingested data to the platform
   */
