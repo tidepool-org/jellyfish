@@ -423,16 +423,6 @@ describe('schema/basal.js', function(){
           done(err);
         });
       });
-
-      it('passes through without rate if suppressed (and therefore suppressed.rate) absent', function(done){
-        var localGoodObject = _.omit(goodObject, ['rate', 'suppressed']);
-        helper.run(localGoodObject, function(err, obj) {
-          var expectedObject = _.omit(localGoodObject, 'previous');
-          expect(obj.rate).not.to.exist;
-          expect(_.pick(obj, Object.keys(expectedObject))).deep.equals(expectedObject);
-          done(err);
-        });
-      });
     });
 
     describe('duration', function(){
