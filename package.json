@@ -1,23 +1,12 @@
 {
   "name": "jellyfish",
-<<<<<<< HEAD
   "version": "0.4.0",
   "description": "Jellyfish are known for their user friendliness with uploads",
   "main": "app.js",
   "scripts": {
-    "start": "node app"
-=======
-  "version": "0.3.25",
-  "description": "Jellyfish are known for their user friendliness with uploads",
-  "main": "app.js",
-  "scripts": {
     "start": "node app",
-    "build": "npm run build-app && npm run build-config",
-    "build-app": "node buildapp",
-    "build-config": "node buildconfig",
     "jshint": "gulp jshint",
     "jshint-watch": "gulp jshint-watch"
->>>>>>> master
   },
   "directories": {
     "lib": "./lib"
