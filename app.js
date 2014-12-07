@@ -153,6 +153,17 @@ var jsonp = function(response) {
             return response.send(500, 'Error reading data file');
           }
 
+          var regex = /DEVICE DATA \((\d+?) records\)/i;
+          var match = regex.exec(data);
+
+          if(match && match.length) {
+            var records = parseInt(match[1]);
+
+            if(records === 0) {
+              return response.send(500, {error: 'norecords', message: 'No records where found for the last' + daysAgo + 'days', code: 204});
+            }
+          }
+
           return response.send(200, data);
         });
       });
