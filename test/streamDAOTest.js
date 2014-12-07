@@ -1,6 +1,21 @@
 /*
  * == BSD2 LICENSE ==
+ * Copyright (c) 2014, Tidepool Project
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the associated License, which is identical to the BSD 2-Clause
+ * License as published by the Open Source Initiative at opensource.org.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the License for more details.
+ * 
+ * You should have received a copy of the License along with this program; if
+ * not, you can obtain one from Tidepool Project at tidepool.org.
+ * == BSD2 LICENSE ==
  */
+
+ /* global describe, before, beforeEach, it, after */
 
 'use strict';
 
@@ -82,7 +97,7 @@ describe('streamDAO', function(){
         streamDAO.getDatum('abcde', 'g', function(err, datum){
           expect(datum).to.not.exist;
           return done(err);
-        })
+        });
       });
     });
 
@@ -124,7 +139,7 @@ describe('streamDAO', function(){
           return done(err);
         }
 
-        if (count == 0) {
+        if (count === 0) {
           ++count;
           return;
         }
@@ -157,7 +172,7 @@ describe('streamDAO', function(){
     ];
 
     beforeEach(function(done){
-      async.map(events, streamDAO.insertDatum, done)
+      async.map(events, streamDAO.insertDatum, done);
     });
 
     it('returns null if nothing before', function(done){
@@ -223,6 +238,6 @@ describe('streamDAO', function(){
           }
         );
       });
-    })
+    });
   });
 });

@@ -20,6 +20,20 @@ Start the development server with:
 $ npm start
 ```
 
+## JSHint
+
+Lint the files in this repo according to the local `.jshintric` with:
+
+```bash
+$ npm run jshint
+```
+
+Or have the linter watch your files as you work with:
+
+```bash
+$ npm run jshint-watch
+```
+
 ## Building the client
 
 The client app is built as a static site in the `dist/` directory.

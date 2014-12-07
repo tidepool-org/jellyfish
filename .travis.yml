@@ -3,4 +3,5 @@ node_js:
   - "0.10"
 services: mongodb
 script:
+- ./node_modules/.bin/gulp
 - ./node_modules/.bin/mocha test

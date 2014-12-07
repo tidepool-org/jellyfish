@@ -14,6 +14,7 @@
   not, you can obtain one from Tidepool Project at tidepool.org.
   == BSD2 LICENSE ==
  */
+'use strict';
 
 var hakken = require('hakken')({ host: 'localhost:8000' });
 var userApiClient = require('user-api-client');
