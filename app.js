@@ -160,7 +160,7 @@ var jsonp = function(response) {
             var records = parseInt(match[1]);
 
             if(records === 0) {
-              return response.send(500, {error: 'norecords', message: 'No records where found for the last' + daysAgo + 'days', code: 204});
+              return response.send(500, {error: 'norecords', message: 'No records where found for the given time period', code: 204});
             }
           }
 
