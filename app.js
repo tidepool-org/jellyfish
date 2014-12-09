@@ -152,18 +152,7 @@ var jsonp = function(response) {
             log.error('Error reading file', task.filePath);
             return response.send(500, 'Error reading data file');
           }
-
-          var regex = /DEVICE DATA \((\d+?) records\)/i;
-          var match = regex.exec(data);
-
-          if(match && match.length) {
-            var records = parseInt(match[1]);
-
-            if(records === 0) {
-              return response.send(500, {error: 'norecords', message: 'No records where found for the given time period', code: 204});
-            }
-          }
-
+          
           return response.send(200, data);
         });
       });
