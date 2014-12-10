@@ -154,7 +154,7 @@ var jsonp = function(response) {
             log.error('Error reading file', task.filePath);
             return response.send(500, 'Error reading data file');
           }
-
+          
           return response.send(200, data);
         });
       });
