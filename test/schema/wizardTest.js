@@ -23,6 +23,7 @@ var _ = require('lodash');
 var expect = require('salinity').expect;
 
 var helper = require('./schemaTestHelper.js');
+var schema = require('../../lib/schema')(exports.streamDAO);
 
 var goodObject = {
   type: 'wizard',
@@ -32,7 +33,8 @@ var goodObject = {
   source: 'manual',
   recommended: {
     carb: 4.0,
-    correction: 1.0
+    correction: 1.0,
+    net: 4.0
   },
   carbInput: 45,
   bgInput: 6.2,
@@ -229,6 +231,18 @@ describe('schema/wizard.js', function(){
   describe('recommended', function(){
     helper.rejectIfAbsent(goodObject, 'recommended');
     helper.expectObjectField(goodObject, 'recommended');
+
+    it.skip('contains only numerical fields', function(done){
+      var obj = _.cloneDeep(goodObject);
+      obj.recommended.carb = '1';
+      helper.expectRejection(obj, 'recommended', done);
+      obj.recommended.carb = goodObject.recommended.carb;
+      obj.recommended.correction = '2';
+      helper.expectRejection(obj, 'recommended', done);
+      obj.recommended.correction = goodObject.recommended.correction;
+      obj.recommended.net = '3';
+      helper.expectRejection(obj, 'recommended', done);
+    });
   });
 
   helper.testCommonFields(goodObject);
