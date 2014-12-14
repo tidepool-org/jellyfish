@@ -232,17 +232,17 @@ describe('schema/wizard.js', function(){
     helper.rejectIfAbsent(goodObject, 'recommended');
     helper.expectObjectField(goodObject, 'recommended');
 
-    it.skip('carb is a numeric field', function(done){
+    it('carb is a numeric field', function(done){
       var obj = _.cloneDeep(goodObject);
       obj.recommended.carb = '1';
       helper.expectRejection(obj, 'recommended', done);
     });
-    it.skip('correction is a numeric field', function(done){
+    it('correction is a numeric field', function(done){
       var obj = _.cloneDeep(goodObject);
       obj.recommended.correction = '2';
       helper.expectRejection(obj, 'recommended', done);
     });
-    it.skip('net is a numeric field', function(done){
+    it('net is a numeric field', function(done){
       var obj = _.cloneDeep(goodObject);
       obj.recommended.net = '3';
       helper.expectRejection(obj, 'recommended', done);
