@@ -234,19 +234,22 @@ var jsonp = function(response) {
     checkToken,
     function(req, res) {
       var token = req._sessionToken;
-      var deviceId = request.params.deviceId;
+      var deviceId = req.params.deviceId;
 
       if(_.isEmpty(token) || _.isEmpty(deviceId)){
-        return res.send(400, 'Expected a deviceId and a session token to be attached');
+        var errorMsg = 'Expected a deviceId and a session token to be attached';
+        log.error(errorMsg);
+        return res.send(400, errorMsg);
       }
 
       try{
         var generatedUploadId = misc.generateId([token, Date.now(), deviceId]);
+        res.send(200, {uploadId:generatedUploadId});
       }catch(error){
+        var errorMsg = 'Error trying to generate an upload session Id';
         log.error(error, errorMsg);
         res.send(500, errorMsg);
       }
-      res.send(200, {uploadId:generatedUploadId});
 
     }
   );
