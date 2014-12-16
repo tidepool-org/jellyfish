@@ -23,11 +23,13 @@ var async = require('async');
 var express = require('express');
 var path = require('path');
 var util = require('util');
+var _ = require('lodash');
 
 var except = require('amoeba').except;
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
+var misc = require('./lib/misc.js');
 
 var jsonp = function(response) {
   return function(error, data) {
@@ -154,7 +156,6 @@ var jsonp = function(response) {
             log.error('Error reading file', task.filePath);
             return response.send(500, 'Error reading data file');
           }
-          
           return response.send(200, data);
         });
       });
@@ -222,6 +223,31 @@ var jsonp = function(response) {
           }
         }
       );
+    }
+  );
+
+  /*
+    init the upload session by generating an upload record
+  */
+  app.get(
+    '/data/session/:deviceId',
+    checkToken,
+    function(req, res) {
+      var token = req._sessionToken;
+      var deviceId = request.params.deviceId;
+
+      if(_.isEmpty(token) || _.isEmpty(deviceId)){
+        return res.send(400, 'Expected a deviceId and a session token to be attached');
+      }
+
+      try{
+        var generatedUploadId = misc.generateId([token, Date.now(), deviceId]);
+      }catch(error){
+        log.error(error, errorMsg);
+        res.send(500, errorMsg);
+      }
+      res.send(200, {uploadId:generatedUploadId});
+
     }
   );
 
