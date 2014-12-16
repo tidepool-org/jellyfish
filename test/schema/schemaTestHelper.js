@@ -188,6 +188,13 @@ exports.testCommonFields = function(goodObject) {
     });
   });
 
+  describe('uploadId', function(){
+    exports.rejectIfAbsent(goodObject, 'uploadId');
+    it('rejects non-string uploadId', function(done){
+      exports.expectRejection(_.assign({}, goodObject, {uploadId: 1337}), 'uploadId', done);
+    });
+  });
+
   describe('source', function(){
     exports.rejectIfAbsent(goodObject, 'source');
     it('rejects non-string source', function(done){
