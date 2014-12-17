@@ -24,7 +24,7 @@ var expect = require('salinity').expect;
 var helper = require('./schemaTestHelper.js');
 
 var goodObject = {
-  type: 'uploadMeta',
+  type: 'upload',
   time: '2014-01-01T01:00:00.000Z',
   timezone: 'Pacific/Auckland',
   uploadId: '123-my-upload-id',
@@ -33,7 +33,7 @@ var goodObject = {
   deviceId: '123-my-upload-id'
 };
 
-describe('schema/uploadMeta.js', function(){
+describe('schema/upload.js', function(){
   describe('uploadId', function(){
     helper.rejectIfAbsent(goodObject, 'uploadId');
     helper.expectStringField(goodObject, 'uploadId');
