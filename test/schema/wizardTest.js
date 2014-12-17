@@ -1,15 +1,15 @@
 /*
  * == BSD2 LICENSE ==
  * Copyright (c) 2014, Tidepool Project
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the associated License, which is identical to the BSD 2-Clause
  * License as published by the Open Source Initiative at opensource.org.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the License for more details.
- * 
+ *
  * You should have received a copy of the License along with this program; if
  * not, you can obtain one from Tidepool Project at tidepool.org.
  * == BSD2 LICENSE ==
@@ -23,6 +23,7 @@ var _ = require('lodash');
 var expect = require('salinity').expect;
 
 var helper = require('./schemaTestHelper.js');
+var schema = require('../../lib/schema')(exports.streamDAO);
 
 var goodObject = {
   type: 'wizard',
@@ -33,7 +34,8 @@ var goodObject = {
   source: 'manual',
   recommended: {
     carb: 4.0,
-    correction: 1.0
+    correction: 1.0,
+    net: 4.0
   },
   carbInput: 45,
   bgInput: 6.2,
@@ -230,6 +232,22 @@ describe('schema/wizard.js', function(){
   describe('recommended', function(){
     helper.rejectIfAbsent(goodObject, 'recommended');
     helper.expectObjectField(goodObject, 'recommended');
+
+    it('carb is a numeric field', function(done){
+      var obj = _.cloneDeep(goodObject);
+      obj.recommended.carb = '1';
+      helper.expectRejection(obj, 'recommended', done);
+    });
+    it('correction is a numeric field', function(done){
+      var obj = _.cloneDeep(goodObject);
+      obj.recommended.correction = '2';
+      helper.expectRejection(obj, 'recommended', done);
+    });
+    it('net is a numeric field', function(done){
+      var obj = _.cloneDeep(goodObject);
+      obj.recommended.net = '3';
+      helper.expectRejection(obj, 'recommended', done);
+    });
   });
 
   helper.testCommonFields(goodObject);
