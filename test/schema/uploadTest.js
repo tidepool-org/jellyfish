@@ -30,6 +30,7 @@ var goodObject = {
   uploadId: '123-my-upload-id',
   byUser : '123-my-user-id',
   source: 'manual',
+  version: '0.86.0',
   deviceId: '123-my-upload-id'
 };
 
@@ -52,6 +53,11 @@ describe('schema/upload.js', function(){
   describe('time', function(){
     helper.rejectIfAbsent(goodObject, 'time');
     helper.expectStringField(goodObject, 'time');
+  });
+
+  describe('version', function(){
+    helper.rejectIfAbsent(goodObject, 'version');
+    helper.expectStringField(goodObject, 'version');
   });
 
   describe('source', function(){
