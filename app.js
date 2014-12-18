@@ -1,15 +1,15 @@
 /*
  * == BSD2 LICENSE ==
  * Copyright (c) 2014, Tidepool Project
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the associated License, which is identical to the BSD 2-Clause
  * License as published by the Open Source Initiative at opensource.org.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the License for more details.
- * 
+ *
  * You should have received a copy of the License along with this program; if
  * not, you can obtain one from Tidepool Project at tidepool.org.
  * == BSD2 LICENSE ==
@@ -24,7 +24,10 @@ var express = require('express');
 var path = require('path');
 var util = require('util');
 
-var except = require('amoeba').except;
+var amoeba = require('amoeba');
+var except = amoeba.except;
+var lifecycle = amoeba.lifecycle();
+var httpClient = amoeba.httpClient();
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
@@ -42,6 +45,7 @@ var jsonp = function(response) {
 
 (function(){
   var hakken = require('hakken')(config.discovery, log).client();
+  lifecycle.add('hakken', hakken);
 
   var userApiWatch = hakken.watchFromConfig(config.userApi.serviceSpec);
   var seagullWatch = hakken.watchFromConfig(config.seagull.serviceSpec);
@@ -52,6 +56,11 @@ var jsonp = function(response) {
   var userApiClientLibrary = require('user-api-client');
   var userApiClient = userApiClientLibrary.client(config.userApi, userApiWatch);
   var seagullClient = require('tidepool-seagull-client')(seagullWatch);
+  var gatekeeperClient = require('tidepool-gatekeeper').client(
+    httpClient,
+    userApiClient.withServerToken.bind(userApiClient),
+    lifecycle.add('gatekeeper-watch', hakken.watchFromConfig(config.gatekeeper.serviceSpec))
+  );
 
   var middleware = userApiClientLibrary.middleware;
   var checkToken = middleware.expressify(middleware.checkToken(userApiClient));
@@ -93,7 +102,7 @@ var jsonp = function(response) {
   });
 
   /*
-    used to process the carelink form data, now that is just for uploading and processing of the carelink csv
+    used to process the caarelink form data, now that is just for uploading and processing of the carelink csv
   */
   app.post(
     '/v1/device/upload/cl',
@@ -154,7 +163,7 @@ var jsonp = function(response) {
             log.error('Error reading file', task.filePath);
             return response.send(500, 'Error reading data file');
           }
-          
+
           return response.send(200, data);
         });
       });
@@ -165,8 +174,9 @@ var jsonp = function(response) {
     send the actual ingested data to the platform
   */
   app.post(
-    '/data',
+    '/data/?:groupId?',
     checkToken,
+
     function(req, res) {
       var userid = req._tokendata.userid;
 
@@ -176,15 +186,44 @@ var jsonp = function(response) {
         return res.send(400, util.format('Expect an object body, got[%s]', typeof(array)));
       }
 
-      if (! Array.isArray(array)) {
+      if (!Array.isArray(array)) {
         array = [array];
       }
 
       var count = 0;
       var duplicates = [];
+
       async.waterfall(
-        [
-          lookupGroupId.bind(null, userid),
+        [function(cb) {
+            if (!req.params.groupId) {
+              cb(null, userid);
+              return;
+            }
+
+            gatekeeperClient.groupsForUser(userid, function(err, groups) {
+              if (err) {
+                cb(err);
+                return;
+              }
+
+              for (var id in groups) {
+                var group = groups[id];
+
+                if (id === req.params.groupId && (group.upload || group.root)) {
+                  cb(null, id);
+                  return;
+                }
+              }
+
+              cb({
+                statusCode: 500,
+                message: 'Looks like you dont have rights to upload to that account.'
+              });
+            });
+          },
+          function(id, cb) {
+            lookupGroupId(id, cb);
+          },
           function(groupId, cb) {
             async.mapSeries(
               array,
@@ -214,7 +253,8 @@ var jsonp = function(response) {
               err.reason = err.message;
               res.send(err.statusCode, err);
             } else {
-              log.warn(err, 'Problem uploading for user[%s].', userid);
+              var groupMessage = req.params.groupId ? ('To group[' + req.params.groupId + ']') : '';
+              log.warn(err, 'Problem uploading for user[%s]. %s', userid, groupMessage);
               res.send(500);
             }
           } else {
