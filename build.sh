@@ -27,4 +27,4 @@ echo "npm install completed"
 
 
 # ./node_modules/.bin/mocha test
-NODE_ENV=production npm run build-app
+# NODE_ENV=production npm run build-app

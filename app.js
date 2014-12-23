@@ -23,11 +23,13 @@ var async = require('async');
 var express = require('express');
 var path = require('path');
 var util = require('util');
+var _ = require('lodash');
 
 var except = require('amoeba').except;
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
+var misc = require('./lib/misc.js');
 
 var jsonp = function(response) {
   return function(error, data) {
@@ -60,7 +62,7 @@ var jsonp = function(response) {
   mongoClient.start();
 
   var tasks = require('./lib/tasks.js')(mongoClient);
-  var uploadFlow = require('./lib/uploadFlow.js')({ storageDir: config.tempStorage }, tasks);
+  var carelinkUploadFlow = require('./lib/carelinkUploadFlow.js')({ storageDir: config.tempStorage }, tasks);
   var dataBroker = require('./lib/dataBroker.js')(require('./lib/streamDAO.js')(mongoClient));
 
   function lookupGroupId(userid, callback) {
@@ -92,8 +94,11 @@ var jsonp = function(response) {
     response.send(200, 'OK');
   });
 
+  /*
+    used to process the carelink form data, now that is just for uploading and processing of the carelink csv
+  */
   app.post(
-    '/v1/device/upload',
+    '/v1/device/upload/cl',
     checkToken,
     function(req, res) {
       lookupGroupId(req._tokendata.userid, function(err, groupId) {
@@ -112,7 +117,8 @@ var jsonp = function(response) {
           res.send(503);
           return;
         }
-        uploadFlow.ingest(req, { groupId: groupId }, jsonp(res));
+        //get the form then
+        carelinkUploadFlow.ingest(req, { groupId: groupId }, jsonp(res));
       });
     }
   );
@@ -127,6 +133,38 @@ var jsonp = function(response) {
     }
   );
 
+  app.get(
+    '/v1/device/data/:id',
+    checkToken,
+    function(request, response) {
+      tasks.get(request.params.id, function(err, task){
+        if (err) {
+          return response.send(500, 'Error getting sync task');
+        }
+
+        if (!task) {
+          return response.send(404, 'No sync task found');
+        }
+
+        if (!task.filePath){
+          log.warn('Task did not have a file', task);
+          return response.send(404, 'No data file for sync task');
+        }
+
+        fs.readFile(task.filePath, function(err, data) {
+          if (err) {
+            log.error('Error reading file', task.filePath);
+            return response.send(500, 'Error reading data file');
+          }
+          return response.send(200, data);
+        });
+      });
+    }
+  );
+
+  /*
+    send the actual ingested data to the platform
+  */
   app.post(
     '/data',
     checkToken,
@@ -187,14 +225,6 @@ var jsonp = function(response) {
       );
     }
   );
-
-  var webClient = require('./lib/webclient.js');
-  if (config.serveStatic != null) {
-    webClient.setupForProduction(app);
-  }
-  else {
-    webClient.setupForDevelopment(app);
-  }
 
   process.on('uncaughtException', function(err){
     log.error(err, 'Uncaught exception bubbled all the way up!');
