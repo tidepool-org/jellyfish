@@ -190,7 +190,7 @@ var jsonp = function(response) {
           // we need to delete old carelink data first
           function(groupId, cb) {
             dataBroker.maybeDeleteOldCarelinkData(array, function() {
-              cb(groupId);
+              cb(null, groupId);
             });
           },
           function(groupId, cb) {
