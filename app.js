@@ -189,7 +189,7 @@ var jsonp = function(response) {
           // if there are records with source: 'carelink' in the dataset,
           // we need to delete old carelink data first
           function(groupId, cb) {
-            dataBroker.maybeDeleteOldCarelinkData(array, function() {
+            dataBroker.maybeDeleteOldCarelinkData(groupId, array, function() {
               cb(null, groupId);
             });
           },
