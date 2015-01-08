@@ -23,6 +23,7 @@ var async = require('async');
 var express = require('express');
 var path = require('path');
 var util = require('util');
+var _ = require('lodash');
 
 var amoeba = require('amoeba');
 var except = amoeba.except;
@@ -31,6 +32,7 @@ var httpClient = amoeba.httpClient();
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
+var misc = require('./lib/misc.js');
 
 var jsonp = function(response) {
   return function(error, data) {
@@ -163,7 +165,6 @@ var jsonp = function(response) {
             log.error('Error reading file', task.filePath);
             return response.send(500, 'Error reading data file');
           }
-
           return response.send(200, data);
         });
       });
@@ -176,7 +177,6 @@ var jsonp = function(response) {
   app.post(
     '/data/?:groupId?',
     checkToken,
-
     function(req, res) {
       var userid = req._tokendata.userid;
 
@@ -223,6 +223,13 @@ var jsonp = function(response) {
           },
           function(id, cb) {
             lookupGroupId(id, cb);
+          },
+          // if there are records with source: 'carelink' in the dataset,
+          // we need to delete old carelink data first
+          function(groupId, cb) {
+            dataBroker.maybeDeleteOldCarelinkData(groupId, array, function() {
+              cb(null, groupId);
+            });
           },
           function(groupId, cb) {
             async.mapSeries(

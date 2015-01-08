@@ -75,8 +75,6 @@ module.exports = (function () {
    * Known types are 'local' and 'sandcastle'.
    *
    * 'local' is the default and just stores files locally
-   * 'sandcastle' connects up with sandcastle and takes a `serviceSpec` parameter which is passed through
-   *   to hakken to create a service watch.
    */
   env.storage = JSON.parse(config.fromEnvironment("FILE_STORAGE", '{ "type": "local", "storageDir":"./data" }'));
 

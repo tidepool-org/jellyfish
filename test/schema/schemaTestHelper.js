@@ -1,15 +1,15 @@
 /*
  * == BSD2 LICENSE ==
  * Copyright (c) 2014, Tidepool Project
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the associated License, which is identical to the BSD 2-Clause
  * License as published by the Open Source Initiative at opensource.org.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the License for more details.
- * 
+ *
  * You should have received a copy of the License along with this program; if
  * not, you can obtain one from Tidepool Project at tidepool.org.
  * == BSD2 LICENSE ==
@@ -70,7 +70,7 @@ exports.okIfAbsent = function(goodObject, field) {
 };
 
 exports.expectNotNumberField = function(goodObject, field) {
-  it('rejects numerical value', function(done){
+  it('rejects numeric value', function(done){
     var toAdjust = {};
     toAdjust[field] = 1;
     exports.expectRejection(_.assign({}, goodObject, toAdjust), field, done);
@@ -185,6 +185,13 @@ exports.testCommonFields = function(goodObject) {
     exports.rejectIfAbsent(goodObject, 'deviceId');
     it('rejects non-string deviceId', function(done){
       exports.expectRejection(_.assign({}, goodObject, {deviceId: 1337}), 'deviceId', done);
+    });
+  });
+
+  describe('uploadId', function(){
+    exports.rejectIfAbsent(goodObject, 'uploadId');
+    it('rejects non-string uploadId', function(done){
+      exports.expectRejection(_.assign({}, goodObject, {uploadId: 1337}), 'uploadId', done);
     });
   });
 

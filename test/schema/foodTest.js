@@ -29,6 +29,7 @@ var goodObject = {
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
   deviceId: 'test',
+  uploadId: 'test',
   source: 'manual',
   carbs: 73,
   _groupId: 'g'

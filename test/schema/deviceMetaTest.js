@@ -39,6 +39,7 @@ describe('schema/deviceMeta.js', function(){
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
+      uploadId: 'test',
       source: 'manual',
       _groupId: 'g'
     };
@@ -84,6 +85,7 @@ describe('schema/deviceMeta.js', function(){
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
+      uploadId: 'test',
       source: 'manual',
       _groupId: 'g'
     };
@@ -96,6 +98,7 @@ describe('schema/deviceMeta.js', function(){
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
+      uploadId: 'test',
       source: 'manual',
       _groupId: 'g'
     };
@@ -108,6 +111,7 @@ describe('schema/deviceMeta.js', function(){
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
+      uploadId: 'test',
       source: 'manual',
       _groupId: 'g'
     };
