@@ -23,6 +23,7 @@ var async = require('async');
 var express = require('express');
 var path = require('path');
 var util = require('util');
+var _ = require('lodash');
 
 var amoeba = require('amoeba');
 var except = amoeba.except;
@@ -31,6 +32,7 @@ var httpClient = amoeba.httpClient();
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
+var misc = require('./lib/misc.js');
 
 var jsonp = function(response) {
   return function(error, data) {
@@ -194,7 +196,8 @@ var jsonp = function(response) {
       var duplicates = [];
 
       async.waterfall(
-        [function(cb) {
+        [
+          function(cb) {
             if (!req.params.groupId) {
               cb(null, userid);
               return;
@@ -223,6 +226,13 @@ var jsonp = function(response) {
           },
           function(id, cb) {
             lookupGroupId(id, cb);
+          },
+          // if there are records with source: 'carelink' in the dataset,
+          // we need to delete old carelink data first
+          function(groupId, cb) {
+            dataBroker.maybeDeleteOldCarelinkData(groupId, array, function() {
+              cb(null, groupId);
+            });
           },
           function(groupId, cb) {
             async.mapSeries(

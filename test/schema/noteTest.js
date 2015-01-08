@@ -36,6 +36,7 @@ var goodObject = {
   timezoneOffset: 120,
   displayTime: '2014-01-01T07:00:00.000Z',
   deviceId: 'test',
+  uploadId: 'test',
   source: 'manual',
   _groupId: 'g',
   shortText: '1234',
@@ -48,6 +49,7 @@ var reference = {
   time: '2013-11-27T17:00:00.000Z',
   timezoneOffset: 120,
   deviceId: 'test',
+  uploadId: 'test',
   source: 'manual',
   value: 1.12,
   _groupId: 'g'
