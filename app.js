@@ -104,7 +104,7 @@ var jsonp = function(response) {
   });
 
   /*
-    used to process the caarelink form data, now that is just for uploading and processing of the carelink csv
+    used to process the carelink form data, now that is just for uploading and processing of the carelink csv
   */
   app.post(
     '/v1/device/upload/cl',
@@ -122,7 +122,7 @@ var jsonp = function(response) {
         }
 
         if (groupId == null) {
-          log.warn('Unable to get hashPair, something is broken...');
+          log.warn('Unable to get hashPair; something is broken...');
           res.send(503);
           return;
         }
@@ -165,7 +165,6 @@ var jsonp = function(response) {
             log.error('Error reading file', task.filePath);
             return response.send(500, 'Error reading data file');
           }
-
           return response.send(200, data);
         });
       });
@@ -178,14 +177,13 @@ var jsonp = function(response) {
   app.post(
     '/data/?:groupId?',
     checkToken,
-
     function(req, res) {
       var userid = req._tokendata.userid;
 
       var array = req.body;
 
       if (typeof(array) !== 'object') {
-        return res.send(400, util.format('Expect an object body, got[%s]', typeof(array)));
+        return res.send(400, util.format('Expected an object body, got[%s]', typeof(array)));
       }
 
       if (!Array.isArray(array)) {
@@ -220,7 +218,7 @@ var jsonp = function(response) {
 
               cb({
                 statusCode: 500,
-                message: 'Looks like you dont have rights to upload to that account.'
+                message: 'You don\'t have rights to upload to that account.'
               });
             });
           },
