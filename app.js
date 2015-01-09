@@ -196,23 +196,24 @@ var jsonp = function(response) {
       async.waterfall(
         [
           function(cb) {
+            // if no groupId was specified, just continue to upload for the
+            // connected user
             if (!req.params.groupId) {
-              cb(null, userid);
-              return;
+              return cb(null, userid);
             }
 
+            // get the groups for the logged-in user
             gatekeeperClient.groupsForUser(userid, function(err, groups) {
               if (err) {
-                cb(err);
-                return;
+                return cb(err);
               }
 
+              // and check them all to see if we have upload permissions
               for (var id in groups) {
                 var group = groups[id];
 
                 if (id === req.params.groupId && (group.upload || group.root)) {
-                  cb(null, id);
-                  return;
+                  return cb(null, id);
                 }
               }
 
