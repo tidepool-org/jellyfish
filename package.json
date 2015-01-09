@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node app",
     "jshint": "gulp jshint",
-    "jshint-watch": "gulp jshint-watch"
+    "jshint-watch": "gulp jshint-watch",
+    "build": "npm install"
   },
   "directories": {
     "lib": "./lib"
