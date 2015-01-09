@@ -209,22 +209,22 @@ var jsonp = function(response) {
               }
 
               // and check them all to see if we have upload permissions
-              for (var id in groups) {
-                var group = groups[id];
+              for (var groupId in groups) {
+                var perms = groups[groupId];
 
-                if (id === req.params.groupId && (group.upload || group.root)) {
-                  return cb(null, id);
+                if (groupId === req.params.groupId && (perms.upload || perms.root)) {
+                  return cb(null, groupId);
                 }
               }
 
               cb({
-                statusCode: 500,
+                statusCode: 403,
                 message: 'You don\'t have rights to upload to that account.'
               });
             });
           },
-          function(id, cb) {
-            lookupGroupId(id, cb);
+          function(groupId, cb) {
+            lookupGroupId(groupId, cb);
           },
           // if there are records with source: 'carelink' in the dataset,
           // we need to delete old carelink data first
