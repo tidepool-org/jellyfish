@@ -41,7 +41,6 @@ describe('schema/bolus.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual',
       _groupId: 'g'
     };
 
@@ -82,7 +81,6 @@ describe('schema/bolus.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual',
       _groupId: 'g'
     };
     var objId = schema.makeId(goodObject);
@@ -152,7 +150,6 @@ describe('schema/bolus.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual',
       _groupId: 'g'
     };
     var objId = schema.makeId(goodObject);
@@ -264,7 +261,6 @@ describe('schema/bolus.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual',
       _groupId: 'g'
     };
     var objId = schema.makeId(goodObject);

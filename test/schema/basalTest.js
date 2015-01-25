@@ -42,7 +42,6 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual',
       _groupId: 'g'
     };
 
@@ -97,7 +96,6 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual'
     };
 
     var previousCutShort = {
@@ -110,7 +108,6 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual'
     };
 
     var goodObject = {
@@ -123,7 +120,6 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual',
       _groupId: 'g',
       previous: previousMatches
     };
@@ -269,7 +265,6 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual'
     };
 
     var previousCutShort = {
@@ -282,7 +277,6 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual'
     };
 
     var goodObject = {
@@ -293,7 +287,6 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual',
       _groupId: 'g',
       previous: previousMatches,
       suppressed: previousCutShort
@@ -389,7 +382,6 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual'
     };
 
     var previousCutShort = {
@@ -402,7 +394,6 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual'
     };
 
     var goodObject = {
@@ -415,7 +406,6 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual',
       _groupId: 'g',
       previous: previousMatches,
       suppressed: previousCutShort

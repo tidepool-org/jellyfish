@@ -8,7 +8,6 @@
     "rate": 1.0,
     "deviceId": "tools",
     "uploadId": "tools",
-    "source": "tools",
     "_active": true,
     "_version": 0,
     "id": "2f5hmegkt9gv29kk6fnl86justpvbn6k"
@@ -20,7 +19,6 @@
     "scheduleName": "Standard",
     "duration": 21600000,
     "rate": 2.0,
-    "source": "tools",
     "deviceId": "tools",
     "uploadId": "tools",
     "_active": false,
@@ -35,7 +33,6 @@
     "duration": 10800000,
     "expectedDuration": 21600000,
     "rate": 2.0,
-    "source": "tools",
     "deviceId": "tools",
     "uploadId": "tools",
     "_active": true,
@@ -57,10 +54,8 @@
       "duration": 21600000,
       "rate": 2,
       "deviceId": "tools",
-      "uploadId": "tools",
-      "source": "tools"
+      "uploadId": "tools"
     },
-    "source": "tools",
     "deviceId": "tools",
     "uploadId": "tools",
     "_active": false,
@@ -83,10 +78,8 @@
       "duration": 21600000,
       "rate": 2,
       "deviceId": "tools",
-      "uploadId": "tools",
-      "source": "tools"
+      "uploadId": "tools"
     },
-    "source": "tools",
     "deviceId": "tools",
     "uploadId": "tools",
     "_active": true,
@@ -107,11 +100,9 @@
       "scheduleName": "Standard",
       "duration": 21600000,
       "rate": 1.0,
-      "source": "tools",
       "deviceId": "tools",
       "uploadId": "tools"
     },
-    "source": "tools",
     "deviceId": "tools",
     "uploadId": "tools",
     "_active": true,
@@ -125,7 +116,6 @@
     "scheduleName": "Standard",
     "duration": 21600000,
     "rate": 1.0,
-    "source": "tools",
     "deviceId": "tools",
     "uploadId": "tools",
     "_active": false,
@@ -146,7 +136,6 @@
         "nextId": "ac629uvtvrn0cj10hfmde8bqpq57glgr"
       }
     ],
-    "source": "tools",
     "deviceId": "tools",
     "uploadId": "tools",
     "_active": true,
@@ -160,7 +149,6 @@
     "scheduleName": "Standard",
     "duration": 18000000,
     "rate": 2.0,
-    "source": "tools",
     "deviceId": "tools",
     "uploadId": "tools",
     "_active": true,

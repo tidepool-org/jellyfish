@@ -30,7 +30,6 @@ var goodObject = {
   timezoneOffset: 120,
   deviceId: 'test',
   uploadId: 'test',
-  source: 'manual',
   "activeSchedule": "standard",
   "units": {
     "carb": "grams",
