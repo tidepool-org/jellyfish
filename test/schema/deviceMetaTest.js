@@ -40,7 +40,6 @@ describe('schema/deviceMeta.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual',
       _groupId: 'g'
     };
 
@@ -86,7 +85,6 @@ describe('schema/deviceMeta.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual',
       _groupId: 'g'
     };
 
@@ -99,7 +97,6 @@ describe('schema/deviceMeta.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual',
       _groupId: 'g'
     };
 
@@ -112,7 +109,6 @@ describe('schema/deviceMeta.js', function(){
       timezoneOffset: 120,
       deviceId: 'test',
       uploadId: 'test',
-      source: 'manual',
       _groupId: 'g'
     };
 

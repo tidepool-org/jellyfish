@@ -8,7 +8,6 @@
     "duration": 21600000,
     "deviceId": "tools",
     "uploadId": "tools",
-    "source": "tools",
     "previous": {
       "time": "2014-06-10T18:00:00.000Z",
       "type": "basal",
@@ -17,8 +16,7 @@
       "rate": 2.0,
       "duration": 21600000,
       "deviceId": "tools",
-      "uploadId": "tools",
-      "source": "tools"
+      "uploadId": "tools"
     }
   },
   {
@@ -30,7 +28,6 @@
     "duration": 21600000,
     "deviceId": "tools",
     "uploadId": "tools",
-    "source": "tools",
     "previous": {
       "time": "2014-06-11T00:00:00.000Z",
       "type": "basal",
@@ -39,8 +36,7 @@
       "rate": 2.0,
       "duration": 21600000,
       "deviceId": "tools",
-      "uploadId": "tools",
-      "source": "tools"
+      "uploadId": "tools"
     }
   },
   {
@@ -51,7 +47,6 @@
     "duration": 21600000,
     "deviceId": "tools",
     "uploadId": "tools",
-    "source": "tools",
     "suppressed": {
       "time": "2014-06-11T06:00:00.000Z",
       "type": "basal",
@@ -60,8 +55,7 @@
       "rate": 2.0,
       "duration": 21600000,
       "deviceId": "tools",
-      "uploadId": "tools",
-      "source": "tools"
+      "uploadId": "tools"
     },
     "previous": "fgvks5t7urvk8c8v35r66diabrn3v2n3"
   },
@@ -73,7 +67,6 @@
     "duration": 10800000,
     "deviceId": "tools",
     "uploadId": "tools",
-    "source": "tools",
     "suppressed": {
       "time": "2014-06-11T12:00:00.000Z",
       "type": "basal",
@@ -82,8 +75,7 @@
       "rate": 1.0,
       "duration": 21600000,
       "deviceId": "tools",
-      "uploadId": "tools",
-      "source": "tools"
+      "uploadId": "tools"
     },
     "previous": {
       "time": "2014-06-11T09:00:00.000Z",
@@ -92,8 +84,7 @@
       "percent": 0.5,
       "duration": 21600000,
       "deviceId": "tools",
-      "uploadId": "tools",
-      "source": "tools"
+      "uploadId": "tools"
     }
   },
   {
@@ -105,7 +96,6 @@
     "duration": 21600000,
     "deviceId": "tools",
     "uploadId": "tools",
-    "source": "tools",
     "previous": {
       "time": "2014-06-11T12:00:00.000Z",
       "type": "basal",
@@ -113,8 +103,7 @@
       "percent": 0.5,
       "duration": 10800000,
       "deviceId": "tools",
-      "uploadId": "tools",
-      "source": "tools"
+      "uploadId": "tools"
     }
   },
   {
@@ -126,7 +115,6 @@
     "duration": 18000000,
     "deviceId": "tools",
     "uploadId": "tools",
-    "source": "tools",
     "previous": {
       "time": "2014-06-11T16:00:00.000Z",
       "type": "basal",
@@ -135,8 +123,7 @@
       "rate": 1.0,
       "duration": 21600000,
       "deviceId": "tools",
-      "uploadId": "tools",
-      "source": "tools"
+      "uploadId": "tools"
     }
   }
 ]

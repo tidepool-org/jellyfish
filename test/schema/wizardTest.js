@@ -31,7 +31,6 @@ var goodObject = {
   timezoneOffset: 120,
   deviceId: 'test',
   uploadId: 'test',
-  source: 'manual',
   recommended: {
     carb: 4.0,
     correction: 1.0,
