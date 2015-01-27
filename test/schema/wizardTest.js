@@ -229,7 +229,7 @@ describe('schema/wizard.js', function(){
   });
 
   describe('recommended', function(){
-    helper.rejectIfAbsent(goodObject, 'recommended');
+    helper.okIfAbsent(goodObject, 'recommended');
     helper.expectObjectField(goodObject, 'recommended');
 
     it('carb is a numeric field', function(done){
