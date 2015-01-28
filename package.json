@@ -22,7 +22,7 @@
   },
   "author": "Tidepool contributors",
   "dependencies": {
-    "amoeba": "0.0.8",
+    "amoeba": "0.1.1",
     "async": "0.2.9",
     "bunyan": "0.22.1",
     "busboy": "0.0.14",
