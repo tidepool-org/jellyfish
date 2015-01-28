@@ -15,30 +15,34 @@
  * == BSD2 LICENSE ==
  */
 
+ /* global describe, before, beforeEach, it, after */
+
 'use strict';
 
-function attachSchemas(schemas) {
-  for (var i = 1; i < arguments.length; ++i) {
-    schemas[arguments[i].key] = arguments[i];
-  }
-  return schemas;
-}
+var _ = require('lodash');
+var expect = require('salinity').expect;
 
-module.exports = function(streamDAO) {
-  return attachSchemas(
-    {},
-    require('./basal.js')(streamDAO),
-    require('./bloodKetone.js'),
-    require('./bolus.js')(streamDAO),
-    require('./cbg.js'),
-    require('./deviceMeta.js')(streamDAO),
-    require('./food.js'),
-    require('./grabbag.js'),
-    require('./note.js')(streamDAO),
-    require('./smbg.js'),
-    require('./settings.js'),
-    require('./upload.js'),
-    require('./urineKetone.js'),
-    require('./wizard.js')
-  );
+var helper = require('./schemaTestHelper.js');
+
+var goodObject = {
+  type: 'urineKetone',
+  time: '2014-01-01T01:00:00.000Z',
+  timezoneOffset: 120,
+  deviceId: 'test',
+  uploadId: 'test',
+  value: 'small',
+  _groupId: 'g'
 };
+
+describe('schema/urineKetone.js', function(){
+  describe('value', function(){
+    helper.rejectIfAbsent(goodObject, 'value');
+    helper.expectStringField(goodObject, 'value');
+
+    it('rejects a `foo` value', function(done){
+      helper.expectRejection(_.assign({}, goodObject, {value: 'foo'}), 'value', done);
+    });
+  });
+
+  helper.testCommonFields(goodObject);
+});
