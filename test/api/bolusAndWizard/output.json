@@ -1,6 +1,6 @@
 [
   { "time": "2014-06-11T11:20:00.703Z", "type": "bolus", "subType": "normal", "normal": 2.5, "deviceId": "tools", "uploadId": "tools", "source": "tools", "_active": false, "_version": 0, "id": "ddrucd8457tlt6hjebeoatc5qa5o2d8r" },
   { "time": "2014-06-11T11:20:00.703Z", "type": "bolus", "subType": "normal", "normal": 1.5, "expectedNormal": 2.5, "deviceId": "tools", "uploadId": "tools", "source": "tools", "_active": true, "_version": 1, "id": "ddrucd8457tlt6hjebeoatc5qa5o2d8r" },
-  { "time": "2014-06-11T18:00:00.000Z", "type": "wizard", "recommended": { "carb": 3, "correction": 0.5 }, "bgInput": 122, "carbInput": 40, "insulinOnBoard": 0.8, "payload": { "someValue": 1234 }, "bolus": "4tk1v85lgkb29641a7ltfo1skfiu4kbm", "deviceId": "tools", "uploadId": "tools", "source": "tools", "_active": true, "_version": 0, "id": "3mad7q9nl7k1pl9n597od5bhp1v82je9" },
+  { "time": "2014-06-11T18:00:00.000Z", "type": "wizard", "recommended": { "carb": 3, "correction": 0.5 }, "bgInput": 6.771912549075551, "units": "mg/dL", "carbInput": 40, "insulinOnBoard": 0.8, "payload": { "someValue": 1234 }, "bolus": "4tk1v85lgkb29641a7ltfo1skfiu4kbm", "deviceId": "tools", "uploadId": "tools", "source": "tools", "_active": true, "_version": 0, "id": "3mad7q9nl7k1pl9n597od5bhp1v82je9" },
   { "time": "2014-06-11T18:00:00.000Z", "type": "bolus", "subType": "normal", "normal": 3.5, "deviceId": "tools", "uploadId": "tools", "source": "tools", "_active": true, "_version": 0, "id": "4tk1v85lgkb29641a7ltfo1skfiu4kbm" }
 ]

@@ -32,6 +32,7 @@ var goodObject = {
   uploadId: 'test',
   value: 1.12,
   isig: 24.37,
+  units: 'mg/dL',
   _groupId: 'g'
 };
 
@@ -45,6 +46,11 @@ describe('schema/cbg.js', function(){
   describe('isig', function(){
     helper.okIfAbsent(goodObject, 'isig');
     helper.expectNumericalField(goodObject, 'isig');
+  });
+
+  describe('units', function(){
+    helper.rejectIfAbsent(goodObject, 'units');
+    helper.expectStringField(goodObject, 'units');
   });
 
   helper.testCommonFields(goodObject);

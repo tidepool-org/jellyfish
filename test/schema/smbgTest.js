@@ -33,14 +33,20 @@ var goodObject = {
   deviceId: 'test',
   uploadId: 'test',
   value: 1.12,
+  units: 'mg/dL',
   _groupId: 'g'
 };
 
-describe('schema/cbg.js', function(){
+describe('schema/smbg.js', function(){
   describe('value', function(){
     helper.rejectIfAbsent(goodObject, 'value');
     helper.expectNumericalField(goodObject, 'value');
     helper.expectUnitConversion(goodObject, 'value');
+  });
+
+  describe('units', function(){
+    helper.rejectIfAbsent(goodObject, 'units');
+    helper.expectStringField(goodObject, 'units');
   });
 
   helper.testCommonFields(goodObject);
