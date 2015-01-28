@@ -31,7 +31,7 @@
     "in-d-gestion": "0.4.1",
     "lodash": "2.4.1",
     "moment": "2.4.0",
-    "mongodb": "1.4.0",
+    "mongodb": "1.4.29",
     "request": "2.33.0",
     "rx": "2.2.13",
     "sundial": "0.1.6",
