@@ -30,7 +30,6 @@ var goodObject = {
   timezoneOffset: 120,
   deviceId: 'test',
   uploadId: 'test',
-  source: 'manual',
   value: 1.12,
   isig: 24.37,
   _groupId: 'g'

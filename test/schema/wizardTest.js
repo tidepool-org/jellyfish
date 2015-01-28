@@ -31,7 +31,6 @@ var goodObject = {
   timezoneOffset: 120,
   deviceId: 'test',
   uploadId: 'test',
-  source: 'manual',
   recommended: {
     carb: 4.0,
     correction: 1.0,
@@ -230,7 +229,7 @@ describe('schema/wizard.js', function(){
   });
 
   describe('recommended', function(){
-    helper.rejectIfAbsent(goodObject, 'recommended');
+    helper.okIfAbsent(goodObject, 'recommended');
     helper.expectObjectField(goodObject, 'recommended');
 
     it('carb is a numeric field', function(done){
