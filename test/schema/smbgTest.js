@@ -43,5 +43,16 @@ describe('schema/cbg.js', function(){
     helper.expectUnitConversion(goodObject, 'value');
   });
 
+  describe('subType', function(){
+    var withSubType = _.assign({}, goodObject, {subType: ''});
+    helper.okIfAbsent(goodObject, 'subType');
+    helper.expectStringField(withSubType, 'subType');
+
+    it('rejects `foo` value', function(done){
+      withSubType.subType = 'foo';
+      helper.expectRejection(withSubType, 'subType', done);
+    });
+  });
+
   helper.testCommonFields(goodObject);
 });
