@@ -1,15 +1,15 @@
 /*
  * == BSD2 LICENSE ==
  * Copyright (c) 2014, Tidepool Project
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the associated License, which is identical to the BSD 2-Clause
  * License as published by the Open Source Initiative at opensource.org.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the License for more details.
- * 
+ *
  * You should have received a copy of the License along with this program; if
  * not, you can obtain one from Tidepool Project at tidepool.org.
  * == BSD2 LICENSE ==
@@ -123,6 +123,7 @@ describe('schema/deviceMeta.js', function(){
     describe('status', function(){
       helper.rejectIfAbsent(goodObject, 'status');
       helper.expectStringField(goodObject, 'status');
+      helper.expectFieldIn(goodObject, 'status', ['suspended', 'resumed']);
 
       it('allows suspended', function(done){
         helper.run(_.assign({}, goodObject, {status: 'suspended'}), done);
@@ -138,31 +139,14 @@ describe('schema/deviceMeta.js', function(){
       helper.rejectIfAbsent(goodObject, 'reason');
       helper.expectStringField(goodObject, 'reason');
 
-      function allowsReason(obj, reason) {
-        it(util.format('allows %s', reason), function(done){
-          helper.run(_.assign({}, obj, {reason: reason}), done);
-        });
-      }
-
       describe('when resumed', function(){
         var localGoodObject = _.assign({}, goodObject, {status: 'resumed'});
-        allowsReason(localGoodObject, 'manual');
-        allowsReason(localGoodObject, 'automatic');
-
-        it('rejects other', function(done){
-          helper.expectRejection(_.assign({}, localGoodObject, {reason: 'other'}), 'reason', done);
-        });
+        helper.expectFieldIn(localGoodObject, 'reason', ['manual', 'automatic']);
       });
 
       describe('when suspended', function(){
         var localGoodObject = _.assign({}, goodObject, {status: 'suspended'});
-        allowsReason(localGoodObject, 'manual');
-        allowsReason(localGoodObject, 'low_glucose');
-        allowsReason(localGoodObject, 'alarm');
-
-        it('rejects other', function(done){
-          helper.expectRejection(_.assign({}, localGoodObject, {reason: 'other'}), 'reason', done);
-        });
+        helper.expectFieldIn(localGoodObject, 'reason', ['manual', 'low_glucose', 'alarm']);
       });
     });
 

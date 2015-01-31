@@ -25,27 +25,20 @@ var expect = require('salinity').expect;
 var helper = require('./schemaTestHelper.js');
 
 var goodObject = {
-  type: 'cbg',
+  type: 'bloodKetone',
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
   deviceId: 'test',
   uploadId: 'test',
   value: 1.12,
-  isig: 24.37,
-  units: 'mg/dL',
-  _groupId: 'g'
+  _groupId: 'g',
+  units: 'mmol/L'
 };
 
-describe('schema/cbg.js', function(){
+describe('schema/bloodKetone.js', function(){
   describe('value', function(){
     helper.rejectIfAbsent(goodObject, 'value');
     helper.expectNumericalField(goodObject, 'value');
-    helper.expectUnitConversion(goodObject, 'value');
-  });
-
-  describe('isig', function(){
-    helper.okIfAbsent(goodObject, 'isig');
-    helper.expectNumericalField(goodObject, 'isig');
   });
 
   describe('units', function(){
