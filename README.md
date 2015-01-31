@@ -22,7 +22,7 @@ $ npm start
 
 ## JSHint
 
-Lint the files in this repo according to the local `.jshintric` with:
+Lint the files in this repo according to the local `.jshintrc` with:
 
 ```bash
 $ npm run jshint
