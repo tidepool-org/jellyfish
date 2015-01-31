@@ -108,6 +108,29 @@ exports.expectObjectField = function(goodObject, field) {
   exports.expectNotNumberField(goodObject, field);
 };
 
+exports.expectFieldIn = function(goodObject, field, possibles, expects) {
+  _.each(possibles, function(p, idx) {
+    it('permits a value of "' + p + '"', function(done) {
+      var poss = {};
+      poss[field] = p;
+      exports.run(_.assign({}, goodObject, poss), function(err, val) {
+        expect(err).to.not.exist;
+        var expected = p;
+        if (expects != null) {
+          expected = expects[idx];
+        }
+        expect(val[field]).equals(expected);
+        done(err);
+      });
+    });
+  });
+  it('does not permit an inappropriate value.', function(done) {
+    var poss = {};
+    poss[field]='USELESS_VALUE';
+    exports.expectRejection(_.assign({}, goodObject, poss), field, done);
+  });
+};
+
 exports.expectSubsetEqual = function(lhs, rhs) {
   expect(_.pick(lhs, Object.keys(rhs))).deep.equals(rhs);
 };
