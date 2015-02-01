@@ -56,11 +56,7 @@ describe('schema/smbg.js', function(){
     var withSubType = _.assign({}, goodObject, {subType: ''});
     helper.okIfAbsent(goodObject, 'subType');
     helper.expectStringField(withSubType, 'subType');
-
-    it('rejects `foo` value', function(done){
-      withSubType.subType = 'foo';
-      helper.expectRejection(withSubType, 'subType', done);
-    });
+    helper.expectFieldIn(goodObject, 'subType', ['', 'linked', 'manual']);
   });
 
   helper.testCommonFields(goodObject);
