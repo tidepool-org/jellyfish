@@ -2,6 +2,7 @@
     {
         "time": "2014-06-11T11:12:43.029Z",
         "type": "smbg",
+	"subType": "manual",
         "value": 100,
         "units": "mg/dl",
         "deviceId": "tools",

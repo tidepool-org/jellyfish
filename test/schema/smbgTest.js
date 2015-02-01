@@ -52,5 +52,12 @@ describe('schema/smbg.js', function(){
       ['mmol/L', 'mmol/L', 'mg/dL', 'mg/dL']);
   });
 
+  describe('subType', function(){
+    var withSubType = _.assign({}, goodObject, {subType: ''});
+    helper.okIfAbsent(goodObject, 'subType');
+    helper.expectStringField(withSubType, 'subType');
+    helper.expectFieldIn(goodObject, 'subType', ['', 'linked', 'manual']);
+  });
+
   helper.testCommonFields(goodObject);
 });
