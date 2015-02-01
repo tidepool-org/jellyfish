@@ -19,29 +19,26 @@
 
 'use strict';
 
-var util = require('util');
-
 var _ = require('lodash');
 var expect = require('salinity').expect;
 
 var helper = require('./schemaTestHelper.js');
 
 var goodObject = {
-  type: 'smbg',
+  type: 'bloodKetone',
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
   deviceId: 'test',
   uploadId: 'test',
   value: 1.12,
-  units: 'mg/dL',
-  _groupId: 'g'
+  _groupId: 'g',
+  units: 'mmol/L'
 };
 
-describe('schema/smbg.js', function(){
+describe('schema/bloodKetone.js', function(){
   describe('value', function(){
     helper.rejectIfAbsent(goodObject, 'value');
     helper.expectNumericalField(goodObject, 'value');
-    helper.expectUnitConversion(goodObject, 'value');
   });
 
   describe('units', function(){
@@ -50,17 +47,6 @@ describe('schema/smbg.js', function(){
     helper.expectFieldIn(goodObject, 'units',
       ['mmol/L', 'mmol/l', 'mg/dL', 'mg/dl'],
       ['mmol/L', 'mmol/L', 'mg/dL', 'mg/dL']);
-  });
-
-  describe('subType', function(){
-    var withSubType = _.assign({}, goodObject, {subType: ''});
-    helper.okIfAbsent(goodObject, 'subType');
-    helper.expectStringField(withSubType, 'subType');
-
-    it('rejects `foo` value', function(done){
-      withSubType.subType = 'foo';
-      helper.expectRejection(withSubType, 'subType', done);
-    });
   });
 
   helper.testCommonFields(goodObject);
