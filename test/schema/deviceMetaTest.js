@@ -80,7 +80,7 @@ describe('schema/deviceMeta.js', function(){
       type: 'deviceMeta',
       subType: 'status',
       status: 'suspended',
-      reason: 'low_glucose',
+      reason: 'automatic',
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
@@ -138,16 +138,7 @@ describe('schema/deviceMeta.js', function(){
     describe('reason', function(){
       helper.rejectIfAbsent(goodObject, 'reason');
       helper.expectStringField(goodObject, 'reason');
-
-      describe('when resumed', function(){
-        var localGoodObject = _.assign({}, goodObject, {status: 'resumed'});
-        helper.expectFieldIn(localGoodObject, 'reason', ['manual', 'automatic']);
-      });
-
-      describe('when suspended', function(){
-        var localGoodObject = _.assign({}, goodObject, {status: 'suspended'});
-        helper.expectFieldIn(localGoodObject, 'reason', ['manual', 'low_glucose', 'alarm']);
-      });
+      helper.expectFieldIn(goodObject, 'reason', ['manual', 'automatic']);
     });
 
     describe('previous', function(){
@@ -237,6 +228,82 @@ describe('schema/deviceMeta.js', function(){
           helper.expectSubsetEqual(objs[1], _.assign({}, localGoodObject, {annotations: [{ code: "status/incomplete-tuple" }]}));
         });
       });
+    });
+
+    helper.testCommonFields(goodObject);
+  });
+
+  describe('alarm', function() {
+    var goodObject = {
+      type: 'deviceMeta',
+      subType: 'alarm',
+      alarmType: 'low_insulin',
+      time: '2014-01-01T01:00:00.000Z',
+      timezoneOffset: 120,
+      deviceId: 'test',
+      uploadId: 'test',
+      _groupId: 'g'
+    };
+
+    describe('alarmType', function() {
+      helper.rejectIfAbsent(goodObject, 'alarmType');
+      helper.expectStringField(goodObject, 'alarmType');
+      helper.expectFieldIn(goodObject, 'alarmType', [
+        'low_insulin',
+        'no_insulin',
+        'low_power',
+        'no_power',
+        'occlusion',
+        'no_delivery',
+        'auto_off',
+        'over_limit',
+        'other'
+      ]);
+    });
+
+    describe('status', function() {
+      helper.okIfAbsent(goodObject, 'status');
+      helper.expectNotNumberField(_.assign({}, goodObject, {status: {
+        type: 'deviceMeta',
+        subType: 'status',
+        status: 'suspended',
+        reason: 'automatic',
+        time: '2014-01-01T00:00:00.000Z',
+        timezoneOffset: 120,
+        deviceId: 'test',
+        uploadId: 'test',
+        _groupId: 'g'
+      }}), 'status');
+    });
+
+    helper.testCommonFields(goodObject);
+  });
+
+  describe('reservoirChange', function() {
+    var goodObject = {
+      type: 'deviceMeta',
+      subType: 'alarm',
+      alarmType: 'low_insulin',
+      time: '2014-01-01T01:00:00.000Z',
+      timezoneOffset: 120,
+      deviceId: 'test',
+      uploadId: 'test',
+      _groupId: 'g'
+    };
+
+    describe('status', function() {
+      helper.okIfAbsent(goodObject, 'status');
+      helper.expectNotNumberField(_.assign({}, goodObject, {status: {
+        type: 'deviceMeta',
+        subType: 'status',
+        status: 'suspended',
+        reason: 'automatic',
+        time: '2014-01-01T00:00:00.000Z',
+        timezoneOffset: 120,
+        deviceId: 'test',
+        uploadId: 'test',
+        _groupId: 'g'
+      }}), 'status');
     });
 
     helper.testCommonFields(goodObject);
