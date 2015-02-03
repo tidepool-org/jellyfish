@@ -308,4 +308,31 @@ describe('schema/deviceMeta.js', function(){
 
     helper.testCommonFields(goodObject);
   });
+
+  describe('prime', function() {
+    var goodObject = {
+      type: 'deviceMeta',
+      subType: 'prime',
+      primeTarget: 'cannula',
+      time: '2014-01-01T01:00:00.000Z',
+      timezoneOffset: 120,
+      deviceId: 'test',
+      uploadId: 'test',
+      _groupId: 'g'
+    };
+
+    describe('primeTarget', function() {
+      helper.rejectIfAbsent(goodObject, 'primeTarget');
+      helper.expectStringField(goodObject, 'primeTarget');
+      helper.expectFieldIn(goodObject, 'primeTarget', ['cannula', 'tubing']);
+    });
+
+    describe('volume', function() {
+      helper.okIfAbsent(goodObject, 'volume');
+      var withVolume = _.assign({}, goodObject, {volume: 0.5});
+      helper.expectNumericalField(withVolume, 'volume');
+    });
+
+    helper.testCommonFields(goodObject);
+  });
 });
