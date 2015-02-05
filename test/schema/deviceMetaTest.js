@@ -46,6 +46,7 @@ describe('schema/deviceMeta.js', function(){
 
     describe('value', function(){
       helper.rejectIfAbsent(goodObject, 'value');
+      helper.rejectIfAbsent(goodObject, 'units');
       helper.expectNumericalField(goodObject, 'value');
 
       it('converts "mmol/l" to "mmol/L"', function(done){
