@@ -36,6 +36,7 @@ describe('schema/deviceMeta.js', function(){
       type: 'deviceMeta',
       subType: 'calibration',
       value: 3.0,
+      units: 'mg/dL',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
