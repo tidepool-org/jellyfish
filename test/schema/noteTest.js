@@ -61,7 +61,7 @@ beforeEach(function(){
     .callsArgWith(2, null, reference);
 });
 
-describe('schema/cbg.js', function(){
+describe('schema/note.js', function(){
 
   describe('shortText', function(){
     helper.okIfAbsent(goodObject, 'shortText');

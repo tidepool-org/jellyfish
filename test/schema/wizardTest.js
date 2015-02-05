@@ -47,6 +47,7 @@ var goodObject = {
     time: '2014-01-01T01:00:00.000Z',
     deviceId: 'test'
   },
+  units: 'mg/dL',
   _groupId: 'g'
 };
 
@@ -58,7 +59,7 @@ describe('schema/wizard.js', function(){
     helper.expectUnitConversion(goodObject, 'bgInput');
 
     it('converts units', function(done){
-      var localGood = _.assign({}, goodObject, { bgInput: 100, units: 'mg/dl' });
+      var localGood = _.assign({}, goodObject, { bgInput: 100 });
       helper.run(localGood, function(err, converted){
         if (err != null) {
           return done(err);
@@ -71,7 +72,7 @@ describe('schema/wizard.js', function(){
     });
 
     it('does not produce an NaN value if it is absent and units need conversion', function(done){
-      var localGood = _.assign({}, _.omit(goodObject, 'bgInput'), {units: 'mg/dL'});
+      var localGood = _.assign({}, _.omit(goodObject, 'bgInput'));
       helper.run(localGood, function(err, converted){
         if (err != null) {
           return done(err);
@@ -88,7 +89,7 @@ describe('schema/wizard.js', function(){
     helper.expectObjectField(goodObject, 'bgTarget');
 
     it('is ok if it is absent and units need conversion', function(done){
-      helper.run(_.assign(_.omit(goodObject, 'bgTarget'), {units: 'mg/dL'}), function(err, converted) {
+      helper.run(_.assign({}, _.omit(goodObject, 'bgTarget')), function(err, converted) {
         expect(converted.bgTarget).not.to.equal(null);
         done();
       });
@@ -135,7 +136,6 @@ describe('schema/wizard.js', function(){
       });
 
       it('converts units', function(done){
-        localGood.units = 'mg/dL';
         localGood.bgTarget = { target: 80, range: 10 };
 
         helper.run(localGood, function(err, converted) {
@@ -160,7 +160,6 @@ describe('schema/wizard.js', function(){
       });
 
       it('converts units', function(done){
-        localGood.units = 'mg/dL';
         localGood.bgTarget = { target: 100, high: 140 };
 
         helper.run(localGood, function(err, converted) {
@@ -198,7 +197,7 @@ describe('schema/wizard.js', function(){
     helper.expectNumericalField(goodObject, 'insulinSensitivity');
 
     it('converts units', function(done){
-      var localGood = _.assign({}, goodObject, { insulinSensitivity: 50, units: 'mg/dl' });
+      var localGood = _.assign({}, goodObject, { insulinSensitivity: 50 });
       helper.run(localGood, function(err, converted){
         if (err != null) {
           return done(err);
@@ -211,7 +210,7 @@ describe('schema/wizard.js', function(){
     });
 
     it('does not produce an NaN value if it is absent and units need conversion', function(done){
-      var localGood = _.assign({}, _.omit(goodObject, 'insulinSensitivity'), {units: 'mg/dL'});
+      var localGood = _.assign({}, _.omit(goodObject, 'insulinSensitivity'));
       helper.run(localGood, function(err, converted){
         if (err != null) {
           return done(err);
@@ -247,6 +246,14 @@ describe('schema/wizard.js', function(){
       obj.recommended.net = '3';
       helper.expectRejection(obj, 'recommended', done);
     });
+  });
+
+  describe('units', function(){
+    helper.rejectIfAbsent(goodObject, 'units');
+    helper.expectStringField(goodObject, 'units');
+    helper.expectFieldIn(goodObject, 'units',
+      ['mmol/L', 'mmol/l', 'mg/dL', 'mg/dl'],
+      ['mmol/L', 'mmol/L', 'mg/dL', 'mg/dL']);
   });
 
   helper.testCommonFields(goodObject);
