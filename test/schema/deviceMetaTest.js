@@ -36,6 +36,7 @@ describe('schema/deviceMeta.js', function(){
       type: 'deviceMeta',
       subType: 'calibration',
       value: 3.0,
+      units: 'mg/dL',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
@@ -45,6 +46,7 @@ describe('schema/deviceMeta.js', function(){
 
     describe('value', function(){
       helper.rejectIfAbsent(goodObject, 'value');
+      helper.rejectIfAbsent(goodObject, 'units');
       helper.expectNumericalField(goodObject, 'value');
 
       it('converts "mmol/l" to "mmol/L"', function(done){
