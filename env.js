@@ -65,6 +65,11 @@ module.exports = (function () {
     serverSecret: config.fromEnvironment("SERVER_SECRET")
   };
 
+  env.gatekeeper = {
+    // The config object to discover gatekeeper.  This is just passed through to hakken.watchFromConfig()
+    serviceSpec: JSON.parse(config.fromEnvironment('GATEKEEPER_SERVICE'))
+  };
+
   /**
    * A JSON object that describes where to store intermediate files (data files to be processed)
    * Known types are 'local' and 'sandcastle'.
