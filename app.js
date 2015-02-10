@@ -27,7 +27,6 @@ var _ = require('lodash');
 
 var amoeba = require('amoeba');
 var except = amoeba.except;
-var lifecycle = amoeba.lifecycle();
 var httpClient = amoeba.httpClient();
 
 var config = require('./env.js');
@@ -46,22 +45,29 @@ var jsonp = function(response) {
 };
 
 (function(){
+
+  //hakken setup
   var hakken = require('hakken')(config.discovery, log).client();
-  lifecycle.add('hakken', hakken);
-
-  var userApiWatch = hakken.watchFromConfig(config.userApi.serviceSpec);
-  var seagullWatch = hakken.watchFromConfig(config.seagull.serviceSpec);
   hakken.start();
-  userApiWatch.start();
-  seagullWatch.start();
 
+  //user-api setup
+  var userApiWatch = hakken.watchFromConfig(config.userApi.serviceSpec);
+  userApiWatch.start();
   var userApiClientLibrary = require('user-api-client');
   var userApiClient = userApiClientLibrary.client(config.userApi, userApiWatch);
+
+  //seagull setup
+  var seagullWatch = hakken.watchFromConfig(config.seagull.serviceSpec);
+  seagullWatch.start();
   var seagullClient = require('tidepool-seagull-client')(seagullWatch);
+
+  //gatekeeper setup
+  var gatekeeperWatch = hakken.watchFromConfig(config.gatekeeper.serviceSpec);
+  gatekeeperWatch.start();
   var gatekeeperClient = require('tidepool-gatekeeper').client(
     httpClient,
     userApiClient.withServerToken.bind(userApiClient),
-    lifecycle.add('gatekeeper-watch', hakken.watchFromConfig(config.gatekeeper.serviceSpec))
+    gatekeeperWatch
   );
 
   var middleware = userApiClientLibrary.middleware;
