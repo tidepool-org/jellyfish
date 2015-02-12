@@ -83,5 +83,23 @@
         "uploadId": "test",
         "time": "2014-07-28T00:12:03.000Z",
         "timezoneOffset": -420
+    },
+    {
+        "type": "deviceMeta",
+        "subType": "timeChange",
+        "change": {
+            "from": "2015-03-08T12:02:00",
+            "to": "2015-03-08T13:00:00",
+            "agent": "manual",
+            "reasons": [
+                "to_daylight_savings",
+                "correction"
+            ]
+        },
+        "time": "2015-03-08T19:00:00.000Z",
+        "timezoneOffset": -420,
+        "deviceTime": "2015-03-08T12:02:00",
+        "deviceId": "Paradigm Revel - 723",
+        "uploadId": "test"
     }
 ]

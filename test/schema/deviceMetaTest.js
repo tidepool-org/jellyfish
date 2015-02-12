@@ -337,4 +337,102 @@ describe('schema/deviceMeta.js', function(){
 
     helper.testCommonFields(goodObject);
   });
+
+  describe('timeChange', function() {
+    var goodObject = {
+      type: 'deviceMeta',
+      subType: 'timeChange',
+      change: {
+        from: '2015-03-08T12:02:00',
+        to: '2015-03-08T13:00:00',
+        agent: 'manual',
+        reasons: ['to_daylight_savings', 'correction'],
+        timezone: 'US/Pacific'
+      },
+      time: '2015-03-08T19:00:00.000Z',
+      timezoneOffset: -480,
+      deviceId: 'test',
+      uploadId: 'test',
+      _groupId: 'g'
+    };
+
+    describe('change', function() {
+      helper.rejectIfAbsent(goodObject, 'change');
+      helper.expectObjectField(goodObject, 'change');
+
+      it('change.from is required', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        delete obj.change.from;
+        helper.expectRejection(obj, 'change', done);
+      });
+
+      it('change.from is a string', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.change.from = 1;
+        helper.expectRejection(obj, 'change', done);
+      });
+
+      it('change.from is a properly-formatted deviceTime', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.change.from = '2015-03-08 12:02:00';
+        helper.expectRejection(obj, 'change', done);
+      });
+
+      it('change.to is required', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        delete obj.change.to;
+        helper.expectRejection(obj, 'change', done);
+      });
+
+      it('change.to is a string', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.change.to = 1;
+        helper.expectRejection(obj, 'change', done);
+      });
+
+      it('change.to is a properly-formatted deviceTime', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.change.to = '2015-03-08T13:00:00.000Z';
+        helper.expectRejection(obj, 'change', done);
+      });
+
+      it('change.agent is a string', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.change.agent = 1;
+        helper.expectRejection(obj, 'change', done);
+      });
+
+      it('change.agent can only be `manual` or `automatic`', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.change.agent = 'foo';
+        helper.expectRejection(obj, 'change', done);
+      });
+
+      it('change.agent is required', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        delete obj.change.agent;
+        helper.expectRejection(obj, 'change', done);
+      });
+
+      it('change.reasons is an array', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.change.reasons = 1;
+        helper.expectRejection(obj, 'change', done);
+      });
+
+      it('change.reasons does not accept any old string values', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.change.reasons = ['foo', 'bar'];
+        helper.expectRejection(obj, 'change', done);
+      });
+
+      it('change.timezone is a string', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.change.timezone = 1;
+        helper.expectRejection(obj, 'change', done);
+      });
+    });
+
+    helper.testCommonFields(goodObject);
+  });
 });

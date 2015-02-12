@@ -78,5 +78,27 @@
         "id": "0l2aou5scqf1msp8ip0647crbkojoth4",
         "_version": 0,
         "_active": true
+    },
+    {
+        "type": "deviceMeta",
+        "subType": "timeChange",
+        "change": {
+            "from": "2015-03-08T12:02:00",
+            "to": "2015-03-08T13:00:00",
+            "agent": "manual",
+            "reasons": [
+                "to_daylight_savings",
+                "correction"
+            ]
+        },
+        "time": "2015-03-08T19:00:00.000Z",
+        "timezoneOffset": -420,
+        "deviceTime": "2015-03-08T12:02:00",
+        "deviceId": "Paradigm Revel - 723",
+        "uploadId": "test",
+        "_groupId": "1234",
+        "id": "num627sfihu1m6g7pad0uro3fdilm42j",
+        "_version": 0,
+        "_active": true
     }
 ]
