@@ -18,7 +18,7 @@
  /* global describe, before, beforeEach, it, after */
 
 'use strict';
-
+var _ = require('lodash');
 var expect = require('salinity').expect;
 
 var helper = require('./schemaTestHelper.js');
@@ -30,6 +30,10 @@ var goodObject = {
   uploadId: '123-my-upload-id',
   byUser : '123-my-user-id',
   version: '0.86.0',
+  deviceManufacturers: ['Medtronic'],
+  deviceModel: 'Paradigm 522',
+  deviceSerialNumber: '12345',
+  deviceTags: ['insulin-pump'],
   deviceId: '123-my-upload-id'
 };
 
@@ -62,6 +66,42 @@ describe('schema/upload.js', function(){
   describe('deviceId', function(){
     helper.rejectIfAbsent(goodObject, 'deviceId');
     helper.expectStringField(goodObject, 'deviceId');
+  });
+
+  describe('deviceTags', function() {
+    helper.rejectIfAbsent(goodObject, 'deviceTags');
+
+    it('is an array', function(done) {
+      var obj = _.cloneDeep(goodObject);
+      obj.deviceTags = 1;
+      helper.expectRejection(obj, 'deviceTags', done);
+    });
+
+    it('only accepts approved values', function(done) {
+      var obj = _.cloneDeep(goodObject);
+      obj.deviceTags = ['cgm', 'foo'];
+      helper.expectRejection(obj, 'deviceTags', done);
+    });
+  });
+
+  describe('deviceManufacturers', function() {
+    helper.rejectIfAbsent(goodObject, 'deviceManufacturers');
+
+    it('is an array', function(done) {
+      var obj = _.cloneDeep(goodObject);
+      obj.deviceManufacturers = 1;
+      helper.expectRejection(obj, 'deviceManufacturers', done);
+    });
+  });
+
+  describe('deviceModel', function() {
+    helper.rejectIfAbsent(goodObject, 'deviceModel');
+    helper.expectStringField(goodObject, 'deviceModel');
+  });
+
+  describe('deviceSerialNumber', function() {
+    helper.rejectIfAbsent(goodObject, 'deviceSerialNumber');
+    helper.expectStringField(goodObject, 'deviceSerialNumber');
   });
 
 });
