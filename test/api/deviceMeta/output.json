@@ -35,7 +35,9 @@
         "deviceTime": "2014-07-27T17:07:10",
         "deviceId": "test",
         "uploadId": "test",
-        "reason": "manual",
+        "reason": {
+            "suspended": "manual"
+        },
         "time": "2014-07-28T00:07:10.000Z",
         "timezoneOffset": -420,
         "_groupId": "1234",
@@ -55,7 +57,10 @@
         "deviceTime": "2014-07-27T17:07:10",
         "deviceId": "test",
         "uploadId": "test",
-        "reason": "manual",
+        "reason": {
+            "suspended": "manual",
+            "resumed": "manual"
+        },
         "time": "2014-07-28T00:07:10.000Z",
         "timezoneOffset": -420,
         "_groupId": "1234",
