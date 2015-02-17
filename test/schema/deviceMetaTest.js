@@ -82,7 +82,7 @@ describe('schema/deviceMeta.js', function(){
       type: 'deviceMeta',
       subType: 'status',
       status: 'suspended',
-      reason: 'automatic',
+      reason: {suspended: 'automatic'},
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
@@ -94,7 +94,7 @@ describe('schema/deviceMeta.js', function(){
       type: 'deviceMeta',
       subType: 'status',
       status: 'suspended',
-      reason: 'manual',
+      reason: {suspended: 'manual'},
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
@@ -106,7 +106,7 @@ describe('schema/deviceMeta.js', function(){
       type: 'deviceMeta',
       subType: 'status',
       status: 'resumed',
-      reason: 'manual',
+      reason: {resumed: 'manual'},
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
@@ -139,8 +139,37 @@ describe('schema/deviceMeta.js', function(){
 
     describe('reason', function(){
       helper.rejectIfAbsent(goodObject, 'reason');
-      helper.expectStringField(goodObject, 'reason');
-      helper.expectFieldIn(goodObject, 'reason', ['manual', 'automatic']);
+      helper.expectObjectField(goodObject, 'reason');
+
+      it('suspended is a string field', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.reason.suspended = 1;
+        helper.expectRejection(obj, 'reason', done);
+      });
+
+      it('suspended is not a `foo` value', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.reason.suspended = 'foo';
+        helper.expectRejection(obj, 'reason', done);
+      });
+
+      it('resumed is a string field', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.reason.resumed = 1;
+        helper.expectRejection(obj, 'reason', done);
+      });
+
+      it('resumed is not a `foo` value', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.reason.resumed = 'foo';
+        helper.expectRejection(obj, 'reason', done);
+      });
+
+      it('cannot be empty', function(done) {
+        var obj = _.cloneDeep(goodObject);
+        obj.reason = {};
+        helper.expectRejection(obj, 'reason', done);
+      });
     });
 
     describe('previous', function(){
@@ -210,7 +239,7 @@ describe('schema/deviceMeta.js', function(){
 
         var localGoodObject = _.assign({}, goodObject, { status: 'resumed' });
         helper.run(_.assign({}, localGoodObject, {previous: previousMatches}), done, function(objs) {
-          helper.expectSubsetEqual(objs, _.assign({}, previousMatches, {duration: 60 * 60 * 1000}));
+          helper.expectSubsetEqual(objs, _.assign({}, previousMatches, {duration: 60 * 60 * 1000}, {reason: _.assign({}, localGoodObject.reason, previousMatches.reason)}));
         });
       });
 
@@ -226,7 +255,7 @@ describe('schema/deviceMeta.js', function(){
         var localGoodObject = _.assign({}, goodObject, { status: 'suspended' });
         helper.run(_.assign({}, localGoodObject, {previous: previousMatches}), done, function(objs) {
           expect(objs).length(2);
-          helper.expectSubsetEqual(objs[0], _.assign({}, previousMatches, {duration: 60 * 60 * 1000}));
+          helper.expectSubsetEqual(objs[0], _.assign({}, previousMatches, {duration: 60 * 60 * 1000}, {reason: _.assign({}, localGoodObject.reason, previousMatches.reason)}));
           helper.expectSubsetEqual(objs[1], _.assign({}, localGoodObject, {annotations: [{ code: "status/incomplete-tuple" }]}));
         });
       });
