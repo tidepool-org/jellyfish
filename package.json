@@ -34,7 +34,7 @@
     "mongodb": "1.4.33",
     "request": "2.51.0",
     "rx": "2.4.1",
-    "sundial": "0.1.6",
+    "sundial": "1.1.4",
     "tidepool-seagull-client": "0.0.2",
     "user-api-client": "0.3.0"
   },
