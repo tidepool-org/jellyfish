@@ -35,7 +35,7 @@
     "request": "2.53.0",
     "rx": "2.4.1",
     "sundial": "1.1.4",
-    "tidepool-seagull-client": "0.1.1",
+    "tidepool-seagull-client": "0.1.2",
     "user-api-client": "0.3.0"
   },
   "devDependencies": {
