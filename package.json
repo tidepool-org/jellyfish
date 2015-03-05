@@ -27,7 +27,7 @@
     "bunyan": "1.3.3",
     "busboy": "0.2.9",
     "express": "3.19.1",
-    "hakken": "0.1.4",
+    "hakken": "0.1.6",
     "in-d-gestion": "0.4.1",
     "lodash": "3.0.0",
     "moment": "2.4.0",
