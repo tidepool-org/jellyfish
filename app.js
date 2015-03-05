@@ -62,7 +62,6 @@ var jsonp = function(response) {
   mongoClient.start();
 
   var tasks = require('./lib/tasks.js')(mongoClient);
-  var carelinkUploadFlow = require('./lib/carelinkUploadFlow.js')({ storageDir: config.tempStorage }, tasks);
   var dataBroker = require('./lib/dataBroker.js')(require('./lib/streamDAO.js')(mongoClient));
 
   function lookupGroupId(userid, callback) {
@@ -93,35 +92,6 @@ var jsonp = function(response) {
   app.get('/status', function(request, response) {
     response.send(200, 'OK');
   });
-
-  /*
-    used to process the carelink form data, now that is just for uploading and processing of the carelink csv
-  */
-  app.post(
-    '/v1/device/upload/cl',
-    checkToken,
-    function(req, res) {
-      lookupGroupId(req._tokendata.userid, function(err, groupId) {
-        if (err != null) {
-          if (err.statusCode == null) {
-            log.warn(err, 'Failed to get private pair for user[%s]', req._tokendata.userid);
-            res.send(500);
-          } else {
-            res.send(err.statusCode, err);
-          }
-          return;
-        }
-
-        if (groupId == null) {
-          log.warn('Unable to get hashPair, something is broken...');
-          res.send(503);
-          return;
-        }
-        //get the form then
-        carelinkUploadFlow.ingest(req, { groupId: groupId }, jsonp(res));
-      });
-    }
-  );
 
   // This is actually a potential leak because it allows *any* logged in user to see the status of any task.
   // It's just the status though, and this whole thing needs to get redone at some point anyway, so I'm leaving it.
