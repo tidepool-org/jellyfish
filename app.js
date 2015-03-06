@@ -100,7 +100,7 @@ var jsonp = function(response) {
   app.use(bodyparser.json({ limit: '4mb' }));
 
   app.get('/status', function(request, response) {
-    response.send(200, 'OK');
+    response.status(200).send('OK');
   });
 
   // This is actually a potential leak because it allows *any* logged in user to see the status of any task.
@@ -119,24 +119,24 @@ var jsonp = function(response) {
     function(request, response) {
       tasks.get(request.params.id, function(err, task){
         if (err) {
-          return response.send(500, 'Error getting sync task');
+          return response.status(500).send('Error getting sync task');
         }
 
         if (!task) {
-          return response.send(404, 'No sync task found');
+          return response.status(404).send('No sync task found');
         }
 
         if (!task.filePath){
           log.warn('Task did not have a file', task);
-          return response.send(404, 'No data file for sync task');
+          return response.status(404).send('No data file for sync task');
         }
 
         fs.readFile(task.filePath, function(err, data) {
           if (err) {
             log.error('Error reading file', task.filePath);
-            return response.send(500, 'Error reading data file');
+            return response.status(500).send('Error reading data file');
           }
-          return response.send(200, data);
+          return response.status(200).send(data);
         });
       });
     }
@@ -154,7 +154,7 @@ var jsonp = function(response) {
       var array = req.body;
 
       if (typeof(array) !== 'object') {
-        return res.send(400, util.format('Expect an object body, got[%s]', typeof(array)));
+        return res.status(400).send(util.format('Expect an object body, got[%s]', typeof(array)));
       }
 
       if (! Array.isArray(array)) {
@@ -206,7 +206,7 @@ var jsonp = function(response) {
               res.send(500);
             }
           } else {
-            res.send(200, duplicates);
+            res.status(200).send(duplicates);
           }
         }
       );
