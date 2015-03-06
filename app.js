@@ -21,11 +21,14 @@ var fs = require('fs');
 
 var async = require('async');
 var express = require('express');
+var compression = require('compression');
+var bodyparser = require('body-parser');
 var path = require('path');
 var util = require('util');
 var _ = require('lodash');
 
-var except = require('amoeba').except;
+var amoeba = require('amoeba');
+var except = amoeba.except;
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
@@ -43,17 +46,24 @@ var jsonp = function(response) {
 };
 
 (function(){
-  var hakken = require('hakken')(config.discovery, log).client();
+  var lifecycle = amoeba.lifecycle();
+  var hakken = require('hakken')(config.discovery).client();
+  lifecycle.add('hakken', hakken);
 
-  var userApiWatch = hakken.watchFromConfig(config.userApi.serviceSpec);
-  var seagullWatch = hakken.watchFromConfig(config.seagull.serviceSpec);
-  hakken.start();
-  userApiWatch.start();
-  seagullWatch.start();
+  var httpClient = amoeba.httpClient();
 
   var userApiClientLibrary = require('user-api-client');
-  var userApiClient = userApiClientLibrary.client(config.userApi, userApiWatch);
-  var seagullClient = require('tidepool-seagull-client')(seagullWatch);
+  var userApiClient = userApiClientLibrary.client(
+    config.userApi,
+    lifecycle.add('user-api-watch', hakken.watchFromConfig(config.userApi.serviceSpec))
+  );
+
+  var seagullClient = require('tidepool-seagull-client')(
+    lifecycle.add('seagull-watch', hakken.watchFromConfig(config.seagull.serviceSpec)),
+    {},
+    httpClient
+  );
+
 
   var middleware = userApiClientLibrary.middleware;
   var checkToken = middleware.expressify(middleware.checkToken(userApiClient));
@@ -86,8 +96,8 @@ var jsonp = function(response) {
 
   var app = express();
 
-  app.use(express.compress());
-  app.use(express.json({ limit: '4mb' }));
+  app.use(compression());
+  app.use(bodyparser.json({ limit: '4mb' }));
 
   app.get('/status', function(request, response) {
     response.send(200, 'OK');
