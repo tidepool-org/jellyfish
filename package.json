@@ -37,7 +37,7 @@
     "rx": "2.4.1",
     "sundial": "1.1.4",
     "tidepool-seagull-client": "0.1.2",
-    "user-api-client": "0.3.1"
+    "user-api-client": "0.3.2"
   },
   "devDependencies": {
     "gulp": "^3.8.10",
