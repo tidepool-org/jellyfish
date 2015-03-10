@@ -29,6 +29,7 @@ var _ = require('lodash');
 
 var amoeba = require('amoeba');
 var except = amoeba.except;
+var httpClient = amoeba.httpClient();
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
@@ -64,6 +65,12 @@ var jsonp = function(response) {
     httpClient
   );
 
+  var gatekeeper = require('tidepool-gatekeeper');
+  var gatekeeperClient = gatekeeper.client(
+    httpClient,
+    userApiClient.withServerToken.bind(userApiClient),
+    lifecycle.add('gatekeeper-watch', hakken.watchFromConfig(config.gatekeeper.serviceSpec))
+  );
 
   var middleware = userApiClientLibrary.middleware;
   var checkToken = middleware.expressify(middleware.checkToken(userApiClient));
@@ -146,7 +153,7 @@ var jsonp = function(response) {
     send the actual ingested data to the platform
   */
   app.post(
-    '/data',
+    '/data/?:groupId?',
     checkToken,
     function(req, res) {
       var userid = req._tokendata.userid;
@@ -154,18 +161,49 @@ var jsonp = function(response) {
       var array = req.body;
 
       if (typeof(array) !== 'object') {
-        return res.status(400).send(util.format('Expect an object body, got[%s]', typeof(array)));
+        return res.status(400).send(util.format('Expected an object body, got[%s]', typeof(array)));
       }
 
-      if (! Array.isArray(array)) {
+      if (!Array.isArray(array)) {
         array = [array];
       }
 
       var count = 0;
       var duplicates = [];
+
       async.waterfall(
         [
-          lookupGroupId.bind(null, userid),
+          function(cb) {
+            // if no groupId was specified, just continue to upload for the
+            // connected user
+            if (!req.params.groupId) {
+              return cb(null, userid);
+            }
+
+            // get the groups for the logged-in user
+            gatekeeperClient.groupsForUser(userid, function(err, groups) {
+              if (err) {
+                return cb(err);
+              }
+
+              // and check them all to see if we have upload permissions
+              for (var groupId in groups) {
+                var perms = groups[groupId];
+
+                if (groupId === req.params.groupId && (perms.upload || perms.root)) {
+                  return cb(null, groupId);
+                }
+              }
+
+              cb({
+                statusCode: 403,
+                message: 'You don\'t have rights to upload to that account.'
+              });
+            });
+          },
+          function(groupId, cb) {
+            lookupGroupId(groupId, cb);
+          },
           // if there are records with source: 'carelink' in the dataset,
           // we need to delete old carelink data first
           function(groupId, cb) {
@@ -202,7 +240,8 @@ var jsonp = function(response) {
               err.reason = err.message;
               res.send(err.statusCode, err);
             } else {
-              log.warn(err, 'Problem uploading for user[%s].', userid);
+              var groupMessage = req.params.groupId ? ('To group[' + req.params.groupId + ']') : '';
+              log.warn(err, 'Problem uploading for user[%s]. %s', userid, groupMessage);
               res.send(500);
             }
           } else {
