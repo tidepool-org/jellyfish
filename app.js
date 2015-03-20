@@ -48,8 +48,7 @@ var jsonp = function(response) {
 
 (function(){
   var lifecycle = amoeba.lifecycle();
-  var hakken = require('hakken')(config.discovery).client();
-  lifecycle.add('hakken', hakken);
+  var hakken = lifecycle.add('hakken', require('hakken')(config.discovery, log).client());
 
   var httpClient = amoeba.httpClient();
 
@@ -71,6 +70,9 @@ var jsonp = function(response) {
     userApiClient.withServerToken.bind(userApiClient),
     lifecycle.add('gatekeeper-watch', hakken.watchFromConfig(config.gatekeeper.serviceSpec))
   );
+
+  lifecycle.start();
+  lifecycle.join();
 
   var middleware = userApiClientLibrary.middleware;
   var checkToken = middleware.expressify(middleware.checkToken(userApiClient));
