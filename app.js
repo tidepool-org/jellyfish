@@ -23,17 +23,12 @@ var async = require('async');
 var express = require('express');
 var compression = require('compression');
 var bodyparser = require('body-parser');
-var path = require('path');
 var util = require('util');
-var _ = require('lodash');
 
 var amoeba = require('amoeba');
-var except = amoeba.except;
-var httpClient = amoeba.httpClient();
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
-var misc = require('./lib/misc.js');
 
 var jsonp = function(response) {
   return function(error, data) {
@@ -81,6 +76,7 @@ var jsonp = function(response) {
   mongoClient.start();
 
   var tasks = require('./lib/tasks.js')(mongoClient);
+  var carelinkUploadFlow = require('./lib/carelinkUploadFlow.js')({ storageDir: config.tempStorage }, tasks);
   var dataBroker = require('./lib/dataBroker.js')(require('./lib/streamDAO.js')(mongoClient));
 
   function lookupGroupId(userid, callback) {
@@ -111,6 +107,34 @@ var jsonp = function(response) {
   app.get('/status', function(request, response) {
     response.status(200).send('OK');
   });
+
+  /*
+   * Deals with Carelink data fetching it and then storing the file
+   */
+  app.post(
+    '/v1/device/upload/cl',
+    checkToken,
+    function(request, response) {
+      lookupGroupId(request._tokendata.userid, function(err, groupId) {
+        if (err != null) {
+          if (err.statusCode == null) {
+            log.warn(err, 'Failed to get private pair for user[%s]', request._tokendata.userid);
+            return response.status(500).send('Error private pair for user');
+          } else {
+            log.warn(err, 'Failed to get private pair for user[%s] with error [%s]', request._tokendata.userid, err);
+            return response.status(err.statusCode).send(err);
+          }
+        }
+
+        if (groupId == null) {
+          log.warn('Unable to get hashPair; something is broken...');
+          return response.status(503);
+        }
+        //get the form then
+        carelinkUploadFlow.ingest(request, { groupId: groupId }, jsonp(response));
+      });
+    }
+  );
 
   // This is actually a potential leak because it allows *any* logged in user to see the status of any task.
   // It's just the status though, and this whole thing needs to get redone at some point anyway, so I'm leaving it.
@@ -152,8 +176,8 @@ var jsonp = function(response) {
   );
 
   /*
-    send the actual ingested data to the platform
-  */
+   * Send the actual ingested data to the platform
+   */
   app.post(
     '/data/?:groupId?',
     checkToken,
@@ -260,13 +284,13 @@ var jsonp = function(response) {
 
   if (config.httpPort != null) {
     require('http').createServer(app).listen(config.httpPort, function(){
-      log.info("Api server running on port[%s]", config.httpPort);
+      log.info('Api server running on port[%s]', config.httpPort);
     });
   }
 
   if (config.httpsPort != null) {
     require('https').createServer(config.httpsConfig, app).listen(config.httpsPort, function(){
-      log.info("Api server listening for HTTPS on port[%s]", config.httpsPort);
+      log.info('Api server listening for HTTPS on port[%s]', config.httpsPort);
     });
   }
 
