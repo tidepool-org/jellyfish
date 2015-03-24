@@ -30,6 +30,7 @@
     "compression": "1.4.1",
     "express": "4.12.2",
     "hakken": "0.1.7",
+    "in-d-gestion": "0.4.1",
     "lodash": "3.4.0",
     "moment": "2.9.0",
     "mongodb": "1.4.34",
