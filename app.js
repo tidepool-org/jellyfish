@@ -21,17 +21,14 @@ var fs = require('fs');
 
 var async = require('async');
 var express = require('express');
-var path = require('path');
+var compression = require('compression');
+var bodyparser = require('body-parser');
 var util = require('util');
-var _ = require('lodash');
 
 var amoeba = require('amoeba');
-var except = amoeba.except;
-var httpClient = amoeba.httpClient();
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
-var misc = require('./lib/misc.js');
 
 var jsonp = function(response) {
   return function(error, data) {
@@ -45,30 +42,32 @@ var jsonp = function(response) {
 };
 
 (function(){
+  var lifecycle = amoeba.lifecycle();
+  var hakken = lifecycle.add('hakken', require('hakken')(config.discovery, log).client());
 
-  //hakken setup
-  var hakken = require('hakken')(config.discovery, log).client();
-  hakken.start();
+  var httpClient = amoeba.httpClient();
 
-  //user-api setup
-  var userApiWatch = hakken.watchFromConfig(config.userApi.serviceSpec);
-  userApiWatch.start();
   var userApiClientLibrary = require('user-api-client');
-  var userApiClient = userApiClientLibrary.client(config.userApi, userApiWatch);
+  var userApiClient = userApiClientLibrary.client(
+    config.userApi,
+    lifecycle.add('user-api-watch', hakken.watchFromConfig(config.userApi.serviceSpec))
+  );
 
-  //seagull setup
-  var seagullWatch = hakken.watchFromConfig(config.seagull.serviceSpec);
-  seagullWatch.start();
-  var seagullClient = require('tidepool-seagull-client')(seagullWatch);
+  var seagullClient = require('tidepool-seagull-client')(
+    lifecycle.add('seagull-watch', hakken.watchFromConfig(config.seagull.serviceSpec)),
+    {},
+    httpClient
+  );
 
-  //gatekeeper setup
-  var gatekeeperWatch = hakken.watchFromConfig(config.gatekeeper.serviceSpec);
-  gatekeeperWatch.start();
-  var gatekeeperClient = require('tidepool-gatekeeper').client(
+  var gatekeeper = require('tidepool-gatekeeper');
+  var gatekeeperClient = gatekeeper.client(
     httpClient,
     userApiClient.withServerToken.bind(userApiClient),
-    gatekeeperWatch
+    lifecycle.add('gatekeeper-watch', hakken.watchFromConfig(config.gatekeeper.serviceSpec))
   );
+
+  lifecycle.start();
+  lifecycle.join();
 
   var middleware = userApiClientLibrary.middleware;
   var checkToken = middleware.expressify(middleware.checkToken(userApiClient));
@@ -102,38 +101,37 @@ var jsonp = function(response) {
 
   var app = express();
 
-  app.use(express.compress());
-  app.use(express.json({ limit: '4mb' }));
+  app.use(compression());
+  app.use(bodyparser.json({ limit: '4mb' }));
 
   app.get('/status', function(request, response) {
-    response.send(200, 'OK');
+    response.status(200).send('OK');
   });
 
   /*
-    used to process the carelink form data, now that is just for uploading and processing of the carelink csv
-  */
+   * Deals with Carelink data fetching it and then storing the file
+   */
   app.post(
     '/v1/device/upload/cl',
     checkToken,
-    function(req, res) {
-      lookupGroupId(req._tokendata.userid, function(err, groupId) {
+    function(request, response) {
+      lookupGroupId(request._tokendata.userid, function(err, groupId) {
         if (err != null) {
           if (err.statusCode == null) {
-            log.warn(err, 'Failed to get private pair for user[%s]', req._tokendata.userid);
-            res.send(500);
+            log.warn(err, 'Failed to get private pair for user[%s]', request._tokendata.userid);
+            return response.status(500).send('Error private pair for user');
           } else {
-            res.send(err.statusCode, err);
+            log.warn(err, 'Failed to get private pair for user[%s] with error [%s]', request._tokendata.userid, err);
+            return response.status(err.statusCode).send(err);
           }
-          return;
         }
 
         if (groupId == null) {
           log.warn('Unable to get hashPair; something is broken...');
-          res.send(503);
-          return;
+          return response.status(503);
         }
         //get the form then
-        carelinkUploadFlow.ingest(req, { groupId: groupId }, jsonp(res));
+        carelinkUploadFlow.ingest(request, { groupId: groupId }, jsonp(response));
       });
     }
   );
@@ -154,32 +152,32 @@ var jsonp = function(response) {
     function(request, response) {
       tasks.get(request.params.id, function(err, task){
         if (err) {
-          return response.send(500, 'Error getting sync task');
+          return response.status(500).send('Error getting sync task');
         }
 
         if (!task) {
-          return response.send(404, 'No sync task found');
+          return response.status(404).send('No sync task found');
         }
 
         if (!task.filePath){
           log.warn('Task did not have a file', task);
-          return response.send(404, 'No data file for sync task');
+          return response.status(404).send('No data file for sync task');
         }
 
         fs.readFile(task.filePath, function(err, data) {
           if (err) {
             log.error('Error reading file', task.filePath);
-            return response.send(500, 'Error reading data file');
+            return response.status(500).send('Error reading data file');
           }
-          return response.send(200, data);
+          return response.status(200).send(data);
         });
       });
     }
   );
 
   /*
-    send the actual ingested data to the platform
-  */
+   * Send the actual ingested data to the platform
+   */
   app.post(
     '/data/?:groupId?',
     checkToken,
@@ -189,7 +187,7 @@ var jsonp = function(response) {
       var array = req.body;
 
       if (typeof(array) !== 'object') {
-        return res.send(400, util.format('Expected an object body, got[%s]', typeof(array)));
+        return res.status(400).send(util.format('Expected an object body, got[%s]', typeof(array)));
       }
 
       if (!Array.isArray(array)) {
@@ -273,7 +271,7 @@ var jsonp = function(response) {
               res.send(500);
             }
           } else {
-            res.send(200, duplicates);
+            res.status(200).send(duplicates);
           }
         }
       );
@@ -286,13 +284,13 @@ var jsonp = function(response) {
 
   if (config.httpPort != null) {
     require('http').createServer(app).listen(config.httpPort, function(){
-      log.info("Api server running on port[%s]", config.httpPort);
+      log.info('Api server running on port[%s]', config.httpPort);
     });
   }
 
   if (config.httpsPort != null) {
     require('https').createServer(config.httpsConfig, app).listen(config.httpsPort, function(){
-      log.info("Api server listening for HTTPS on port[%s]", config.httpsPort);
+      log.info('Api server listening for HTTPS on port[%s]', config.httpsPort);
     });
   }
 
