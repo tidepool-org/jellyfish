@@ -67,18 +67,6 @@ var log = require('./lib/log.js')('app.js');
   'servicePublish!',
   {
     start: function(cb) {
-      if (config.httpPort != null) {
-        require('http').createServer(service).listen(config.httpPort, function(){
-          log.info("Api server running on port[%s]", config.httpPort);
-        });
-      }
-
-      if (config.httpsPort != null) {
-        require('https').createServer(config.httpsConfig, service).listen(config.httpsPort, function(){
-          log.info("Api server listening for HTTPS on port[%s]", config.httpsPort);
-        });
-      }
-
       var serviceDescriptor = { service: config.serviceName };
       if (config.httpsPort != null) {
         serviceDescriptor.host = config.publishHost + ':' + config.httpsPort;
