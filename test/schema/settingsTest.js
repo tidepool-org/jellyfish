@@ -95,7 +95,7 @@ describe('schema/settings.js', function () {
   });
 
   describe('carbRatio', function () {
-    helper.rejectIfAbsent(goodObject, 'carbRatio');
+    helper.rejectIfNeither(goodObject, 'carbRatio', 'carbRatios');
     helper.expectObjectField(goodObject, 'carbRatio');
 
     it('rejects a schedule with a negative start', function(done){
@@ -115,10 +115,36 @@ describe('schema/settings.js', function () {
       localGood.carbRatio[1].start = (24 * 60 * 60 * 1000);
       helper.expectRejection(localGood, 'carbRatio', done);
     });
+
   });
 
-  describe('insulinSensitivity', function () {
-    helper.rejectIfAbsent(goodObject, 'insulinSensitivity');
+  describe('carbRatios', function() {
+    var multiCarbRatios = _.cloneDeep(goodObject);
+    delete multiCarbRatios['carbRatio'];
+    multiCarbRatios['carbRatios'] = { "weekday": goodObject['carbRatio'], "weekend": goodObject['carbRatio']};
+
+    helper.expectObjectField(multiCarbRatios, 'carbRatios');
+
+    it('accepts carbRatios with multiple schedules', function(done) {
+      helper.run(multiCarbRatios, done);
+    });
+
+    it('rejects carbRatios with bad internal schema', function(done) {
+      var multiCarbRatioWrong = _.cloneDeep(goodObject);
+      delete multiCarbRatioWrong['carbRatio'];
+      multiCarbRatioWrong['carbRatios'] = { "these": "are not the droids you're looking for" }
+      helper.expectRejection(multiCarbRatioWrong, 'carbRatios', done);
+    });
+  });
+
+  it('rejects with both carbRatio and carbRatios present', function(done) {
+    var both = _.cloneDeep(goodObject);
+    both['carbRatios'] = { "weekday": goodObject['carbRatio'], "weekend": goodObject['carbRatio']};
+    helper.expectRejection(both, 'carbRatio', done);
+  });
+
+  describe('insulinSensitivity', function() {
+    helper.rejectIfNeither(goodObject, 'insulinSensitivity', 'insulinSensitivities');
     helper.expectObjectField(goodObject, 'insulinSensitivity');
 
     it('rejects a schedule with a negative start', function(done){
@@ -153,8 +179,47 @@ describe('schema/settings.js', function () {
     });
   });
 
+  describe('insulinSensitivities', function() {
+    var multiIS = _.cloneDeep(goodObject);
+    delete multiIS['insulinSensitivity'];
+    multiIS['insulinSensitivities'] = { "weekday": goodObject['insulinSensitivity'], "weekend": goodObject['insulinSensitivity'] };
+
+    helper.expectObjectField(multiIS, 'insulinSensitivities');
+
+    it('accepts with multiple schedules', function(done) {
+      helper.run(multiIS, done);
+    });
+
+    it('rejects with bogus schema', function(done) {
+      var bogusMultiIS = _.cloneDeep(multiIS);
+      bogusMultiIS['insulinSensitivities'] = { "one": "does not simply walk into Mordor" };
+      helper.expectRejection(bogusMultiIS, 'insulinSensitivities', done);
+
+    });
+  });
+
+  describe('bgTargets', function() {
+    var multiBgTargets = _.cloneDeep(goodObject);
+    delete multiBgTargets['bgTarget'];
+    multiBgTargets['bgTargets'] = { "weekday": goodObject['bgTarget'], "weekend": goodObject['bgTarget'] };
+
+    helper.expectObjectField(multiBgTargets, 'bgTargets');
+
+    it('accepts with multiple schedules', function(done) {
+      helper.run(multiBgTargets, done);
+    });
+
+    it('rejects with bogus schema', function(done) {
+      var bogusMultiBgTargets = _.cloneDeep(multiBgTargets);
+      bogusMultiBgTargets['bgTargets'] = { "Y": "you no fix this bug" };
+      helper.expectRejection(bogusMultiBgTargets, 'bgTargets', done);
+
+    });
+  });
+
+
   describe('bgTarget', function () {
-    helper.rejectIfAbsent(goodObject, 'bgTarget');
+    helper.rejectIfNeither(goodObject, 'bgTarget', 'bgTargets');
     helper.expectObjectField(goodObject, 'bgTarget');
 
     describe('(Target) + High/Low', function(){
