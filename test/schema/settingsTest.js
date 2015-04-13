@@ -194,7 +194,25 @@ describe('schema/settings.js', function () {
       var bogusMultiIS = _.cloneDeep(multiIS);
       bogusMultiIS.insulinSensitivities = { "one": "does not simply walk into Mordor" };
       helper.expectRejection(bogusMultiIS, 'insulinSensitivities', done);
+    });
 
+    it('still converts units in multiple schedules', function(done) {
+      var multiConvert = _.cloneDeep(multiIS);
+      multiConvert.units.bg = 'mg/dL';
+      multiConvert.insulinSensitivities = { 
+        "weekday": [  { "amount": 35, "start": 0 },
+          { "amount": 35, "start": 18000000 }  ],
+        "weekend": [ { "amount": 50, "start": 0 },
+          { "amount": 50, "start": 18000000 } ]
+        };
+      helper.run(multiConvert, function(err, converted) {
+        if (err != null) {
+          return done(err);
+        }
+        expect(converted.insulinSensitivities.weekday[0].amount).equals(1.9427617968659368);
+        expect(converted.insulinSensitivities.weekend[1].amount).equals(2.7753739955227665);
+        done(err);
+      });
     });
   });
 
@@ -213,7 +231,29 @@ describe('schema/settings.js', function () {
       var bogusMultiBgTargets = _.cloneDeep(multiBgTargets);
       bogusMultiBgTargets.bgTargets = { "Y": "you no fix this bug" };
       helper.expectRejection(bogusMultiBgTargets, 'bgTargets', done);
+    });
 
+    it('still converts units with multiple schedules', function(done) {
+      var multiConvert = _.cloneDeep(multiBgTargets);
+      multiConvert.units.bg = 'mg/dL';
+      multiConvert.bgTargets = { 
+        "weekday": [
+          { low: 80, high: 100, target: 90, start: 0 },
+          { low: 90, high: 110, target: 100, start: 10800000 }
+        ],
+        "weekend": [
+          { low: 80, high: 100, target: 90, start: 0 },
+          { low: 90, high: 110, target: 100, start: 10800000 }
+        ]};
+      helper.run(multiConvert, function(err, converted) {
+        if (err != null) {
+          return done(err);
+        }
+        expect(converted.bgTargets.weekday[0].low).equals(4.440598392836427);
+        expect(converted.bgTargets.weekend[1].high).equals(6.1058227901500866);
+        expect(converted.bgTargets.weekend[0].target).equals(4.9956731919409805);
+        done(err);
+      });
     });
   });
 
