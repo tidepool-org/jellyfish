@@ -95,7 +95,7 @@ describe('schema/settings.js', function () {
   });
 
   describe('carbRatio', function () {
-    helper.rejectIfAbsent(goodObject, 'carbRatio');
+    helper.rejectIfNeither(goodObject, 'carbRatio', 'carbRatios');
     helper.expectObjectField(goodObject, 'carbRatio');
 
     it('rejects a schedule with a negative start', function(done){
@@ -115,10 +115,36 @@ describe('schema/settings.js', function () {
       localGood.carbRatio[1].start = (24 * 60 * 60 * 1000);
       helper.expectRejection(localGood, 'carbRatio', done);
     });
+
   });
 
-  describe('insulinSensitivity', function () {
-    helper.rejectIfAbsent(goodObject, 'insulinSensitivity');
+  describe('carbRatios', function() {
+    var multiCarbRatios = _.cloneDeep(goodObject);
+    delete multiCarbRatios.carbRatio;
+    multiCarbRatios.carbRatios = { "weekday": goodObject.carbRatio, "weekend": goodObject.carbRatio};
+
+    helper.expectObjectField(multiCarbRatios, 'carbRatios');
+
+    it('accepts carbRatios with multiple schedules', function(done) {
+      helper.run(multiCarbRatios, done);
+    });
+
+    it('rejects carbRatios with bad internal schema', function(done) {
+      var multiCarbRatioWrong = _.cloneDeep(goodObject);
+      delete multiCarbRatioWrong.carbRatio;
+      multiCarbRatioWrong.carbRatios = { "these": "are not the droids you're looking for" };
+      helper.expectRejection(multiCarbRatioWrong, 'carbRatios', done);
+    });
+  });
+
+  it('rejects with both carbRatio and carbRatios present', function(done) {
+    var both = _.cloneDeep(goodObject);
+    both.carbRatios = { "weekday": goodObject.carbRatio, "weekend": goodObject.carbRatio};
+    helper.expectRejection(both, 'carbRatio', done);
+  });
+
+  describe('insulinSensitivity', function() {
+    helper.rejectIfNeither(goodObject, 'insulinSensitivity', 'insulinSensitivities');
     helper.expectObjectField(goodObject, 'insulinSensitivity');
 
     it('rejects a schedule with a negative start', function(done){
@@ -153,8 +179,87 @@ describe('schema/settings.js', function () {
     });
   });
 
+  describe('insulinSensitivities', function() {
+    var multiIS = _.cloneDeep(goodObject);
+    delete multiIS.insulinSensitivity;
+    multiIS.insulinSensitivities = { "weekday": goodObject.insulinSensitivity, "weekend": goodObject.insulinSensitivity };
+
+    helper.expectObjectField(multiIS, 'insulinSensitivities');
+
+    it('accepts with multiple schedules', function(done) {
+      helper.run(multiIS, done);
+    });
+
+    it('rejects with bogus schema', function(done) {
+      var bogusMultiIS = _.cloneDeep(multiIS);
+      bogusMultiIS.insulinSensitivities = { "one": "does not simply walk into Mordor" };
+      helper.expectRejection(bogusMultiIS, 'insulinSensitivities', done);
+    });
+
+    it('still converts units in multiple schedules', function(done) {
+      var multiConvert = _.cloneDeep(multiIS);
+      multiConvert.units.bg = 'mg/dL';
+      multiConvert.insulinSensitivities = { 
+        "weekday": [  { "amount": 35, "start": 0 },
+          { "amount": 35, "start": 18000000 }  ],
+        "weekend": [ { "amount": 50, "start": 0 },
+          { "amount": 50, "start": 18000000 } ]
+        };
+      helper.run(multiConvert, function(err, converted) {
+        if (err != null) {
+          return done(err);
+        }
+        expect(converted.insulinSensitivities.weekday[0].amount).equals(1.9427617968659368);
+        expect(converted.insulinSensitivities.weekend[1].amount).equals(2.7753739955227665);
+        done(err);
+      });
+    });
+  });
+
+  describe('bgTargets', function() {
+    var multiBgTargets = _.cloneDeep(goodObject);
+    delete multiBgTargets.bgTarget;
+    multiBgTargets.bgTargets = { "weekday": goodObject.bgTarget, "weekend": goodObject.bgTarget };
+
+    helper.expectObjectField(multiBgTargets, 'bgTargets');
+
+    it('accepts with multiple schedules', function(done) {
+      helper.run(multiBgTargets, done);
+    });
+
+    it('rejects with bogus schema', function(done) {
+      var bogusMultiBgTargets = _.cloneDeep(multiBgTargets);
+      bogusMultiBgTargets.bgTargets = { "Y": "you no fix this bug" };
+      helper.expectRejection(bogusMultiBgTargets, 'bgTargets', done);
+    });
+
+    it('still converts units with multiple schedules', function(done) {
+      var multiConvert = _.cloneDeep(multiBgTargets);
+      multiConvert.units.bg = 'mg/dL';
+      multiConvert.bgTargets = { 
+        "weekday": [
+          { low: 80, high: 100, target: 90, start: 0 },
+          { low: 90, high: 110, target: 100, start: 10800000 }
+        ],
+        "weekend": [
+          { low: 80, high: 100, target: 90, start: 0 },
+          { low: 90, high: 110, target: 100, start: 10800000 }
+        ]};
+      helper.run(multiConvert, function(err, converted) {
+        if (err != null) {
+          return done(err);
+        }
+        expect(converted.bgTargets.weekday[0].low).equals(4.440598392836427);
+        expect(converted.bgTargets.weekend[1].high).equals(6.1058227901500866);
+        expect(converted.bgTargets.weekend[0].target).equals(4.9956731919409805);
+        done(err);
+      });
+    });
+  });
+
+
   describe('bgTarget', function () {
-    helper.rejectIfAbsent(goodObject, 'bgTarget');
+    helper.rejectIfNeither(goodObject, 'bgTarget', 'bgTargets');
     helper.expectObjectField(goodObject, 'bgTarget');
 
     describe('(Target) + High/Low', function(){

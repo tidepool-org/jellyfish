@@ -63,6 +63,12 @@ exports.rejectIfAbsent = function(goodObject, field) {
   });
 };
 
+exports.rejectIfNeither = function(object, field1, field2) { 
+  it(util.format('rejects if neither field[%s] nor field[%s] is present', field1, field2), function(done) {
+    exports.expectRejection(_.omit(object, field1, field2), field1, done);
+  });
+};
+
 exports.okIfAbsent = function(goodObject, field) {
   it(util.format('allows the field[%s] to be absent', field), function(done){
     exports.run(_.omit(goodObject, field), done);
