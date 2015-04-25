@@ -24,27 +24,42 @@ var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
 
 (function(){
-  var lifecycle = amoeba.lifecycle();
-  var hakken = lifecycle.add('hakken', require('hakken')(config.discovery, log).client());
+  var hakken = require('hakken')(config.discovery, log).client();
 
-  var httpClient = amoeba.httpClient();
+  /*
+   * user API
+   */
+  var userApiWatch = hakken.watchFromConfig(config.userApi.serviceSpec);
+  userApiWatch.start();
 
   var userApiClient = require('user-api-client').client(
     config.userApi,
-    lifecycle.add('user-api-watch', hakken.watchFromConfig(config.userApi.serviceSpec))
+    userApiWatch
   );
 
+  /*
+   * seagull API
+   */
+  var seagullApiWatch = hakken.watchFromConfig(config.seagull.serviceSpec);
+  seagullApiWatch.start();
+
   var seagullClient = require('tidepool-seagull-client')(
-    lifecycle.add('seagull-watch', hakken.watchFromConfig(config.seagull.serviceSpec)),
+    seagullApiWatch,
     {},
     httpClient
   );
+
+  /*
+   * gatekeeper API
+   */
+  var gatekeeperApiWatch = hakken.watchFromConfig(config.gatekeeper.serviceSpec);
+  gatekeeperApiWatch.start();
 
   var gatekeeper = require('tidepool-gatekeeper');
   var gatekeeperClient = gatekeeper.client(
     httpClient,
     userApiClient.withServerToken.bind(userApiClient),
-    lifecycle.add('gatekeeper-watch', hakken.watchFromConfig(config.gatekeeper.serviceSpec))
+    gatekeeperApiWatch
   );
 
   var mongoClient = require('./lib/mongo/mongoClient.js')(config.mongo);
@@ -57,42 +72,29 @@ var log = require('./lib/log.js')('app.js');
     userApiClient,
     gatekeeperClient
   );
-  lifecycle.add('jellyfishService', service);
+
+   //let's get this party started
+  service.start(function (err) {
+    if (err != null) {
+      throw err;
+    }
+
+    var serviceDescriptor = { service: config.serviceName };
+    if (config.httpsPort != null) {
+      serviceDescriptor.host = config.publishHost + ':' + config.httpsPort;
+      serviceDescriptor.protocol = 'https';
+    } else if (config.httpPort != null) {
+      serviceDescriptor.host = config.publishHost + ':' + config.httpPort;
+      serviceDescriptor.protocol = 'http';
+    }
+
+    log.info('Publishing service[%j]', serviceDescriptor);
+    hakkenClient.publish(serviceDescriptor);
+  });
+
 
   process.on('uncaughtException', function(err){
     log.error(err, 'Uncaught exception bubbled all the way up!');
   });
-
-  lifecycle.add(
-  'servicePublish!',
-  {
-    start: function(cb) {
-      var serviceDescriptor = { service: config.serviceName };
-      if (config.httpsPort != null) {
-        serviceDescriptor.host = config.publishHost + ':' + config.httpsPort;
-        serviceDescriptor.protocol = 'https';
-      } else if (config.httpPort != null) {
-        serviceDescriptor.host = config.publishHost + ':' + config.httpPort;
-        serviceDescriptor.protocol = 'http';
-      }
-
-      log.info('Publishing service[%j]', serviceDescriptor);
-      hakken.publish(serviceDescriptor);
-
-      if (cb != null) {
-        cb();
-      }
-    },
-    close: function(cb) {
-      log.warn('Calling publish close function');
-      if (cb != null) {
-        cb();
-      }
-      setTimeout(process.exit.bind(0), 2000);
-    }
-  });
-
-  lifecycle.start();
-  lifecycle.join();
 
 })();
