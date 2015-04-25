@@ -25,6 +25,7 @@ var log = require('./lib/log.js')('app.js');
 
 (function(){
   var hakken = require('hakken')(config.discovery, log).client();
+  hakken.start();
 
   /*
    * user API
@@ -89,7 +90,7 @@ var log = require('./lib/log.js')('app.js');
     }
 
     log.info('Publishing service[%j]', serviceDescriptor);
-    hakkenClient.publish(serviceDescriptor);
+    hakken.publish(serviceDescriptor);
   });
 
 
