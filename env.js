@@ -102,6 +102,10 @@ module.exports = (function () {
   // the files used to communicate errors from child processes back to the main process.
   env.tempStorage = config.fromEnvironment('TEMP_STORAGE', '/tmp/jellyfish');
 
+  // The version that we will accept upload requests from, will be in format of 0.200.0
+  // NOTE: This will be transitioned to a version of the datamodel
+  env.minimumUploaderVersion = config.fromEnvironment('MINIMUM_UPLOADER_VERSION', null);
+
   // Serve static build of client app from this directory
   // (use "dist" if you haven't changed default build directory)
   env.serveStatic = config.fromEnvironment('SERVE_STATIC', null);
