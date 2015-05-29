@@ -57,6 +57,16 @@ exports.expectRejection = function(object, field, cb) {
   });
 };
 
+exports.expectRejectionAndError = function(object, expectedError, cb) {
+  exports.run(object, function(err){
+    expect(err).to.exist;
+    expect(err.statusCode).equals(400);
+    expect(err.message.code).equals(expectedError.code);
+    expect(err.message.errorField).equals(expectedError.errorField);
+    cb();
+  });
+};
+
 exports.rejectIfAbsent = function(goodObject, field) {
   it(util.format('rejects if field[%s] is not present', field), function(done){
     exports.expectRejection(_.omit(goodObject, field), field, done);
