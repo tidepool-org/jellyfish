@@ -202,12 +202,6 @@ exports.testCommonFields = function(goodObject) {
     it('rejects non-numerical timezoneOffset', function(done){
       exports.expectRejection(_.assign({}, goodObject, {timezoneOffset: '+08:00'}), 'timezoneOffset', done);
     });
-    it('rejects timezoneOffset < -1440', function(done){
-      exports.expectRejection(_.assign({}, goodObject, {timezoneOffset: -1441}), 'timezoneOffset', done);
-    });
-    it('rejects timezoneOffset > 1440', function(done){
-      exports.expectRejection(_.assign({}, goodObject, {timezoneOffset: 1441}), 'timezoneOffset', done);
-    });
   });
 
   describe('deviceId', function(){
