@@ -61,8 +61,9 @@ exports.expectRejectionAndError = function(object, expectedError, cb) {
   exports.run(object, function(err){
     expect(err).to.exist;
     expect(err.statusCode).equals(400);
-    expect(err.message.code).equals(expectedError.code);
-    expect(err.message.errorField).equals(expectedError.errorField);
+    expect(err.text).equals(expectedError.text);
+    expect(err.code).equals(expectedError.code);
+    expect(err.errorField).equals(expectedError.errorField);
     cb();
   });
 };

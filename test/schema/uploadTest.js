@@ -81,7 +81,7 @@ describe('schema/upload.js', function(){
       done();
     });
     it('is rejected when its an outdated version', function(done) {
-      helper.expectRejectionAndError(badTidepoolUploaderObject, {code: 'outdatedVersion', errorField: 'version'}, done);
+      helper.expectRejectionAndError(badTidepoolUploaderObject, {text: 'The minimum supported version is [0.99.0]. Version [tidepool-uploader 0.1.0] is no longer supported.', code: 'outdatedVersion', errorField: 'version'}, done);
     });
   });
 
