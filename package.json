@@ -37,6 +37,7 @@
     "mongodb": "1.4.34",
     "request": "2.53.0",
     "rx": "2.4.1",
+    "semver": "4.3.4",
     "sundial": "1.1.7",
     "tidepool-gatekeeper": "0.1.5",
     "tidepool-seagull-client": "0.1.3",
