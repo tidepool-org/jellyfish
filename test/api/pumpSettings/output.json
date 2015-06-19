@@ -1,5 +1,5 @@
 [{
-  "type": "settings",
+  "type": "pumpSettings",
   "time": "2014-01-01T01:00:00.000Z",
   "timezoneOffset": 120,
   "deviceId": "test",
@@ -30,5 +30,9 @@
   "bgTarget": [
     { "low": 5.5, "high": 6.7, "start": 0 },
     { "low": 5, "high": 6.1, "start": 18000000 }
-  ]
+  ],
+  "_groupId": "g",
+  "_active": true,
+  "_version": 0,
+  "id": "8ujpjnqpnh31nulmp30o7gdmf4n6onma"
 }]
