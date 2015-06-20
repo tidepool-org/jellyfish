@@ -25,7 +25,7 @@ var expect = require('salinity').expect;
 var helper = require('./schemaTestHelper.js');
 
 var goodObject = {
-  type: 'settings',
+  type: 'pumpSettings',
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
   deviceId: 'test',
@@ -60,7 +60,7 @@ var goodObject = {
   _groupId: 'g'
 };
 
-describe('schema/settings.js', function () {
+describe('schema/pumpSettings.js', function () {
   describe('activeSchedule', function () {
     helper.rejectIfAbsent(goodObject, 'activeSchedule');
     helper.expectStringField(goodObject, 'activeSchedule');
