@@ -65,7 +65,7 @@ describe('streamDAO', function(){
           expect(datum).to.exist;
           expect(new Date(datum.createdTime).valueOf()).that.is.within(now, Date.now());
           expect(_.omit(datum, 'createdTime', '_id')).to.deep.equals(
-            { id: 'abcd', v: 1, _groupId: 'g', _version: 0, _active: true }
+            { id: 'abcd', v: 1, _groupId: 'g', _version: 0, _schemaVersion: 0, _active: true }
           );
 
           done(err);
@@ -106,6 +106,7 @@ describe('streamDAO', function(){
             f: 'a',
             _groupId: 'g',
             _version: 1,
+            _schemaVersion: 0,
             _active: true,
             createdTime: createdTime
           });
@@ -117,7 +118,7 @@ describe('streamDAO', function(){
               expect(elements).to.have.length(1);
               expect(elements[0]._archivedTime).that.is.within(now, Date.now());
               expect(_.omit(elements[0], '_archivedTime')).to.deep.equals(
-                { _id: overwrittenId, id: 'abcd', f: 'a', _groupId: 'g', v: 1, createdTime: createdTime, _version: 0, _active: false }
+                { _id: overwrittenId, id: 'abcd', f: 'a', _groupId: 'g', v: 1, createdTime: createdTime, _version: 0, _schemaVersion: 0, _active: false }
               );
 
               done(err);
@@ -175,7 +176,7 @@ describe('streamDAO', function(){
               expect(elements).to.have.length(1);
               expect(elements[0]._archivedTime).that.is.within(now, Date.now());
               expect(_.omit(elements[0], '_archivedTime')).to.deep.equals(
-                { _id: overwrittenId, id: 'abcd', f: 'a', _groupId: 'g', v: 1, createdTime: createdTime, _version: 0, _active: false }
+                { _id: overwrittenId, id: 'abcd', f: 'a', _groupId: 'g', v: 1, createdTime: createdTime, _version: 0, _schemaVersion: 0, _active: false }
               );
 
               done(err);

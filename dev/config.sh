@@ -11,4 +11,4 @@ export USER_API_SERVICE="{ \"type\": \"static\", \"hosts\": [{ \"protocol\": \"h
 export SEAGULL_SERVICE="{ \"type\": \"static\", \"hosts\": [{ \"protocol\": \"http\", \"host\": \"localhost:9120\" }] }"
 export GATEKEEPER_SERVICE="{ \"type\": \"static\", \"hosts\": [{ \"protocol\": \"http\", \"host\": \"localhost:9123\" }] }"
 export MINIMUM_UPLOADER_VERSION="0.99.0"
-export SCHEMA_VERSION="0"
+export SCHEMA_VERSION=0
