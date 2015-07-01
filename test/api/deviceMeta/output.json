@@ -11,6 +11,7 @@
         "_groupId": "1234",
         "id": "es3l2qo0p9knth2iiq051r85t57stp3f",
         "_version": 0,
+        "_schemaVersion": 0,
         "_active": true
     },
     {
@@ -26,6 +27,7 @@
         "_groupId": "1234",
         "id": "jdps43kvonp72kcmkj7hjertq8knfbbt",
         "_version": 0,
+        "_schemaVersion": 0,
         "_active": true
     },
     {
@@ -48,6 +50,7 @@
         ],
         "id": "m21tehi9e58cuq2doskj36l53p5bj5o1",
         "_version": 0,
+        "_schemaVersion": 0,
         "_active": false
     },
     {
@@ -66,6 +69,7 @@
         "_groupId": "1234",
         "id": "m21tehi9e58cuq2doskj36l53p5bj5o1",
         "_version": 1,
+        "_schemaVersion": 0,
         "_active": true,
         "duration": 14000
     },
@@ -82,6 +86,7 @@
         "_groupId": "1234",
         "id": "0l2aou5scqf1msp8ip0647crbkojoth4",
         "_version": 0,
+        "_schemaVersion": 0,
         "_active": true
     },
     {
@@ -104,6 +109,7 @@
         "_groupId": "1234",
         "id": "num627sfihu1m6g7pad0uro3fdilm42j",
         "_version": 0,
+        "_schemaVersion": 0,
         "_active": true
     }
 ]

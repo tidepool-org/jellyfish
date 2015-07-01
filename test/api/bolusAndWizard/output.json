@@ -8,6 +8,7 @@
         "uploadId": "tools",
         "_active": false,
         "_version": 0,
+        "_schemaVersion": 0,
         "id": "ddrucd8457tlt6hjebeoatc5qa5o2d8r"
     },
     {
@@ -20,6 +21,7 @@
         "uploadId": "tools",
         "_active": true,
         "_version": 1,
+        "_schemaVersion": 0,
         "id": "ddrucd8457tlt6hjebeoatc5qa5o2d8r"
     },
     {
@@ -41,6 +43,7 @@
         "uploadId": "tools",
         "_active": true,
         "_version": 0,
+        "_schemaVersion": 0,
         "id": "3mad7q9nl7k1pl9n597od5bhp1v82je9"
     },
     {
@@ -52,6 +55,7 @@
         "uploadId": "tools",
         "_active": true,
         "_version": 0,
+        "_schemaVersion": 0,
         "id": "4tk1v85lgkb29641a7ltfo1skfiu4kbm"
     }
 ]
