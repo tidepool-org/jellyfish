@@ -98,9 +98,7 @@ describe('schema/cgmSettings.js', function () {
       done();
     });
   });
-  /*
   describe('outOfRangeAlerts', function () {
-    helper.rejectIfAbsent(goodObject, 'outOfRangeAlerts');
     helper.expectObjectField(goodObject, 'outOfRangeAlerts');
     it('fields', function(done){
       var localGood = _.cloneDeep(goodObject);
@@ -111,7 +109,6 @@ describe('schema/cgmSettings.js', function () {
       done();
     });
   });
-  */
   describe('rateOfChangeAlerts', function () {
     helper.rejectIfAbsent(goodObject, 'rateOfChangeAlerts');
     helper.expectObjectField(goodObject, 'rateOfChangeAlerts');
