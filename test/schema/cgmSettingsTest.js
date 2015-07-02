@@ -100,17 +100,75 @@ var goodObject = {
 */
 
 describe('schema/cgmSettings.js', function () {
+  describe('transmitterId', function () {
+    helper.rejectIfAbsent(goodObject, 'transmitterId');
+    helper.expectStringField(goodObject, 'transmitterId');
+  });
+  describe('units', function () {
+    helper.rejectIfAbsent(goodObject, 'units');
+    helper.expectStringField(goodObject, 'units');
+  });
   describe('highAlerts', function () {
     helper.rejectIfAbsent(goodObject, 'highAlerts');
     helper.expectObjectField(goodObject, 'highAlerts');
+
+    it('fields', function(done){
+      var localGood = _.cloneDeep(goodObject);
+      helper.rejectIfAbsent(localGood.lowAlerts, 'enabled');
+      helper.expectObjectField(localGood.lowAlerts, 'enabled');
+      helper.rejectIfAbsent(localGood.lowAlerts, 'level');
+      helper.expectNumericalField(localGood.lowAlerts, 'level');
+      helper.rejectIfAbsent(localGood.lowAlerts, 'snooze');
+      helper.expectNumericalField(localGood.lowAlerts, 'snooze');
+      done();
+    });
   });
   describe('lowAlerts', function () {
     helper.rejectIfAbsent(goodObject, 'lowAlerts');
     helper.expectObjectField(goodObject, 'lowAlerts');
+
+    it('fields', function(done){
+      var localGood = _.cloneDeep(goodObject);
+      helper.rejectIfAbsent(localGood.lowAlerts, 'enabled');
+      helper.expectObjectField(localGood.lowAlerts, 'enabled');
+      helper.rejectIfAbsent(localGood.lowAlerts, 'level');
+      helper.expectNumericalField(localGood.lowAlerts, 'level');
+      helper.rejectIfAbsent(localGood.lowAlerts, 'snooze');
+      helper.expectNumericalField(localGood.lowAlerts, 'snooze');
+      done();
+    });
   });
   describe('rateOfChangeAlerts', function () {
     helper.rejectIfAbsent(goodObject, 'rateOfChangeAlerts');
     helper.expectObjectField(goodObject, 'rateOfChangeAlerts');
+  });
+  /*describe('outOfRangeAlerts', function () {
+    helper.rejectIfAbsent(goodObject, 'outOfRangeAlerts');
+    helper.expectObjectField(goodObject, 'outOfRangeAlerts');
+  });*/
+  describe('rateOfChangeAlerts', function () {
+    helper.rejectIfAbsent(goodObject, 'rateOfChangeAlerts');
+    helper.expectObjectField(goodObject, 'rateOfChangeAlerts');
+    it('fallRate', function(done){
+      var localGood = _.cloneDeep(goodObject);
+      helper.rejectIfAbsent(localGood, 'fallRate');
+      helper.expectObjectField(localGood, 'fallRate');
+      helper.rejectIfAbsent(localGood.fallRate, 'enabled');
+      helper.expectObjectField(localGood.fallRate, 'enabled');
+      helper.rejectIfAbsent(localGood.fallRate, 'rate');
+      helper.expectNumericalField(localGood.fallRate, 'rate');
+      done();
+    });
+    it('riseRate', function(done){
+      var localGood = _.cloneDeep(goodObject);
+      helper.rejectIfAbsent(localGood, 'riseRate');
+      helper.expectObjectField(localGood, 'riseRate');
+      helper.rejectIfAbsent(localGood.fallRate, 'enabled');
+      helper.expectObjectField(localGood.fallRate, 'enabled');
+      helper.rejectIfAbsent(localGood.fallRate, 'rate');
+      helper.expectNumericalField(localGood.fallRate, 'rate');
+      done();
+    });
   });
 
   helper.testCommonFields(goodObject);
