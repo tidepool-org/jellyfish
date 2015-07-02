@@ -1,109 +1,109 @@
 [
     {
-        "type": "deviceEvent",
-        "subType": "reservoirChange",
-        "deviceTime": "2014-07-27T17:07:10",
-        "deviceId": "test",
-        "uploadId": "test",
-        "time": "2014-07-28T00:07:10.000Z",
-        "timezoneOffset": -420,
-        "status": "qvi2f8v85p97m1cibdkab9m9cg2rrgcn",
+        "_active": true,
         "_groupId": "1234",
-        "id": "vg2la7gkdt046l9vhcdnsh36lc7qerhd",
         "_version": 0,
-        "_active": true
-    },
-    {
-        "type": "deviceEvent",
-        "subType": "alarm",
         "alarmType": "no_delivery",
-        "deviceTime": "2014-07-27T17:07:10",
         "deviceId": "test",
-        "uploadId": "test",
+        "deviceTime": "2014-07-27T17:07:10",
+        "id": "e4v8dh0mnr883sb2logsc0cv71dp40em",
+        "status": "qvi2f8v85p97m1cibdkab9m9cg2rrgcn",
+        "subType": "alarm",
         "time": "2014-07-28T00:07:10.000Z",
         "timezoneOffset": -420,
-        "status": "qvi2f8v85p97m1cibdkab9m9cg2rrgcn",
-        "_groupId": "1234",
-        "id": "e4v8dh0mnr883sb2logsc0cv71dp40em",
-        "_version": 0,
-        "_active": true
+        "type": "deviceEvent",
+        "uploadId": "test"
     },
     {
-        "type": "deviceEvent",
-        "subType": "status",
-        "status": "suspended",
-        "deviceTime": "2014-07-27T17:07:10",
-        "deviceId": "test",
-        "uploadId": "test",
-        "reason": {
-            "suspended": "manual"
-        },
-        "time": "2014-07-28T00:07:10.000Z",
-        "timezoneOffset": -420,
+        "_active": false,
         "_groupId": "1234",
+        "_version": 0,
         "annotations": [
             {
                 "code": "status/incomplete-tuple"
             }
         ],
-        "id": "qvi2f8v85p97m1cibdkab9m9cg2rrgcn",
-        "_version": 0,
-        "_active": false
-    },
-    {
-        "type": "deviceEvent",
-        "subType": "status",
-        "status": "suspended",
-        "deviceTime": "2014-07-27T17:07:10",
         "deviceId": "test",
-        "uploadId": "test",
+        "deviceTime": "2014-07-27T17:07:10",
+        "id": "qvi2f8v85p97m1cibdkab9m9cg2rrgcn",
         "reason": {
-            "suspended": "manual",
-            "resumed": "manual"
+            "suspended": "manual"
         },
+        "status": "suspended",
+        "subType": "status",
         "time": "2014-07-28T00:07:10.000Z",
         "timezoneOffset": -420,
-        "_groupId": "1234",
-        "id": "qvi2f8v85p97m1cibdkab9m9cg2rrgcn",
-        "_version": 1,
-        "_active": true,
-        "duration": 14000
+        "type": "deviceEvent",
+        "uploadId": "test"
     },
     {
+        "_active": true,
+        "_groupId": "1234",
+        "_version": 1,
+        "deviceId": "test",
+        "deviceTime": "2014-07-27T17:07:10",
+        "duration": 14000,
+        "id": "qvi2f8v85p97m1cibdkab9m9cg2rrgcn",
+        "reason": {
+            "resumed": "manual",
+            "suspended": "manual"
+        },
+        "status": "suspended",
+        "subType": "status",
+        "time": "2014-07-28T00:07:10.000Z",
+        "timezoneOffset": -420,
         "type": "deviceEvent",
-        "subType": "prime",
-        "primeTarget": "tubing",
-        "volume": 21.2,
-        "deviceTime": "2014-07-27T17:12:03",
+        "uploadId": "test"
+    },
+    {
+        "_active": true,
+        "_groupId": "1234",
+        "_version": 0,
+        "deviceId": "test",
+        "deviceTime": "2014-07-27T17:07:10",
+        "id": "vg2la7gkdt046l9vhcdnsh36lc7qerhd",
+        "status": "qvi2f8v85p97m1cibdkab9m9cg2rrgcn",
+        "subType": "reservoirChange",
+        "time": "2014-07-28T00:07:10.000Z",
+        "timezoneOffset": -420,
+        "type": "deviceEvent",
+        "uploadId": "test"
+    },
+    {
+        "_active": true,
+        "_groupId": "1234",
+        "_version": 0,
         "deviceId": "Paradigm Revel - 723",
-        "uploadId": "test",
+        "deviceTime": "2014-07-27T17:12:03",
+        "id": "1k3o73ilaqgkh00sqhiv7saqej4ei63g",
+        "primeTarget": "tubing",
+        "subType": "prime",
         "time": "2014-07-28T00:12:03.000Z",
         "timezoneOffset": -420,
-        "_groupId": "1234",
-        "id": "1k3o73ilaqgkh00sqhiv7saqej4ei63g",
-        "_version": 0,
-        "_active": true
+        "type": "deviceEvent",
+        "uploadId": "test",
+        "volume": 21.2
     },
     {
-        "type": "deviceEvent",
-        "subType": "timeChange",
+        "_active": true,
+        "_groupId": "1234",
+        "_version": 0,
         "change": {
-            "from": "2015-03-08T12:02:00",
-            "to": "2015-03-08T13:00:00",
             "agent": "manual",
+            "from": "2015-03-08T12:02:00",
             "reasons": [
                 "to_daylight_savings",
                 "correction"
-            ]
+            ],
+            "to": "2015-03-08T13:00:00"
         },
+        "deviceId": "Paradigm Revel - 723",
+        "deviceTime": "2015-03-08T12:02:00",
+        "id": "nv5fq3fd3ht67a4h5msj373lgg3hi8js",
+        "subType": "timeChange",
         "time": "2015-03-08T19:00:00.000Z",
         "timezoneOffset": -420,
-        "deviceTime": "2015-03-08T12:02:00",
-        "deviceId": "Paradigm Revel - 723",
-        "uploadId": "test",
-        "_groupId": "1234",
-        "id": "nv5fq3fd3ht67a4h5msj373lgg3hi8js",
-        "_version": 0,
-        "_active": true
+        "type": "deviceEvent",
+        "uploadId": "test"
     }
 ]
