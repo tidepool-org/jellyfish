@@ -59,46 +59,6 @@ var goodObject = {
   _groupId: 'g'
 };
 
-/*
-{
-        "deviceId": "DexG4RecwitSha_SM51118608",
-        "deviceTime": "2015-06-16T09:09:10",
-        "guid": "0ba0f39d-6e21-4454-a6f0-ac2fb10c3a9b",
-        "highAlerts": {
-            "enabled": true,
-            "level": 8.3261219865683,
-            "snooze": 0
-        },
-        "id": "3t8f5h40i1245011ck8mtduledrftv2d",
-        "lowAlerts": {
-            "enabled": true,
-            "level": 3.6079861941795968,
-            "snooze": 0
-        },
-        "outOfRangeAlerts": {
-            "enabled": false,
-            "snooze": 1800000
-        },
-        "rateOfChangeAlerts": {
-            "fallRate": {
-                "enabled": false,
-                "rate": -0.16652243973136602
-            },
-            "riseRate": {
-                "enabled": false,
-                "rate": 0.16652243973136602
-            }
-        },
-        "time": "2015-06-16T13:09:10.000Z",
-        "timezoneOffset": -240,
-        "transmitterId": "68U6B",
-        "type": "cgmSettings",
-        "units": "mg/dL",
-        "uploadId": "upid_4d6253eba395"
-    }
-
-*/
-
 describe('schema/cgmSettings.js', function () {
   describe('transmitterId', function () {
     helper.rejectIfAbsent(goodObject, 'transmitterId');
@@ -138,14 +98,20 @@ describe('schema/cgmSettings.js', function () {
       done();
     });
   });
-  describe('rateOfChangeAlerts', function () {
-    helper.rejectIfAbsent(goodObject, 'rateOfChangeAlerts');
-    helper.expectObjectField(goodObject, 'rateOfChangeAlerts');
-  });
-  /*describe('outOfRangeAlerts', function () {
+  /*
+  describe('outOfRangeAlerts', function () {
     helper.rejectIfAbsent(goodObject, 'outOfRangeAlerts');
     helper.expectObjectField(goodObject, 'outOfRangeAlerts');
-  });*/
+    it('fields', function(done){
+      var localGood = _.cloneDeep(goodObject);
+      helper.rejectIfAbsent(localGood.outOfRangeAlerts, 'enabled');
+      helper.expectObjectField(localGood.outOfRangeAlerts, 'enabled');
+      helper.rejectIfAbsent(localGood.outOfRangeAlerts, 'snooze');
+      helper.expectNumericalField(localGood.outOfRangeAlerts, 'snooze');
+      done();
+    });
+  });
+  */
   describe('rateOfChangeAlerts', function () {
     helper.rejectIfAbsent(goodObject, 'rateOfChangeAlerts');
     helper.expectObjectField(goodObject, 'rateOfChangeAlerts');
