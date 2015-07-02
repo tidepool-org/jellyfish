@@ -1,6 +1,6 @@
 [
     {
-        "type": "deviceMeta",
+        "type": "deviceEvent",
         "subType": "alarm",
         "alarmType": "no_delivery",
         "deviceTime": "2014-07-27T17:07:10",
@@ -9,7 +9,7 @@
         "time": "2014-07-28T00:07:10.000Z",
         "timezoneOffset": -420,
         "status": {
-            "type": "deviceMeta",
+            "type": "deviceEvent",
             "subType": "status",
             "status": "suspended",
             "deviceTime": "2014-07-27T17:07:10",
@@ -23,7 +23,7 @@
         }
     },
     {
-        "type": "deviceMeta",
+        "type": "deviceEvent",
         "subType": "reservoirChange",
         "deviceTime": "2014-07-27T17:07:10",
         "deviceId": "test",
@@ -31,7 +31,7 @@
         "time": "2014-07-28T00:07:10.000Z",
         "timezoneOffset": -420,
         "status": {
-            "type": "deviceMeta",
+            "type": "deviceEvent",
             "subType": "status",
             "status": "suspended",
             "deviceTime": "2014-07-27T17:07:10",
@@ -45,7 +45,7 @@
         }
     },
     {
-        "type": "deviceMeta",
+        "type": "deviceEvent",
         "subType": "status",
         "status": "suspended",
         "deviceTime": "2014-07-27T17:07:10",
@@ -58,7 +58,7 @@
         "timezoneOffset": -420
     },
     {
-        "type": "deviceMeta",
+        "type": "deviceEvent",
         "subType": "status",
         "status": "resumed",
         "deviceTime": "2014-07-27T17:07:24",
@@ -70,7 +70,7 @@
         "time": "2014-07-28T00:07:24.000Z",
         "timezoneOffset": -420,
         "previous": {
-            "type": "deviceMeta",
+            "type": "deviceEvent",
             "subType": "status",
             "status": "suspended",
             "deviceTime": "2014-07-27T17:07:10",
@@ -84,7 +84,7 @@
         }
     },
     {
-        "type": "deviceMeta",
+        "type": "deviceEvent",
         "subType": "prime",
         "primeTarget": "tubing",
         "volume": 21.2,
@@ -95,7 +95,7 @@
         "timezoneOffset": -420
     },
     {
-        "type": "deviceMeta",
+        "type": "deviceEvent",
         "subType": "timeChange",
         "change": {
             "from": "2015-03-08T12:02:00",
