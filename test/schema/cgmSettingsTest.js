@@ -31,7 +31,7 @@ var goodObject = {
   deviceId: 'test',
   uploadId: 'test',
   transmitterId: 'test',
-  units: 'mg/dL',
+  originUnits: 'mg/dL',
   "highAlerts": {
       "enabled": true,
       "level": 8.3261219865683,
@@ -64,12 +64,9 @@ describe('schema/cgmSettings.js', function () {
     helper.rejectIfAbsent(goodObject, 'transmitterId');
     helper.expectStringField(goodObject, 'transmitterId');
   });
-  describe('units', function () {
-    helper.rejectIfAbsent(goodObject, 'units');
-    helper.expectStringField(goodObject, 'units');
-    helper.expectFieldIn(goodObject, 'units',
-      ['mmol/L', 'mmol/l', 'mg/dL', 'mg/dl'],
-      ['mmol/L', 'mmol/L', 'mg/dL', 'mg/dL']);
+  describe('originUnits', function () {
+    helper.rejectIfAbsent(goodObject, 'originUnits');
+    helper.expectStringField(goodObject, 'originUnits');
   });
   describe('highAlerts', function () {
     helper.rejectIfAbsent(goodObject, 'highAlerts');

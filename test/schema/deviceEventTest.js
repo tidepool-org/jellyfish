@@ -36,7 +36,7 @@ describe('schema/deviceEvent.js', function(){
       type: 'deviceEvent',
       subType: 'calibration',
       value: 3.0,
-      units: 'mg/dL',
+      originUnits: 'mg/dL',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
       deviceId: 'test',
@@ -46,11 +46,11 @@ describe('schema/deviceEvent.js', function(){
 
     describe('value', function(){
       helper.rejectIfAbsent(goodObject, 'value');
-      helper.rejectIfAbsent(goodObject, 'units');
+      helper.rejectIfAbsent(goodObject, 'originUnits');
       helper.expectNumericalField(goodObject, 'value');
 
       it('converts "mmol/l" to "mmol/L"', function(done){
-        helper.run(_.assign({}, goodObject, {value: 80, units: 'mmol/l'}), function(err, val){
+        helper.run(_.assign({}, goodObject, {value: 80, originUnits: 'mmol/l'}), function(err, val){
           expect(val.units).equals('mmol/L');
           expect(val.value).equals(80);
           done(err);
@@ -58,16 +58,16 @@ describe('schema/deviceEvent.js', function(){
       });
 
       it('converts units from mg/dL to mmol/L', function(done){
-        helper.run(_.assign({}, goodObject, {value: 80, units: 'mg/dL'}), function(err, val){
-          expect(val.units).equals('mg/dL');
+        helper.run(_.assign({}, goodObject, {value: 80, originUnits: 'mg/dL'}), function(err, val){
+          expect(val.units).equals('mmol/L');
           expect(val.value).equals(4.440598392836427);
           done(err);
         });
       });
 
       it('converts units from mg/dl to mmol/L', function(done){
-        helper.run(_.assign({}, goodObject, {value: 80, units: 'mg/dl'}), function(err, val){
-          expect(val.units).equals('mg/dL');
+        helper.run(_.assign({}, goodObject, {value: 80, originUnits: 'mg/dl'}), function(err, val){
+          expect(val.units).equals('mmol/L');
           expect(val.value).equals(4.440598392836427);
           done(err);
         });

@@ -30,7 +30,7 @@
             "correction": 0.5
         },
         "bgInput": 6.771912549075551,
-        "units": "mg/dL",
+        "units": "mmol/L",
         "carbInput": 40,
         "insulinOnBoard": 0.8,
         "payload": {

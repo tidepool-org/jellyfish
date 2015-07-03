@@ -2,7 +2,7 @@
   "type": "cgmSettings",
   "time": "2015-06-16T13:09:10.000Z",
   "timezoneOffset": -240,
-  "units": "mg/dL",
+  "units": "mmol/L",
   "transmitterId": "test",
   "uploadId": "test",
   "deviceId": "test",

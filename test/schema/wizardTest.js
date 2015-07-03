@@ -25,7 +25,9 @@ var expect = require('salinity').expect;
 var helper = require('./schemaTestHelper.js');
 var schema = require('../../lib/schema')(exports.streamDAO);
 
-var goodObject = {
+//the incoming raw object, i.e. posted to the the API, that
+//has not yet been validated or had any transformations applied
+var incomingObject = {
   type: 'wizard',
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
@@ -47,32 +49,32 @@ var goodObject = {
     time: '2014-01-01T01:00:00.000Z',
     deviceId: 'test'
   },
-  units: 'mg/dL',
+  originUnits: 'mg/dl',
   _groupId: 'g'
 };
 
 describe('schema/wizard.js', function(){
 
   describe('bgInput', function(){
-    helper.okIfAbsent(goodObject, 'bgInput');
-    helper.expectNumericalField(goodObject, 'bgInput');
-    helper.expectUnitConversion(goodObject, 'bgInput');
+    helper.okIfAbsent(incomingObject, 'bgInput');
+    helper.expectNumericalField(incomingObject, 'bgInput');
+    helper.expectUnitConversion(incomingObject, 'bgInput');
 
     it('converts units', function(done){
-      var localGood = _.assign({}, goodObject, { bgInput: 100 });
+      var localGood = _.assign({}, incomingObject, { bgInput: 100, });
       helper.run(localGood, function(err, converted){
         if (err != null) {
           return done(err);
         }
 
-        expect(converted.units).to.equal('mg/dL');
+        expect(converted.units).to.equal('mmol/L');
         expect(converted.bgInput).to.equal(5.550747991045533);
         done();
       });
     });
 
     it('does not produce an NaN value if it is absent and units need conversion', function(done){
-      var localGood = _.assign({}, _.omit(goodObject, 'bgInput'));
+      var localGood = _.assign({}, _.omit(incomingObject, 'bgInput'));
       helper.run(localGood, function(err, converted){
         if (err != null) {
           return done(err);
@@ -85,11 +87,11 @@ describe('schema/wizard.js', function(){
   });
 
   describe('bgTarget', function () {
-    helper.okIfAbsent(goodObject, 'bgTarget');
-    helper.expectObjectField(goodObject, 'bgTarget');
+    helper.okIfAbsent(incomingObject, 'bgTarget');
+    helper.expectObjectField(incomingObject, 'bgTarget');
 
     it('is ok if it is absent and units need conversion', function(done){
-      helper.run(_.assign({}, _.omit(goodObject, 'bgTarget')), function(err, converted) {
+      helper.run(_.assign({}, _.omit(incomingObject, 'bgTarget')), function(err, converted) {
         expect(converted.bgTarget).not.to.equal(null);
         done();
       });
@@ -98,7 +100,7 @@ describe('schema/wizard.js', function(){
     describe('(Target) + High/Low', function(){
       var localGood = {};
       beforeEach(function(){
-        localGood = _.cloneDeep(goodObject);
+        localGood = _.cloneDeep(incomingObject);
       });
 
       it('accepts a bgTarget with a target', function(done){
@@ -107,14 +109,14 @@ describe('schema/wizard.js', function(){
       });
 
       it('converts units', function(done){
-        localGood.units = 'mg/dL';
+        localGood.originUnits = 'mg/dL';
         localGood.bgTarget = { low: 80, high: 100, target: 90 };
 
         helper.run(localGood, function(err, converted) {
           if (err != null) {
             return done(err);
           }
-
+          expect(converted.units).to.equal('mmol/L');
           expect(converted.bgTarget).deep.equals(
             { low: 4.440598392836427, high: 5.550747991045533, target: 4.9956731919409805 }
           );
@@ -127,7 +129,8 @@ describe('schema/wizard.js', function(){
       var localGood = {};
 
       beforeEach(function(){
-        localGood = _.cloneDeep(goodObject);
+        localGood = _.cloneDeep(incomingObject);
+        localGood.originUnits = 'mmol/L';
         localGood.bgTarget = { target: 4.5, range: 0.5 };
       });
 
@@ -136,9 +139,11 @@ describe('schema/wizard.js', function(){
       });
 
       it('converts units', function(done){
+        localGood.originUnits = 'mg/dL';
         localGood.bgTarget = { target: 80, range: 10 };
 
         helper.run(localGood, function(err, converted) {
+          expect(converted.units).to.equal('mmol/L');
           expect(converted.bgTarget).deep.equals(
             { target: 4.440598392836427, range: 0.5550747991045534 }
           );
@@ -151,7 +156,7 @@ describe('schema/wizard.js', function(){
       var localGood = {};
 
       beforeEach(function(){
-        localGood = _.cloneDeep(goodObject);
+        localGood = _.cloneDeep(incomingObject);
         localGood.bgTarget = { target: 4.5, high: 6.0 };
       });
 
@@ -163,6 +168,7 @@ describe('schema/wizard.js', function(){
         localGood.bgTarget = { target: 100, high: 140 };
 
         helper.run(localGood, function(err, converted) {
+          expect(converted.units).to.equal('mmol/L');
           expect(converted.bgTarget).deep.equals(
               { target: 5.550747991045533, high: 7.771047187463747 }
           );
@@ -173,44 +179,52 @@ describe('schema/wizard.js', function(){
   });
 
   describe('bolus', function(){
-    helper.okIfAbsent(goodObject, 'bolus');
-    helper.expectNotNumberField(goodObject, 'bolus');
+    helper.okIfAbsent(incomingObject, 'bolus');
+    helper.expectNotNumberField(incomingObject, 'bolus');
   });
 
   describe('carbInput', function(){
-    helper.okIfAbsent(goodObject, 'carbInput');
-    helper.expectNumericalField(goodObject, 'carbInput');
+    helper.okIfAbsent(incomingObject, 'carbInput');
+    helper.expectNumericalField(incomingObject, 'carbInput');
   });
 
   describe('insulinCarbRatio', function(){
-    helper.okIfAbsent(goodObject, 'insulinCarbRatio');
-    helper.expectNumericalField(goodObject, 'insulinCarbRatio');
+    helper.okIfAbsent(incomingObject, 'insulinCarbRatio');
+    helper.expectNumericalField(incomingObject, 'insulinCarbRatio');
   });
 
   describe('insulinOnBoard', function(){
-    helper.okIfAbsent(goodObject, 'insulinOnBoard');
-    helper.expectNumericalField(goodObject, 'insulinOnBoard');
+    helper.okIfAbsent(incomingObject, 'insulinOnBoard');
+    helper.expectNumericalField(incomingObject, 'insulinOnBoard');
   });
 
   describe('insulinSensitivity', function(){
-    helper.okIfAbsent(goodObject, 'insulinSensitivity');
-    helper.expectNumericalField(goodObject, 'insulinSensitivity');
+    var localGood = {};
+
+    beforeEach(function(){
+      localGood = _.cloneDeep(incomingObject);
+    });
+
+    helper.okIfAbsent(incomingObject, 'insulinSensitivity');
+    helper.expectNumericalField(incomingObject, 'insulinSensitivity');
 
     it('converts units', function(done){
-      var localGood = _.assign({}, goodObject, { insulinSensitivity: 50 });
+      var localGood = _.assign({}, incomingObject, { insulinSensitivity: 50, originUnits : 'mg/dL' });
+      console.log('before conversion ',localGood);
       helper.run(localGood, function(err, converted){
         if (err != null) {
           return done(err);
         }
 
-        expect(converted.units).to.equal('mg/dL');
+        expect(converted.units).to.equal('mmol/L');
+        console.log('converted ',converted);
         expect(converted.insulinSensitivity).to.equal(2.7753739955227665);
         done();
       });
     });
 
     it('does not produce an NaN value if it is absent and units need conversion', function(done){
-      var localGood = _.assign({}, _.omit(goodObject, 'insulinSensitivity'));
+      var localGood = _.assign({}, _.omit(incomingObject, 'insulinSensitivity'));
       helper.run(localGood, function(err, converted){
         if (err != null) {
           return done(err);
@@ -223,38 +237,38 @@ describe('schema/wizard.js', function(){
   });
 
   describe('payload', function(){
-    helper.okIfAbsent(goodObject, 'payload');
-    helper.expectObjectField(goodObject, 'payload');
+    helper.okIfAbsent(incomingObject, 'payload');
+    helper.expectObjectField(incomingObject, 'payload');
   });
 
   describe('recommended', function(){
-    helper.okIfAbsent(goodObject, 'recommended');
-    helper.expectObjectField(goodObject, 'recommended');
+    helper.okIfAbsent(incomingObject, 'recommended');
+    helper.expectObjectField(incomingObject, 'recommended');
 
     it('carb is a numeric field', function(done){
-      var obj = _.cloneDeep(goodObject);
+      var obj = _.cloneDeep(incomingObject);
       obj.recommended.carb = '1';
       helper.expectRejection(obj, 'recommended', done);
     });
     it('correction is a numeric field', function(done){
-      var obj = _.cloneDeep(goodObject);
+      var obj = _.cloneDeep(incomingObject);
       obj.recommended.correction = '2';
       helper.expectRejection(obj, 'recommended', done);
     });
     it('net is a numeric field', function(done){
-      var obj = _.cloneDeep(goodObject);
+      var obj = _.cloneDeep(incomingObject);
       obj.recommended.net = '3';
       helper.expectRejection(obj, 'recommended', done);
     });
   });
 
   describe('units', function(){
-    helper.rejectIfAbsent(goodObject, 'units');
-    helper.expectStringField(goodObject, 'units');
-    helper.expectFieldIn(goodObject, 'units',
-      ['mmol/L', 'mmol/l', 'mg/dL', 'mg/dl'],
-      ['mmol/L', 'mmol/L', 'mg/dL', 'mg/dL']);
+    helper.rejectIfAbsent(incomingObject, 'units');
+    helper.expectStringField(incomingObject, 'units');
+    helper.expectFieldIn(incomingObject, 'units',
+      ['mmol/L', 'mmol/l'],
+      ['mmol/L', 'mmol/L']);
   });
 
-  helper.testCommonFields(goodObject);
+  helper.testCommonFields(incomingObject);
 });

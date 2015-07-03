@@ -26,38 +26,46 @@ var expect = require('salinity').expect;
 
 var helper = require('./schemaTestHelper.js');
 
-var goodObject = {
+//the incoming raw object, i.e. posted to the the API, that
+//has not yet been validated or had any transformations applied
+var incomingObject = {
   type: 'smbg',
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
   deviceId: 'test',
   uploadId: 'test',
   value: 1.12,
-  units: 'mg/dL',
+  originUnits: 'mmol/L',
   _groupId: 'g'
 };
 
 describe('schema/smbg.js', function(){
   describe('value', function(){
-    helper.rejectIfAbsent(goodObject, 'value');
-    helper.expectNumericalField(goodObject, 'value');
-    helper.expectUnitConversion(goodObject, 'value');
+    helper.rejectIfAbsent(incomingObject, 'value');
+    helper.expectNumericalField(incomingObject, 'value');
+    helper.expectUnitConversion(incomingObject, 'value');
+  });
+
+  describe('originUnits', function(){
+    helper.rejectIfAbsent(incomingObject, 'originUnits');
+    helper.expectStringField(incomingObject, 'originUnits');
   });
 
   describe('units', function(){
-    helper.rejectIfAbsent(goodObject, 'units');
-    helper.expectStringField(goodObject, 'units');
-    helper.expectFieldIn(goodObject, 'units',
-      ['mmol/L', 'mmol/l', 'mg/dL', 'mg/dl'],
-      ['mmol/L', 'mmol/L', 'mg/dL', 'mg/dL']);
+    var localIncoming = _.cloneDeep(incomingObject);
+
+    helper.run(localIncoming, function(err, converted) {
+      //occurs after conversion
+      expect(converted.units).to.equal('mmol/L');
+    });
   });
 
   describe('subType', function(){
-    var withSubType = _.assign({}, goodObject, {subType: ''});
-    helper.okIfAbsent(goodObject, 'subType');
+    var withSubType = _.assign({}, incomingObject, {subType: ''});
+    helper.okIfAbsent(incomingObject, 'subType');
     helper.expectStringField(withSubType, 'subType');
-    helper.expectFieldIn(goodObject, 'subType', ['', 'linked', 'manual']);
+    helper.expectFieldIn(incomingObject, 'subType', ['', 'linked', 'manual']);
   });
 
-  helper.testCommonFields(goodObject);
+  helper.testCommonFields(incomingObject);
 });
