@@ -110,6 +110,12 @@ exports.expectNotStringField = function(goodObject, field) {
   });
 };
 
+exports.expectBooleanField = function(goodObject, field) {
+  exports.expectNotNumberField(goodObject, field);
+  exports.expectNotObjectField(goodObject, field);
+  exports.expectNotNumberField(goodObject, field);
+};
+
 exports.expectStringField = function(goodObject, field) {
   exports.expectNotNumberField(goodObject, field);
   exports.expectNotObjectField(goodObject, field);

@@ -30,10 +30,10 @@ var sinon = salinity.sinon;
 var helper = require('./schemaTestHelper.js');
 var schema = require('../../lib/schema/schema.js');
 
-describe('schema/deviceMeta.js', function(){
+describe('schema/deviceEvent.js', function(){
   describe('calibration', function(){
     var goodObject = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'calibration',
       value: 3.0,
       units: 'mg/dL',
@@ -79,7 +79,7 @@ describe('schema/deviceMeta.js', function(){
 
   describe('status', function(){
     var previousMatches = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'status',
       status: 'suspended',
       reason: {suspended: 'automatic'},
@@ -91,7 +91,7 @@ describe('schema/deviceMeta.js', function(){
     };
 
     var previousNoMatch = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'status',
       status: 'suspended',
       reason: {suspended: 'manual'},
@@ -103,7 +103,7 @@ describe('schema/deviceMeta.js', function(){
     };
 
     var goodObject = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'status',
       status: 'resumed',
       reason: {resumed: 'manual'},
@@ -266,7 +266,7 @@ describe('schema/deviceMeta.js', function(){
 
   describe('alarm', function() {
     var goodObject = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'alarm',
       alarmType: 'low_insulin',
       time: '2014-01-01T01:00:00.000Z',
@@ -295,7 +295,7 @@ describe('schema/deviceMeta.js', function(){
     describe('status', function() {
       helper.okIfAbsent(goodObject, 'status');
       helper.expectNotNumberField(_.assign({}, goodObject, {status: {
-        type: 'deviceMeta',
+        type: 'deviceEvent',
         subType: 'status',
         status: 'suspended',
         reason: 'automatic',
@@ -312,7 +312,7 @@ describe('schema/deviceMeta.js', function(){
 
   describe('reservoirChange', function() {
     var goodObject = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'alarm',
       alarmType: 'low_insulin',
       time: '2014-01-01T01:00:00.000Z',
@@ -325,7 +325,7 @@ describe('schema/deviceMeta.js', function(){
     describe('status', function() {
       helper.okIfAbsent(goodObject, 'status');
       helper.expectNotNumberField(_.assign({}, goodObject, {status: {
-        type: 'deviceMeta',
+        type: 'deviceEvent',
         subType: 'status',
         status: 'suspended',
         reason: 'automatic',
@@ -342,7 +342,7 @@ describe('schema/deviceMeta.js', function(){
 
   describe('prime', function() {
     var goodObject = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'prime',
       primeTarget: 'cannula',
       time: '2014-01-01T01:00:00.000Z',
@@ -369,7 +369,7 @@ describe('schema/deviceMeta.js', function(){
 
   describe('timeChange', function() {
     var goodObject = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'timeChange',
       change: {
         from: '2015-03-08T12:02:00',
