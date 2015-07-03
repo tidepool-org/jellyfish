@@ -75,7 +75,7 @@ describe('schema/cgmSettings.js', function () {
     it('fields', function(done){
       var localGood = _.cloneDeep(goodObject);
       helper.rejectIfAbsent(localGood.lowAlerts, 'enabled');
-      helper.expectObjectField(localGood.lowAlerts, 'enabled');
+      helper.expectBooleanField(localGood.lowAlerts, 'enabled');
       helper.rejectIfAbsent(localGood.lowAlerts, 'level');
       helper.expectNumericalField(localGood.lowAlerts, 'level');
       helper.rejectIfAbsent(localGood.lowAlerts, 'snooze');
@@ -90,7 +90,7 @@ describe('schema/cgmSettings.js', function () {
     it('fields', function(done){
       var localGood = _.cloneDeep(goodObject);
       helper.rejectIfAbsent(localGood.lowAlerts, 'enabled');
-      helper.expectObjectField(localGood.lowAlerts, 'enabled');
+      helper.expectBooleanField(localGood.lowAlerts, 'enabled');
       helper.rejectIfAbsent(localGood.lowAlerts, 'level');
       helper.expectNumericalField(localGood.lowAlerts, 'level');
       helper.rejectIfAbsent(localGood.lowAlerts, 'snooze');
@@ -98,12 +98,13 @@ describe('schema/cgmSettings.js', function () {
       done();
     });
   });
+  //NOTE: outOfRangeAlerts is an optional feild i.e. it uses schema.ifExists
   describe('outOfRangeAlerts', function () {
     helper.expectObjectField(goodObject, 'outOfRangeAlerts');
     it('fields', function(done){
       var localGood = _.cloneDeep(goodObject);
       helper.rejectIfAbsent(localGood.outOfRangeAlerts, 'enabled');
-      helper.expectObjectField(localGood.outOfRangeAlerts, 'enabled');
+      helper.expectBooleanField(localGood.outOfRangeAlerts, 'enabled');
       helper.rejectIfAbsent(localGood.outOfRangeAlerts, 'snooze');
       helper.expectNumericalField(localGood.outOfRangeAlerts, 'snooze');
       done();
@@ -117,7 +118,7 @@ describe('schema/cgmSettings.js', function () {
       helper.rejectIfAbsent(localGood, 'fallRate');
       helper.expectObjectField(localGood, 'fallRate');
       helper.rejectIfAbsent(localGood.fallRate, 'enabled');
-      helper.expectObjectField(localGood.fallRate, 'enabled');
+      helper.expectBooleanField(localGood.fallRate, 'enabled');
       helper.rejectIfAbsent(localGood.fallRate, 'rate');
       helper.expectNumericalField(localGood.fallRate, 'rate');
       done();
@@ -127,7 +128,7 @@ describe('schema/cgmSettings.js', function () {
       helper.rejectIfAbsent(localGood, 'riseRate');
       helper.expectObjectField(localGood, 'riseRate');
       helper.rejectIfAbsent(localGood.fallRate, 'enabled');
-      helper.expectObjectField(localGood.fallRate, 'enabled');
+      helper.expectBooleanField(localGood.fallRate, 'enabled');
       helper.rejectIfAbsent(localGood.fallRate, 'rate');
       helper.expectNumericalField(localGood.fallRate, 'rate');
       done();
