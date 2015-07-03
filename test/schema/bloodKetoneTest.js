@@ -32,7 +32,7 @@ var goodObject = {
   uploadId: 'test',
   value: 1.12,
   _groupId: 'g',
-  units: 'mmol/L'
+  originUnits: 'mmol/L'
 };
 
 describe('schema/bloodKetone.js', function(){
@@ -41,12 +41,19 @@ describe('schema/bloodKetone.js', function(){
     helper.expectNumericalField(goodObject, 'value');
   });
 
+  describe('originUnits', function(){
+    helper.rejectIfAbsent(goodObject, 'originUnits');
+    helper.expectStringField(goodObject, 'originUnits');
+  });
+
   describe('units', function(){
-    helper.rejectIfAbsent(goodObject, 'units');
-    helper.expectStringField(goodObject, 'units');
-    helper.expectFieldIn(goodObject, 'units',
-      ['mmol/L', 'mmol/l', 'mg/dL', 'mg/dl'],
-      ['mmol/L', 'mmol/L', 'mg/dL', 'mg/dL']);
+    var localIncoming = _.cloneDeep(goodObject);
+
+    helper.run(localIncoming, function(err, converted) {
+      //occurs after conversion
+      expect(converted.units).to.equal('mmol/L');
+      expect(converted.value).to.equal(1.12);
+    });
   });
 
   helper.testCommonFields(goodObject);

@@ -160,7 +160,7 @@ exports.expectSubsetEqual = function(lhs, rhs) {
 
 exports.expectUnitConversion = function(goodObject, field) {
   it('converts "mmol/l" to "mmol/L"', function(done){
-    var splatMe = { units: 'mmol/l' };
+    var splatMe = { originUnits: 'mmol/l' };
     splatMe[field] = 80;
     exports.run(_.assign({}, goodObject, splatMe), function(err, val){
       expect(val.units).equals('mmol/L');
@@ -170,20 +170,20 @@ exports.expectUnitConversion = function(goodObject, field) {
   });
 
   it('converts units from mg/dL to mmol/L', function(done){
-    var splatMe = { units: 'mg/dL' };
+    var splatMe = { originUnits: 'mg/dL' };
     splatMe[field] = 80;
     exports.run(_.assign({}, goodObject, splatMe), function(err, val){
-      expect(val.units).equals('mg/dL');
+      expect(val.units).equals('mmol/L');
       expect(val[field]).equals(4.440598392836427);
       done(err);
     });
   });
 
   it('converts units from mg/dl to mmol/L', function(done){
-    var splatMe = { units: 'mg/dl' };
+    var splatMe = { originUnits: 'mg/dl' };
     splatMe[field] = 80;
     exports.run(_.assign({}, goodObject, splatMe), function(err, val){
-      expect(val.units).equals('mg/dL');
+      expect(val.units).equals('mmol/L');
       expect(val[field]).equals(4.440598392836427);
       done(err);
     });
