@@ -57,6 +57,7 @@ describe('schema/smbg.js', function(){
     helper.run(localIncoming, function(err, converted) {
       //occurs after conversion
       expect(converted.units).to.equal('mmol/L');
+      expect(converted.value).to.equal(1.12);
     });
   });
 

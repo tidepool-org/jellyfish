@@ -32,7 +32,7 @@ var incomingObject = {
   uploadId: 'test',
   value: 1.12,
   isig: 24.37,
-  originUnits: 'mg/dL',
+  originUnits: 'mmol/L',
   _groupId: 'g'
 };
 
@@ -59,6 +59,7 @@ describe('schema/cbg.js', function(){
     helper.run(localIncoming, function(err, converted) {
       //occurs after conversion
       expect(converted.units).to.equal('mmol/L');
+      expect(converted.value).to.equal(1.12);
     });
   });
 

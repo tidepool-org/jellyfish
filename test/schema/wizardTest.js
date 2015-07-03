@@ -210,14 +210,12 @@ describe('schema/wizard.js', function(){
 
     it('converts units', function(done){
       var localGood = _.assign({}, incomingObject, { insulinSensitivity: 50, originUnits : 'mg/dL' });
-      console.log('before conversion ',localGood);
       helper.run(localGood, function(err, converted){
         if (err != null) {
           return done(err);
         }
 
         expect(converted.units).to.equal('mmol/L');
-        console.log('converted ',converted);
         expect(converted.insulinSensitivity).to.equal(2.7753739955227665);
         done();
       });
@@ -260,14 +258,6 @@ describe('schema/wizard.js', function(){
       obj.recommended.net = '3';
       helper.expectRejection(obj, 'recommended', done);
     });
-  });
-
-  describe('units', function(){
-    helper.rejectIfAbsent(incomingObject, 'units');
-    helper.expectStringField(incomingObject, 'units');
-    helper.expectFieldIn(incomingObject, 'units',
-      ['mmol/L', 'mmol/l'],
-      ['mmol/L', 'mmol/L']);
   });
 
   helper.testCommonFields(incomingObject);
