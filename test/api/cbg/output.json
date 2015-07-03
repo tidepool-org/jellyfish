@@ -8,6 +8,7 @@
         "uploadId": "tools",
         "_active": true,
         "_version": 0,
+        "_schemaVersion": 0,
         "id": "82hm7o09l22vd7806dhoe8iudjr8mehf"
     },
     {
@@ -19,6 +20,7 @@
         "uploadId": "tools",
         "_active": true,
         "_version": 0,
+        "_schemaVersion": 0,
         "id": "porpr0uuum3gkvbj8s44hpfjc978o0b8"
     },
     {
@@ -31,6 +33,7 @@
         "uploadId": "tools",
         "_active": true,
         "_version": 0,
+        "_schemaVersion": 0,
         "id": "0e30jj8v3fnunjioc47hla155ci2cscf"
     }
 ]
