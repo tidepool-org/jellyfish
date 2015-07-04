@@ -69,7 +69,7 @@ describe('schema/cgmSettings.js', function () {
     helper.expectStringField(goodObject, 'units');
     helper.expectFieldIn(goodObject, 'units',
       ['mmol/L', 'mmol/l', 'mg/dL', 'mg/dl'],
-      ['mmol/L', 'mmol/L', 'mg/dL', 'mg/dL']);
+      ['mmol/L', 'mmol/L', 'mmol/L', 'mmol/L']);
   });
   describe('highAlerts', function () {
     helper.rejectIfAbsent(goodObject, 'highAlerts');

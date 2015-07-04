@@ -2,9 +2,9 @@
     {
         "time": "2014-06-11T11:12:43.029Z",
         "type": "smbg",
-	"subType": "manual",
+    	"subType": "manual",
         "value": 5.550747991045533,
-        "units": "mg/dL",
+        "units": "mmol/L",
         "deviceId": "tools",
         "uploadId": "tools",
         "_active": true,
