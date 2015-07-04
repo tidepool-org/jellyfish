@@ -45,8 +45,8 @@ describe('schema/bloodKetone.js', function(){
     helper.rejectIfAbsent(goodObject, 'units');
     helper.expectStringField(goodObject, 'units');
     helper.expectFieldIn(goodObject, 'units',
-      ['mmol/L', 'mmol/l', 'mg/dL', 'mg/dl'],
-      ['mmol/L', 'mmol/L', 'mg/dL', 'mg/dL']);
+      ['mmol/L', 'mmol/l'],
+      ['mmol/L', 'mmol/l']);
   });
 
   helper.testCommonFields(goodObject);
