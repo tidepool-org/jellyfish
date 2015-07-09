@@ -71,12 +71,60 @@ module.exports = (function () {
   };
 
   /**
-   * A JSON object that describes where to store intermediate files (data files to be processed)
-   * Known types are 'local' and 'sandcastle'.
+   * Credentials for AWS.  Only required if env.storage.default is 'aws/s3'.
    *
-   * 'local' is the default and just stores files locally
+   * The AWS_CREDENTIALS value should be a JSON string hash containing the
+   * properties 'accessKeyId' and 'secretAccessKey'.
+   *
+   * An example of a complete AWS_CREDENTIALS value:
+   *
+   * '{"accessKeyId": "<your-access-key-id>", "secretAccessKey": "<your-secret-access-key>"}'
    */
-  env.storage = JSON.parse(config.fromEnvironment("FILE_STORAGE", '{ "type": "local", "storageDir":"./data" }'));
+  env.awsCredentials = JSON.parse(config.fromEnvironment('AWS_CREDENTIALS', '{}'));
+
+  /**
+   * A JSON object that describes where to store intermediate files (data files
+   * to be processed).
+   *
+   * There are currently two known types of storage, 'local' and 'aws/s3'.
+   *
+   * The STORAGE_TYPES value should be a JSON string hash with one key/value pair
+   * for each storage type. The key should be the name of the storage type and the
+   * value should be a hash with the necessary configuration for the storage type.
+   * Every hash MUST contain the type property.
+   *
+   * The 'local' storage type hash should be of the form:
+   *
+   * {"type": "local", "encryption": "aes256", "directory": "./data"}
+   *
+   * "type" - MUST be "local"
+   * "encryption" - either "none" or "aes256"
+   * "directory" - relative path to base directory for upload storage
+   *
+   * The 'aws/s3' storage type hash should be of the form:
+   *
+   * {"type": "aws/s3", "encryption": "aes256", "region": us-west-2", "bucket": "doesnotexist.tidepool.org"}
+   *
+   * "type" - MUST be "aws/s3"
+   * "encryption" - either "none or "aes256"
+   * "region" - AWS region associated with the AWS bucket (eg. "us-west-2")
+   * "bucket" - AWS bucket for upload storage
+   *
+   * An example of a complete STORAGE_TYPES value:
+   *
+   * '{"local": {"type": "local", "encryption": "aes256", "directory": "./data"}, "aws/s3": {"type": "aws/s3", "encryption": "aes256", "region": "us-west-2", "bucket": "doesnotexist.tidepool.org"}}'
+   *
+   * The STORAGE_DEFAULT should be the storage type ('local' or 'aws/s3') used
+   * for new uploads. Existing uploads remember their storage location for
+   * future downloads.
+   */
+  env.storage = {
+    types: JSON.parse(config.fromEnvironment('STORAGE_TYPES', '{"local": {"type": "local", "encryption": "aes256", "directory": "./data"}}')),
+    default: config.fromEnvironment('STORAGE_DEFAULT', 'local')
+  };
+
+  // Configurable salt for encryption
+  env.saltDeploy = config.fromEnvironment('SALT_DEPLOY');
 
   env.seagull = {
     // The config object to discover seagull.  This is just passed through to hakken.watchFromConfig()

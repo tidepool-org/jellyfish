@@ -26,6 +26,7 @@
   "dependencies": {
     "amoeba": "0.2.1",
     "async": "0.9.0",
+    "aws-sdk": "2.1.35",
     "body-parser": "1.12.0",
     "bunyan": "1.4.0",
     "busboy": "0.2.9",
