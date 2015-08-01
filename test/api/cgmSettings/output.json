@@ -1,39 +1,42 @@
-[{
-  "type": "cgmSettings",
-  "time": "2015-06-16T13:09:10.000Z",
-  "timezoneOffset": -240,
-  "units": "mmol/L",
-  "transmitterId": "test",
-  "uploadId": "test",
-  "deviceId": "test",
-  "deviceTime": "2015-06-16T09:09:10",
-  "highAlerts": {
-    "enabled": true,
-    "level": 8.3261219865683,
-    "snooze": 0
-  },
-  "lowAlerts": {
-    "enabled": true,
-    "level": 3.6079861941795968,
-    "snooze": 0
-  },
-  "outOfRangeAlerts": {
-    "enabled": false,
-    "snooze": 1800000
-  },
-  "rateOfChangeAlerts": {
-    "fallRate": {
-      "enabled": false,
-      "rate": -0.16652243973136602
-    },
-    "riseRate": {
-      "enabled": false,
-      "rate": 0.16652243973136602
+[
+    {
+        "type": "cgmSettings",
+        "deviceTime": "2015-06-16T09:09:10",
+        "time": "2015-06-16T13:09:10.000Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
+        "units": "mmol/L",
+        "transmitterId": "test",
+        "uploadId": "test",
+        "deviceId": "test",
+        "highAlerts": {
+            "enabled": true,
+            "level": 8.3261219865683,
+            "snooze": 0
+        },
+        "lowAlerts": {
+            "enabled": true,
+            "level": 3.6079861941795968,
+            "snooze": 0
+        },
+        "outOfRangeAlerts": {
+            "enabled": false,
+            "snooze": 1800000
+        },
+        "rateOfChangeAlerts": {
+            "fallRate": {
+                "enabled": false,
+                "rate": -0.16652243973136602
+            },
+            "riseRate": {
+                "enabled": false,
+                "rate": 0.16652243973136602
+            }
+        },
+        "_groupId": "1234",
+        "id": "9qvelvar5cjk8rqr6dgnoskr0fdoo3ah",
+        "_version": 0,
+        "_active": true,
+        "_schemaVersion": 0
     }
-  },
-  "_groupId": "g",
-  "_active": true,
-  "_version": 0,
-  "_schemaVersion": 0,
-  "id": "9qvelvar5cjk8rqr6dgnoskr0fdoo3ah"
-}]
+]

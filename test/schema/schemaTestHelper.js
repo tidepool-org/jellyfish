@@ -215,7 +215,7 @@ exports.testCommonFields = function(goodObject) {
   });
 
   describe('timezoneOffset', function(){
-    exports.okIfAbsent(goodObject, 'timezoneOffset');
+    exports.rejectIfAbsent(goodObject, 'timezoneOffset');
     it('rejects non-numerical timezoneOffset', function(done){
       exports.expectRejection(_.assign({}, goodObject, {timezoneOffset: '+08:00'}), 'timezoneOffset', done);
     });

@@ -34,6 +34,7 @@ var goodObject = {
   type: 'note',
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
+  conversionOffset: 0,
   displayTime: '2014-01-01T07:00:00.000Z',
   deviceId: 'test',
   uploadId: 'test',

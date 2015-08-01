@@ -37,8 +37,10 @@ describe('schema/bolus.js', function(){
       subType: 'injected',
       value: 3.0,
       insulin: 'novolog',
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'
@@ -64,8 +66,10 @@ describe('schema/bolus.js', function(){
       type: 'bolus',
       subType: 'normal',
       normal: 1.0,
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'
@@ -133,8 +137,10 @@ describe('schema/bolus.js', function(){
       subType: 'square',
       extended: 1.0,
       duration: 3600000,
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'
@@ -244,8 +250,10 @@ describe('schema/bolus.js', function(){
       normal: 2.0,
       extended: 1.0,
       duration: 3600000,
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'

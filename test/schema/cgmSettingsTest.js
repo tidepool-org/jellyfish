@@ -26,8 +26,10 @@ var helper = require('./schemaTestHelper.js');
 
 var goodObject = {
   type: 'cgmSettings',
+  deviceTime: '2015-06-16T15:09:10',
   time: '2015-06-16T13:09:10.000Z',
   timezoneOffset: 120,
+  conversionOffset: 0,
   deviceId: 'test',
   uploadId: 'test',
   transmitterId: 'test',

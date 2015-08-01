@@ -1,7 +1,9 @@
 [{
   "type": "cgmSettings",
+  "deviceTime": "2015-06-16T13:09:10",
   "time": "2015-06-16T13:09:10.000Z",
-  "timezoneOffset": -240,
+  "timezoneOffset": 0,
+  "conversionOffset": 0,
   "units": "mg/dL",
   "transmitterId": "test",
   "uploadId": "test",

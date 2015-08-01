@@ -1,6 +1,9 @@
 [
     {
+        "deviceTime": "2014-06-11T11:12:43",
         "time": "2014-06-11T11:12:43.029Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
         "type": "smbg",
     	"subType": "manual",
         "value": 5.550747991045533,
@@ -13,7 +16,10 @@
         "id": "id1qieiujoteb9g352qm2m2u8atmhit0"
     },
     {
+        "deviceTime": "2014-06-11T17:57:01",
         "time": "2014-06-11T17:57:01.703Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
         "type": "smbg",
         "value": 4.5,
         "units": "mmol/L",

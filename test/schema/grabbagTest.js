@@ -29,6 +29,7 @@ var goodObject = {
   subType: 'something',
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
+  conversionOffset: 0,
   deviceId: 'test',
   uploadId: 'test',
   value: 1.12,

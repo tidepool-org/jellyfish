@@ -1,7 +1,9 @@
 [{
   "type": "pumpSettings",
+  "deviceTime": "2014-01-01T01:00:00",
   "time": "2014-01-01T01:00:00.000Z",
-  "timezoneOffset": 120,
+  "timezoneOffset": 0,
+  "conversionOffset": 0,
   "deviceId": "test",
   "uploadId": "test",
   "activeSchedule": "standard",

@@ -1,31 +1,42 @@
 [
     {
+        "deviceTime": "2014-06-11T11:20:00",
         "time": "2014-06-11T11:20:00.703Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
         "type": "bolus",
         "subType": "normal",
         "normal": 2.5,
         "deviceId": "tools",
         "uploadId": "tools",
-        "_active": false,
+        "_groupId": "1234",
+        "id": "ddrucd8457tlt6hjebeoatc5qa5o2d8r",
         "_version": 0,
-        "_schemaVersion": 0,
-        "id": "ddrucd8457tlt6hjebeoatc5qa5o2d8r"
+        "_active": false,
+        "_schemaVersion": 0
     },
     {
+        "deviceTime": "2014-06-11T11:20:00",
         "time": "2014-06-11T11:20:00.703Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
         "type": "bolus",
         "subType": "normal",
         "normal": 1.5,
-        "expectedNormal": 2.5,
         "deviceId": "tools",
         "uploadId": "tools",
-        "_active": true,
+        "_groupId": "1234",
+        "id": "ddrucd8457tlt6hjebeoatc5qa5o2d8r",
         "_version": 1,
+        "_active": true,
         "_schemaVersion": 0,
-        "id": "ddrucd8457tlt6hjebeoatc5qa5o2d8r"
+        "expectedNormal": 2.5
     },
     {
+        "deviceTime": "2014-06-11T18:00:00",
         "time": "2014-06-11T18:00:00.000Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
         "type": "wizard",
         "recommended": {
             "carb": 3,
@@ -39,24 +50,29 @@
         "payload": {
             "someValue": 1234
         },
-        "bolus": "4tk1v85lgkb29641a7ltfo1skfiu4kbm",
         "deviceId": "tools",
         "uploadId": "tools",
-        "_active": true,
+        "bolus": "4tk1v85lgkb29641a7ltfo1skfiu4kbm",
+        "_groupId": "1234",
+        "id": "3mad7q9nl7k1pl9n597od5bhp1v82je9",
         "_version": 0,
-        "_schemaVersion": 0,
-        "id": "3mad7q9nl7k1pl9n597od5bhp1v82je9"
+        "_active": true,
+        "_schemaVersion": 0
     },
     {
+        "deviceTime": "2014-06-11T18:00:00",
         "time": "2014-06-11T18:00:00.000Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
         "type": "bolus",
         "subType": "normal",
         "normal": 3.5,
         "deviceId": "tools",
         "uploadId": "tools",
-        "_active": true,
+        "_groupId": "1234",
+        "id": "4tk1v85lgkb29641a7ltfo1skfiu4kbm",
         "_version": 0,
-        "_schemaVersion": 0,
-        "id": "4tk1v85lgkb29641a7ltfo1skfiu4kbm"
+        "_active": true,
+        "_schemaVersion": 0
     }
 ]
