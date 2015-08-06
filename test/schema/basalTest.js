@@ -196,7 +196,7 @@ describe('schema/basal.js', function(){
         it('annotates the previous event when no previous provided and new event happens after old event', function(done){
           var localGoodObject = _.omit(goodObject, "previous");
           var expectedPrevious = _.assign({}, previousMatches, {
-            annotations: [{ code: 'basal/mismatched-series', nextId: '2d3ij3nslb9rjsp6e6bantvr61tavpkk' }]
+            annotations: [{ code: 'basal/mismatched-series', nextId: 'a84k2igl7pul6cu9ap63bar175du1gfi' }]
           });
 
           sinon.stub(helper.streamDAO, 'getDatumBefore');
@@ -218,7 +218,7 @@ describe('schema/basal.js', function(){
         it('updates and annotates the previous event when no previous provided and new event cuts off old event', function(done){
           var localGoodObject = _.omit(goodObject, "previous");
           var expectedPrevious = _.assign({}, previousCutShort, {
-            annotations: [{ code: 'basal/mismatched-series', nextId: '2d3ij3nslb9rjsp6e6bantvr61tavpkk' }],
+            annotations: [{ code: 'basal/mismatched-series', nextId: 'a84k2igl7pul6cu9ap63bar175du1gfi' }],
             duration: 3600000,
             expectedDuration: previousCutShort.duration
           });
