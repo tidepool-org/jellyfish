@@ -5,15 +5,16 @@
         "timezoneOffset": 0,
         "conversionOffset": 0,
         "type": "smbg",
-    	"subType": "manual",
+        "subType": "manual",
         "value": 5.550747991045533,
         "units": "mmol/L",
         "deviceId": "tools",
         "uploadId": "tools",
-        "_active": true,
+        "_groupId": "1234",
+        "id": "e2ihon9nqcro96c4uugb4ftdnr07nqok",
         "_version": 0,
-        "_schemaVersion": 0,
-        "id": "id1qieiujoteb9g352qm2m2u8atmhit0"
+        "_active": true,
+        "_schemaVersion": 0
     },
     {
         "deviceTime": "2014-06-11T17:57:01",
@@ -25,9 +26,42 @@
         "units": "mmol/L",
         "deviceId": "tools",
         "uploadId": "tools",
-        "_active": true,
+        "_groupId": "1234",
+        "id": "c14eds071pp5gsirfmgmsclbcahs8th0",
         "_version": 0,
-        "_schemaVersion": 0,
-        "id": "q1hg0c9q7qpd0v4v6a93vl2kgsotlspl"
+        "_active": true,
+        "_schemaVersion": 0
+    },
+    {
+        "deviceTime": "2015-07-04T10:13:00",
+        "time": "2015-07-04T10:13:00.000Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
+        "type": "smbg",
+        "value": 4.9,
+        "units": "mmol/L",
+        "deviceId": "tools",
+        "uploadId": "tools",
+        "_groupId": "1234",
+        "id": "rk2htms97m7hipdu5lrso7ufd3pedm6n",
+        "_version": 0,
+        "_active": true,
+        "_schemaVersion": 0
+    },
+    {
+        "deviceTime": "2015-07-04T10:13:00",
+        "time": "2015-07-04T10:13:00.000Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
+        "type": "smbg",
+        "value": 4.8,
+        "units": "mmol/L",
+        "deviceId": "tools",
+        "uploadId": "tools",
+        "_groupId": "1234",
+        "id": "urrkdln86rl4vhqckps6gnupg5njqk6n",
+        "_version": 0,
+        "_active": true,
+        "_schemaVersion": 0
     }
 ]
