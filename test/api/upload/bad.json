@@ -1,0 +1,23 @@
+[
+    {
+        "type": "upload",
+        "computerTime": "2015-01-01T13:00:00",
+        "time": "2015-01-01T00:00:00.000Z",
+        "timezoneOffset": 780,
+        "conversionOffset": 0,
+        "timezone": "Pacific/Auckland",
+        "version": "tidepool-uploader 0.98.0",
+        "uploadId": "1234",
+        "byUser": "Bob",
+        "deviceTags": [
+            "cgm",
+            "insulin-pump"
+        ],
+        "deviceManufacturers": [
+            "Medtronic"
+        ],
+        "deviceModel": "MiniMed 530G 551",
+        "deviceId": "multiple",
+        "deviceSerialNumber": "multiple"
+    }
+]
