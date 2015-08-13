@@ -1,0 +1,36 @@
+[{
+  "type": "cgmSettings",
+  "deviceTime": "2015-06-16T13:09:10",
+  "time": "2015-06-16T13:09:10.000Z",
+  "timezoneOffset": 0,
+  "conversionOffset": 0,
+  "units": "mg/dL",
+  "transmitterId": "test",
+  "uploadId": "test",
+  "deviceId": "test",
+  "deviceTime": "2015-06-16T09:09:10",
+  "highAlerts": {
+    "enabled": true,
+    "level": 150,
+    "snooze": 0
+  },
+  "lowAlerts": {
+    "enabled": true,
+    "level": 65,
+    "snooze": 0
+  },
+  "outOfRangeAlerts": {
+    "enabled": false,
+    "snooze": 1800000
+  },
+  "rateOfChangeAlerts": {
+    "fallRate": {
+      "enabled": false,
+      "rate": -3
+    },
+    "riseRate": {
+      "enabled": false,
+      "rate": 3
+    }
+  }
+}]

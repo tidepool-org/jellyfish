@@ -28,6 +28,7 @@ var goodObject = {
   type: 'food',
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
+  conversionOffset: 0,
   deviceId: 'test',
   uploadId: 'test',
   carbs: 73,

@@ -74,61 +74,6 @@ describe('streamDAO', function(){
     });
   });
 
-  describe('insert with _forceUpdate', function(){
-    var createdTime = '';
-
-    beforeEach(function(done){
-      streamDAO.insertDatum({id: 'abcd', v: 1, f: 'a', _groupId: 'g'}, function(err){
-        if (err != null) {
-          return done(err);
-        }
-
-        streamDAO.getDatum('abcd', 'g', function(err, datum){
-          createdTime = datum.createdTime;
-          done(err);
-        });
-      });
-    });
-
-    it('should update a value with the `_forceUpdate` flag set to true', function(done){
-      var now = Date.now();
-
-      streamDAO.insertDatum({id: 'abcd', v: 2, f: 'a', _groupId: 'g', _forceUpdate: true}, function(err){
-        if (err != null) {
-          return done(err);
-        }
-
-        streamDAO.getDatum('abcd', 'g', function(err, datum){
-          expect(datum).to.exist;
-          expect(_.omit(datum, ['_id', 'modifiedTime'])).to.deep.equal({
-            id: 'abcd',
-            v: 2,
-            f: 'a',
-            _groupId: 'g',
-            _version: 1,
-            _schemaVersion: 0,
-            _active: true,
-            createdTime: createdTime
-          });
-          expect(Date.parse(datum.modifiedTime)).that.is.within(now, Date.now());
-
-          var overwrittenId = datum._id + '_0';
-          mongoClient.withCollection('deviceData', done, function(coll, done){
-            coll.find({_id: overwrittenId}).toArray(function(err, elements){
-              expect(elements).to.have.length(1);
-              expect(elements[0]._archivedTime).that.is.within(now, Date.now());
-              expect(_.omit(elements[0], '_archivedTime')).to.deep.equals(
-                { _id: overwrittenId, id: 'abcd', f: 'a', _groupId: 'g', v: 1, createdTime: createdTime, _version: 0, _schemaVersion: 0, _active: false }
-              );
-
-              done(err);
-            });
-          });
-        });
-      });
-    });
-  });
-
   describe('update', function(){
     var createdTime = '';
 

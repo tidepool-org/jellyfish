@@ -27,8 +27,10 @@ var schema = require('../../lib/schema')(exports.streamDAO);
 
 var goodObject = {
   type: 'wizard',
+  deviceTime: '2014-01-01T03:00:00',
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
+  conversionOffset: 0,
   deviceId: 'test',
   uploadId: 'test',
   recommended: {
@@ -37,9 +39,10 @@ var goodObject = {
     net: 4.0
   },
   carbInput: 45,
-  bgInput: 6.2,
+  bgInput: 100,
   insulinOnBoard: 1.3,
-  bgTarget: { high: 6.0, low: 4.0 },
+  insulinSensitivity: 75,
+  bgTarget: { high: 120, low: 80 },
   payload: { howdy: 'bob' },
   bolus: {
     type: 'bolus',
@@ -65,7 +68,7 @@ describe('schema/wizard.js', function(){
           return done(err);
         }
 
-        expect(converted.units).to.equal('mg/dL');
+        expect(converted.units).to.equal('mmol/L');
         expect(converted.bgInput).to.equal(5.550747991045533);
         done();
       });
@@ -203,7 +206,7 @@ describe('schema/wizard.js', function(){
           return done(err);
         }
 
-        expect(converted.units).to.equal('mg/dL');
+        expect(converted.units).to.equal('mmol/L');
         expect(converted.insulinSensitivity).to.equal(2.7753739955227665);
         done();
       });
@@ -253,7 +256,7 @@ describe('schema/wizard.js', function(){
     helper.expectStringField(goodObject, 'units');
     helper.expectFieldIn(goodObject, 'units',
       ['mmol/L', 'mmol/l', 'mg/dL', 'mg/dl'],
-      ['mmol/L', 'mmol/L', 'mg/dL', 'mg/dL']);
+      ['mmol/L', 'mmol/L', 'mmol/L', 'mmol/L']);
   });
 
   helper.testCommonFields(goodObject);

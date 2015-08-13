@@ -1,7 +1,10 @@
 [
     {
         "type": "upload",
+        "computerTime": "2015-01-01T13:00:00",
         "time": "2015-01-01T00:00:00.000Z",
+        "timezoneOffset": 780,
+        "conversionOffset": 0,
         "timezone": "Pacific/Auckland",
         "version": "tidepool-uploader 0.200.0",
         "uploadId": "1234",

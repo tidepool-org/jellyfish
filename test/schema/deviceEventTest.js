@@ -30,15 +30,17 @@ var sinon = salinity.sinon;
 var helper = require('./schemaTestHelper.js');
 var schema = require('../../lib/schema/schema.js');
 
-describe('schema/deviceMeta.js', function(){
+describe('schema/deviceEvent.js', function(){
   describe('calibration', function(){
     var goodObject = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'calibration',
       value: 3.0,
       units: 'mg/dL',
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'
@@ -59,7 +61,7 @@ describe('schema/deviceMeta.js', function(){
 
       it('converts units from mg/dL to mmol/L', function(done){
         helper.run(_.assign({}, goodObject, {value: 80, units: 'mg/dL'}), function(err, val){
-          expect(val.units).equals('mg/dL');
+          expect(val.units).equals('mmol/L');
           expect(val.value).equals(4.440598392836427);
           done(err);
         });
@@ -67,7 +69,7 @@ describe('schema/deviceMeta.js', function(){
 
       it('converts units from mg/dl to mmol/L', function(done){
         helper.run(_.assign({}, goodObject, {value: 80, units: 'mg/dl'}), function(err, val){
-          expect(val.units).equals('mg/dL');
+          expect(val.units).equals('mmol/L');
           expect(val.value).equals(4.440598392836427);
           done(err);
         });
@@ -79,36 +81,42 @@ describe('schema/deviceMeta.js', function(){
 
   describe('status', function(){
     var previousMatches = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'status',
       status: 'suspended',
       reason: {suspended: 'automatic'},
+      deviceTime: '2014-01-01T02:00:00',
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'
     };
 
     var previousNoMatch = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'status',
       status: 'suspended',
       reason: {suspended: 'manual'},
+      deviceTime: '2014-01-01T02:00:00',
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'
     };
 
     var goodObject = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'status',
       status: 'resumed',
       reason: {resumed: 'manual'},
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'
@@ -266,11 +274,13 @@ describe('schema/deviceMeta.js', function(){
 
   describe('alarm', function() {
     var goodObject = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'alarm',
       alarmType: 'low_insulin',
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'
@@ -295,12 +305,14 @@ describe('schema/deviceMeta.js', function(){
     describe('status', function() {
       helper.okIfAbsent(goodObject, 'status');
       helper.expectNotNumberField(_.assign({}, goodObject, {status: {
-        type: 'deviceMeta',
+        type: 'deviceEvent',
         subType: 'status',
         status: 'suspended',
         reason: 'automatic',
+        deviceTime: '2014-01-01T02:00:00',
         time: '2014-01-01T00:00:00.000Z',
         timezoneOffset: 120,
+        conversionOffset: 0,
         deviceId: 'test',
         uploadId: 'test',
         _groupId: 'g'
@@ -312,11 +324,13 @@ describe('schema/deviceMeta.js', function(){
 
   describe('reservoirChange', function() {
     var goodObject = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'alarm',
       alarmType: 'low_insulin',
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'
@@ -325,12 +339,14 @@ describe('schema/deviceMeta.js', function(){
     describe('status', function() {
       helper.okIfAbsent(goodObject, 'status');
       helper.expectNotNumberField(_.assign({}, goodObject, {status: {
-        type: 'deviceMeta',
+        type: 'deviceEvent',
         subType: 'status',
         status: 'suspended',
         reason: 'automatic',
+        deviceTime: '2014-01-01T02:00:00',
         time: '2014-01-01T00:00:00.000Z',
         timezoneOffset: 120,
+        conversionOffset: 0,
         deviceId: 'test',
         uploadId: 'test',
         _groupId: 'g'
@@ -342,11 +358,13 @@ describe('schema/deviceMeta.js', function(){
 
   describe('prime', function() {
     var goodObject = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'prime',
       primeTarget: 'cannula',
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'
@@ -369,7 +387,7 @@ describe('schema/deviceMeta.js', function(){
 
   describe('timeChange', function() {
     var goodObject = {
-      type: 'deviceMeta',
+      type: 'deviceEvent',
       subType: 'timeChange',
       change: {
         from: '2015-03-08T12:02:00',
@@ -378,8 +396,10 @@ describe('schema/deviceMeta.js', function(){
         reasons: ['to_daylight_savings', 'correction'],
         timezone: 'US/Pacific'
       },
-      time: '2015-03-08T19:00:00.000Z',
+      deviceTime: '2015-03-08T12:02:00',
+      time: '2015-03-08T21:00:00.000Z',
       timezoneOffset: -480,
+      conversionOffset: 120000,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'

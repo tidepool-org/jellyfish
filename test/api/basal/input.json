@@ -1,6 +1,9 @@
 [
   {
+    "deviceTime": "2014-06-11T00:00:00",
     "time": "2014-06-11T00:00:00.000Z",
+    "timezoneOffset": 0,
+    "conversionOffset": 0,
     "type": "basal",
     "deliveryType": "scheduled",
     "scheduleName": "Standard",
@@ -9,7 +12,10 @@
     "deviceId": "tools",
     "uploadId": "tools",
     "previous": {
+      "deviceTime": "2014-06-10T18:00:00",
       "time": "2014-06-10T18:00:00.000Z",
+      "timezoneOffset": 0,
+      "conversionOffset": 0,
       "type": "basal",
       "deliveryType": "scheduled",
       "scheduleName": "Standard",
@@ -20,7 +26,10 @@
     }
   },
   {
+    "deviceTime": "2014-06-11T06:00:00",
     "time": "2014-06-11T06:00:00.000Z",
+    "timezoneOffset": 0,
+    "conversionOffset": 0,
     "type": "basal",
     "deliveryType": "scheduled",
     "scheduleName": "Standard",
@@ -29,7 +38,10 @@
     "deviceId": "tools",
     "uploadId": "tools",
     "previous": {
+      "deviceTime": "2014-06-11T00:00:00",
       "time": "2014-06-11T00:00:00.000Z",
+      "timezoneOffset": 0,
+      "conversionOffset": 0,
       "type": "basal",
       "deliveryType": "scheduled",
       "scheduleName": "Standard",
@@ -40,7 +52,10 @@
     }
   },
   {
+    "deviceTime": "2014-06-11T09:00:00",
     "time": "2014-06-11T09:00:00.000Z",
+    "timezoneOffset": 0,
+    "conversionOffset": 0,
     "type": "basal",
     "deliveryType": "temp",
     "percent": 0.5,
@@ -48,7 +63,10 @@
     "deviceId": "tools",
     "uploadId": "tools",
     "suppressed": {
+      "deviceTime": "2014-06-11T06:00:00",
       "time": "2014-06-11T06:00:00.000Z",
+      "timezoneOffset": 0,
+      "conversionOffset": 0,
       "type": "basal",
       "deliveryType": "scheduled",
       "scheduleName": "Standard",
@@ -57,10 +75,13 @@
       "deviceId": "tools",
       "uploadId": "tools"
     },
-    "previous": "fgvks5t7urvk8c8v35r66diabrn3v2n3"
+    "previous": "cjou7vscvp8ogv34d6vejootulqfn3jd"
   },
   {
+    "deviceTime": "2014-06-11T12:00:00",
     "time": "2014-06-11T12:00:00.000Z",
+    "timezoneOffset": 0,
+    "conversionOffset": 0,
     "type": "basal",
     "deliveryType": "temp",
     "percent": 0.5,
@@ -68,7 +89,10 @@
     "deviceId": "tools",
     "uploadId": "tools",
     "suppressed": {
+      "deviceTime": "2014-06-11T12:00:00",
       "time": "2014-06-11T12:00:00.000Z",
+      "timezoneOffset": 0,
+      "conversionOffset": 0,
       "type": "basal",
       "deliveryType": "scheduled",
       "scheduleName": "Standard",
@@ -78,7 +102,10 @@
       "uploadId": "tools"
     },
     "previous": {
+      "deviceTime": "2014-06-11T09:00:00",
       "time": "2014-06-11T09:00:00.000Z",
+      "timezoneOffset": 0,
+      "conversionOffset": 0,
       "type": "basal",
       "deliveryType": "temp",
       "percent": 0.5,
@@ -88,7 +115,10 @@
     }
   },
   {
+    "deviceTime": "2014-06-11T15:00:00",
     "time": "2014-06-11T15:00:00.000Z",
+    "timezoneOffset": 0,
+    "conversionOffset": 0,
     "type": "basal",
     "deliveryType": "scheduled",
     "scheduleName": "Standard",
@@ -97,7 +127,10 @@
     "deviceId": "tools",
     "uploadId": "tools",
     "previous": {
+      "deviceTime": "2014-06-11T12:00:00",
       "time": "2014-06-11T12:00:00.000Z",
+      "timezoneOffset": 0,
+      "conversionOffset": 0,
       "type": "basal",
       "deliveryType": "temp",
       "percent": 0.5,
@@ -107,7 +140,10 @@
     }
   },
   {
+    "deviceTime": "2014-06-11T19:00:00",
     "time": "2014-06-11T19:00:00.000Z",
+    "timezoneOffset": 0,
+    "conversionOffset": 0,
     "type": "basal",
     "deliveryType": "scheduled",
     "scheduleName": "Standard",
@@ -116,7 +152,10 @@
     "deviceId": "tools",
     "uploadId": "tools",
     "previous": {
+      "deviceTime": "2014-06-11T16:00:00",
       "time": "2014-06-11T16:00:00.000Z",
+      "timezoneOffset": 0,
+      "conversionOffset": 0,
       "type": "basal",
       "deliveryType": "scheduled",
       "scheduleName": "Standard",

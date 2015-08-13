@@ -6,7 +6,7 @@
         "timezoneOffset": 780,
         "conversionOffset": 0,
         "timezone": "Pacific/Auckland",
-        "version": "tidepool-uploader 0.200.0",
+        "version": "tidepool-uploader 0.98.0",
         "uploadId": "1234",
         "byUser": "Bob",
         "deviceTags": [
@@ -18,11 +18,6 @@
         ],
         "deviceModel": "MiniMed 530G 551",
         "deviceId": "multiple",
-        "deviceSerialNumber": "multiple",
-        "_groupId": "1234",
-        "id": "7h3jc5jj5nl3bcu1gvs4j4k442pup1ef",
-        "_version": 0,
-        "_schemaVersion": 0,
-        "_active": true
+        "deviceSerialNumber": "multiple"
     }
 ]

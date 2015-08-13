@@ -28,8 +28,10 @@ var helper = require('./schemaTestHelper.js');
 
 var goodObject = {
   type: 'smbg',
+  deviceTime: '2014-01-01T03:00:00',
   time: '2014-01-01T01:00:00.000Z',
   timezoneOffset: 120,
+  conversionOffset: 0,
   deviceId: 'test',
   uploadId: 'test',
   value: 1.12,
@@ -49,7 +51,7 @@ describe('schema/smbg.js', function(){
     helper.expectStringField(goodObject, 'units');
     helper.expectFieldIn(goodObject, 'units',
       ['mmol/L', 'mmol/l', 'mg/dL', 'mg/dl'],
-      ['mmol/L', 'mmol/L', 'mg/dL', 'mg/dL']);
+      ['mmol/L', 'mmol/L', 'mmol/L', 'mmol/L']);
   });
 
   describe('subType', function(){

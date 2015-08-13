@@ -27,6 +27,9 @@ var goodObject = {
   type: 'upload',
   time: '2014-01-01T01:00:00.000Z',
   timezone: 'Pacific/Auckland',
+  timezoneOffset: 780,
+  computerTime: '2014-01-01T14:00:00',
+  conversionOffset: 0,
   uploadId: '123-my-upload-id',
   byUser : '123-my-user-id',
   version: '0.101.0',
@@ -42,6 +45,9 @@ var badTidepoolUploaderObject = {
   type: 'upload',
   time: '2014-01-01T01:00:00.000Z',
   timezone: 'Pacific/Auckland',
+  timezoneOffset: 780,
+  computerTime: '2014-01-01T14:00:00',
+  conversionOffset: 0,
   uploadId: '123-my-upload-id',
   byUser : '123-my-user-id',
   version: 'tidepool-uploader 0.1.0',
@@ -79,9 +85,6 @@ describe('schema/upload.js', function(){
       helper.rejectIfAbsent(goodObject, 'version');
       helper.expectStringField(goodObject, 'version');
       done();
-    });
-    it('is rejected when the version is outdated', function(done) {
-      helper.expectRejectionAndError(badTidepoolUploaderObject, {text: 'The minimum supported version is [0.99.0]. Version [tidepool-uploader 0.1.0] is no longer supported.', code: 'outdatedVersion', errorField: 'version'}, done);
     });
   });
 

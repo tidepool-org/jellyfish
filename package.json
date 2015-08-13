@@ -1,6 +1,6 @@
 {
   "name": "jellyfish",
-  "version": "0.9.3",
+  "version": "0.10.3-alpha",
   "description": "Jellyfish are known for their user friendliness with uploads",
   "main": "app.js",
   "scripts": {

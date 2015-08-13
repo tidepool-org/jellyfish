@@ -38,8 +38,10 @@ describe('schema/basal.js', function(){
       value: 3.0,
       duration: 14400000,
       insulin: 'levemir',
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g'
@@ -79,8 +81,10 @@ describe('schema/basal.js', function(){
       scheduleName: 'Pattern A',
       rate: 1.0,
       duration: 3600000,
+      deviceTime: '2014-01-01T02:00:00',
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
     };
@@ -91,8 +95,10 @@ describe('schema/basal.js', function(){
       scheduleName: 'Pattern A',
       rate: 1.0,
       duration: 7200000,
+      deviceTime: '2014-01-01T02:00:00',
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
     };
@@ -103,8 +109,10 @@ describe('schema/basal.js', function(){
       scheduleName: 'Pattern A',
       rate: 1.0,
       duration: 7200000,
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g',
@@ -188,7 +196,7 @@ describe('schema/basal.js', function(){
         it('annotates the previous event when no previous provided and new event happens after old event', function(done){
           var localGoodObject = _.omit(goodObject, "previous");
           var expectedPrevious = _.assign({}, previousMatches, {
-            annotations: [{ code: 'basal/mismatched-series', nextId: '2d3ij3nslb9rjsp6e6bantvr61tavpkk' }]
+            annotations: [{ code: 'basal/mismatched-series', nextId: 'a84k2igl7pul6cu9ap63bar175du1gfi' }]
           });
 
           sinon.stub(helper.streamDAO, 'getDatumBefore');
@@ -210,7 +218,7 @@ describe('schema/basal.js', function(){
         it('updates and annotates the previous event when no previous provided and new event cuts off old event', function(done){
           var localGoodObject = _.omit(goodObject, "previous");
           var expectedPrevious = _.assign({}, previousCutShort, {
-            annotations: [{ code: 'basal/mismatched-series', nextId: '2d3ij3nslb9rjsp6e6bantvr61tavpkk' }],
+            annotations: [{ code: 'basal/mismatched-series', nextId: 'a84k2igl7pul6cu9ap63bar175du1gfi' }],
             duration: 3600000,
             expectedDuration: previousCutShort.duration
           });
@@ -248,8 +256,10 @@ describe('schema/basal.js', function(){
       scheduleName: 'Pattern A',
       rate: 1.0,
       duration: 3600000,
+      deviceTime: '2014-01-01T02:00:00',
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
     };
@@ -260,8 +270,10 @@ describe('schema/basal.js', function(){
       scheduleName: 'Pattern A',
       rate: 1.0,
       duration: 7200000,
+      deviceTime: '2014-01-01T02:00:00',
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
     };
@@ -270,8 +282,10 @@ describe('schema/basal.js', function(){
       type: 'basal',
       deliveryType: 'suspend',
       duration: 1800000,
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g',
@@ -365,8 +379,10 @@ describe('schema/basal.js', function(){
       scheduleName: 'Pattern A',
       rate: 1.0,
       duration: 3600000,
+      deviceTime: '2014-01-01T02:00:00',
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
     };
@@ -377,8 +393,10 @@ describe('schema/basal.js', function(){
       scheduleName: 'Pattern A',
       rate: 1.0,
       duration: 7200000,
+      deviceTime: '2014-01-01T02:00:00',
       time: '2014-01-01T00:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
     };
@@ -389,8 +407,10 @@ describe('schema/basal.js', function(){
       rate: 0.6,
       percent: 0.5,
       duration: 1800000,
+      deviceTime: '2014-01-01T03:00:00',
       time: '2014-01-01T01:00:00.000Z',
       timezoneOffset: 120,
+      conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
       _groupId: 'g',

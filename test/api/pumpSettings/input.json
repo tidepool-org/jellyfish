@@ -1,7 +1,9 @@
 [{
-  "type": "settings",
+  "type": "pumpSettings",
+  "deviceTime": "2014-01-01T01:00:00",
   "time": "2014-01-01T01:00:00.000Z",
-  "timezoneOffset": 120,
+  "timezoneOffset": 0,
+  "conversionOffset": 0,
   "deviceId": "test",
   "uploadId": "test",
   "activeSchedule": "standard",
@@ -30,10 +32,5 @@
   "bgTarget": [
     { "low": 5.5, "high": 6.7, "start": 0 },
     { "low": 5, "high": 6.1, "start": 18000000 }
-  ],
-  "_groupId": "g",
-  "_active": true,
-  "_version": 0,
-  "_schemaVersion": 0,
-  "id": "ifquam7540hbri1fdj214jos00j3jhcr"
+  ]
 }]

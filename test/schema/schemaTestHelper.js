@@ -110,6 +110,12 @@ exports.expectNotStringField = function(goodObject, field) {
   });
 };
 
+exports.expectBooleanField = function(goodObject, field) {
+  exports.expectNotNumberField(goodObject, field);
+  exports.expectNotObjectField(goodObject, field);
+  exports.expectNotNumberField(goodObject, field);
+};
+
 exports.expectStringField = function(goodObject, field) {
   exports.expectNotNumberField(goodObject, field);
   exports.expectNotObjectField(goodObject, field);
@@ -167,7 +173,7 @@ exports.expectUnitConversion = function(goodObject, field) {
     var splatMe = { units: 'mg/dL' };
     splatMe[field] = 80;
     exports.run(_.assign({}, goodObject, splatMe), function(err, val){
-      expect(val.units).equals('mg/dL');
+      expect(val.units).equals('mmol/L');
       expect(val[field]).equals(4.440598392836427);
       done(err);
     });
@@ -177,7 +183,7 @@ exports.expectUnitConversion = function(goodObject, field) {
     var splatMe = { units: 'mg/dl' };
     splatMe[field] = 80;
     exports.run(_.assign({}, goodObject, splatMe), function(err, val){
-      expect(val.units).equals('mg/dL');
+      expect(val.units).equals('mmol/L');
       expect(val[field]).equals(4.440598392836427);
       done(err);
     });
@@ -209,15 +215,9 @@ exports.testCommonFields = function(goodObject) {
   });
 
   describe('timezoneOffset', function(){
-    exports.okIfAbsent(goodObject, 'timezoneOffset');
+    exports.rejectIfAbsent(goodObject, 'timezoneOffset');
     it('rejects non-numerical timezoneOffset', function(done){
       exports.expectRejection(_.assign({}, goodObject, {timezoneOffset: '+08:00'}), 'timezoneOffset', done);
-    });
-    it('rejects timezoneOffset < -1440', function(done){
-      exports.expectRejection(_.assign({}, goodObject, {timezoneOffset: -1441}), 'timezoneOffset', done);
-    });
-    it('rejects timezoneOffset > 1440', function(done){
-      exports.expectRejection(_.assign({}, goodObject, {timezoneOffset: 1441}), 'timezoneOffset', done);
     });
   });
 

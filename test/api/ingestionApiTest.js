@@ -73,6 +73,31 @@ describe('ingestion API', function () {
         }
       );
     });
+    var badInput;
+    try {
+      badInput = JSON.parse(fs.readFileSync(path + '/bad.json'));
+      it(dir + ': outdated uploader version errors', function(done) {
+        async.mapSeries(
+          badInput,
+          function(e, cb){
+            e._groupId = groupId;
+            dataBroker.addDatum(e, cb);
+          },
+          function(err) {
+            expect(err.text).to.equal('The minimum supported version is [0.99.0]. Version [tidepool-uploader 0.98.0] is no longer supported.');
+            expect(err.statusCode).to.equal(400);
+            expect(err.code).to.equal('outdatedVersion');
+            expect(err.errorField).to.equal('version');
+            done();
+          }
+        );
+      });
+    }
+    catch (e) {
+      if (e.code !== 'ENOENT') {
+        throw(e);
+      }
+    }
   }
   for (var i = 0; i < files.length; ++i) {
     var path = __dirname + '/' + files[i];
