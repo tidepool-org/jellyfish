@@ -1,22 +1,22 @@
 /*
  * == BSD2 LICENSE ==
  * Copyright (c) 2014, Tidepool Project
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the associated License, which is identical to the BSD 2-Clause
  * License as published by the Open Source Initiative at opensource.org.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the License for more details.
- * 
+ *
  * You should have received a copy of the License along with this program; if
  * not, you can obtain one from Tidepool Project at tidepool.org.
  * == BSD2 LICENSE ==
  */
 
 'use strict';
- 
+
 var fs = require('fs');
 var path = require('path');
 var url = require('url');
@@ -118,7 +118,7 @@ function go(config) {
 
             log.info('Persisted[%s] events to db.', resultsArray.length);
             mongoClient.close(function(err, results){
-              fs.writeFileSync(path.join(outputDir, 'results.json'), JSON.stringify(testDAO.data)); 
+              fs.writeFileSync(path.join(outputDir, 'results.json'), JSON.stringify(testDAO.data));
               console.log('');
               process.exit(0);
             });
@@ -131,7 +131,7 @@ function go(config) {
 
 function fail(reason, error) {
   mongoClient.close();
-  log.warn(error, 'Failing due to error, with reason[%s].', reason);
+  log.warn(error, 'Failing due to error, with reason: ', reason);
   if (taskStorageDir != null) {
     fs.writeFileSync(path.join(taskStorageDir, 'error.json'), JSON.stringify({ reason: reason }));
   }
