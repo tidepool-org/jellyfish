@@ -21,3 +21,7 @@ the target user):
   `node bin/rawUploads.js download <upload-id>`
 
   The unencrypted upload will be piped to stdout.
+
+  To get a "pure" CSV from stdout into a file, piping through grep works well:
+
+  `node bin/rawUploads.js download <upload-id> | grep -v '^{' > /path/to/save/file/`
