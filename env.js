@@ -119,7 +119,7 @@ module.exports = (function () {
    * future downloads.
    */
   env.storage = {
-    types: JSON.parse(config.fromEnvironment('STORAGE_TYPES', '{"local": {"type": "local", "encryption": "aes256", "directory": "./data"}}')),
+    types: JSON.parse(config.fromEnvironment('STORAGE_TYPES', '{"local": {"type": "local", "encryption": "none", "directory": "./data"}}')),
     default: config.fromEnvironment('STORAGE_DEFAULT', 'local')
   };
 
