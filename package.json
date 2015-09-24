@@ -43,7 +43,7 @@
     "sundial": "1.1.7",
     "tidepool-gatekeeper": "0.2.1",
     "tidepool-seagull-client": "0.1.4",
-    "user-api-client": "0.3.3"
+    "user-api-client": "0.3.4"
   },
   "devDependencies": {
     "gulp": "^3.8.10",
