@@ -42,7 +42,7 @@
     "semver": "4.3.4",
     "sundial": "1.1.7",
     "tidepool-gatekeeper": "0.2.1",
-    "tidepool-seagull-client": "0.1.4",
+    "tidepool-seagull-client": "0.1.5",
     "user-api-client": "0.3.4"
   },
   "devDependencies": {
