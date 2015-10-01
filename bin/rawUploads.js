@@ -82,7 +82,7 @@ var watchWatcher = function(watches) {
 
   function available(watch) {
     return watch.get().length > 0;
-  };
+  }
 
   function wait(cb) {
     if (started) {
@@ -94,7 +94,7 @@ var watchWatcher = function(watches) {
     } else {
       cb("Interrupted");
     }
-  };
+  }
 
   return {
     waitForWatches: function(cb) {
@@ -106,7 +106,7 @@ var watchWatcher = function(watches) {
     close: function() {
       started = false;
     }
-  }
+  };
 };
 
 var apiWatcher = lifecycle.add('api-watcher', watchWatcher([userApiWatch, seagullWatch]));
