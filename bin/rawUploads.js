@@ -43,6 +43,8 @@
 
 'use strict';
 
+var _ = require('lodash');
+
 var async = require('async');
 
 var amoeba = require('amoeba');
@@ -53,16 +55,11 @@ var env = require('../env.js');
 var log = require('../lib/log.js')('rawUploads.js');
 
 var hakken = lifecycle.add('hakken', require('hakken')(env.discovery, log).client());
-var userApiClient = require('user-api-client').client(
-  env.userApi,
-  lifecycle.add('user-api-watch', hakken.watchFromConfig(env.userApi.serviceSpec)),
-  httpClient
-);
-var seagullClient = require('tidepool-seagull-client')(
-  lifecycle.add('seagull-watch', hakken.watchFromConfig(env.seagull.serviceSpec)),
-  {},
-  httpClient
-);
+var userApiWatch = lifecycle.add('user-api-watch', hakken.watchFromConfig(env.userApi.serviceSpec));
+var seagullWatch = lifecycle.add('seagull-watch', hakken.watchFromConfig(env.seagull.serviceSpec));
+
+var userApiClient = require('user-api-client').client(env.userApi, userApiWatch, httpClient);
+var seagullClient = require('tidepool-seagull-client')(seagullWatch, {}, httpClient);
 
 var mongoClient = require('../lib/mongo/mongoClient.js')(env.mongo);
 var storage = require('../lib/storage')(env);
@@ -70,37 +67,79 @@ var tasks = require('../lib/tasks.js')(mongoClient);
 
 function die(message) {
   console.error("ERROR: " + message);
+  lifecycle.close();
   process.exit(1);
 }
 
 function exit() {
   mongoClient.close();
+  lifecycle.close();
   process.exit(0);
 }
 
+var watchWatcher = function(watches) {
+  var started = false;
+
+  function available(watch) {
+    return watch.get().length > 0;
+  }
+
+  function wait(cb) {
+    if (started) {
+      if (_.every(watches, available)) {
+        cb();
+      } else {
+        setTimeout(wait, 500, cb);
+      }
+    } else {
+      cb("Interrupted");
+    }
+  }
+
+  return {
+    waitForWatches: function(cb) {
+      return wait(cb);
+    },
+    start: function() {
+      started = true;
+    },
+    close: function() {
+      started = false;
+    }
+  };
+};
+
+var apiWatcher = lifecycle.add('api-watcher', watchWatcher([userApiWatch, seagullWatch]));
+
 function processArguments(args) {
   lifecycle.start();
-  mongoClient.start(function(err) {
-    if (err != null) {
-      die(err);
+  lifecycle.join();
+  apiWatcher.waitForWatches(function(err) {
+    if (err) {
+      exit();
     }
-    switch (args[0]) {
-      case 'list':
-        listUploads(args[1]);
-        break;
-      case 'download':
-        downloadUpload(args[1]);
-        break;
-      default:
-        die("Unknown command: " + args[0]);
-    }
+    mongoClient.start(function(err) {
+      if (err) {
+        die("Failure while starting mongo client: " + JSON.stringify(err));
+      }
+      switch (args[0]) {
+        case 'list':
+          listUploads(args[1]);
+          break;
+        case 'download':
+          downloadUpload(args[1]);
+          break;
+        default:
+          die("Unknown command: " + args[0]);
+      }
+    });
   });
 }
 
 function listUploads(user) {
   tasks.list(user, function(err, userTasks) {
-    if (err != null) {
-      die(err);
+    if (err) {
+      die("Failure while listing tasks: " + JSON.stringify(err));
     }
     userTasks.forEach(function(userTask) {
       console.log(userTask._id + ' ' + userTask._createdTime);
@@ -131,8 +170,8 @@ function downloadUpload(id) {
       },
     ],
     function(err, dataStream) {
-      if (err != null) {
-        die(err);
+      if (err) {
+        die("Failure while downloading upload: " + JSON.stringify(err));
       }
       dataStream.on('end', function() {
         exit();
