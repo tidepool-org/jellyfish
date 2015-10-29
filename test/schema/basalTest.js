@@ -106,7 +106,6 @@ describe('schema/basal.js', function(){
     var goodObject = {
       type: 'basal',
       deliveryType: 'scheduled',
-      scheduleName: 'Pattern A',
       rate: 1.0,
       duration: 7200000,
       deviceTime: '2014-01-01T03:00:00',
@@ -242,7 +241,7 @@ describe('schema/basal.js', function(){
     });
 
     describe('scheduleName', function(){
-      helper.rejectIfAbsent(goodObject, 'scheduleName');
+      helper.okIfAbsent(goodObject, 'scheduleName');
       helper.expectStringField(goodObject, 'scheduleName');
     });
 
