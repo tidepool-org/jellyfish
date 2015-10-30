@@ -173,6 +173,30 @@ describe('schema/wizard.js', function(){
         });
       });
     });
+
+    describe('Target (only!)', function(){
+      var localGood = {};
+
+      beforeEach(function(){
+        localGood = _.cloneDeep(goodObject);
+        localGood.bgTarget = { target: 4.5 };
+      });
+
+      it('accepts the good', function(done){
+        helper.run(localGood, done);
+      });
+
+      it('converts units', function(done){
+        localGood.bgTarget = { target: 100 };
+
+        helper.run(localGood, function(err, converted) {
+          expect(converted.bgTarget).deep.equals(
+            { target: 5.550747991045533 }
+          );
+          done(err);
+        });
+      });
+    });
   });
 
   describe('bolus', function(){
