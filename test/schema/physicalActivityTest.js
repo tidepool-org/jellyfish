@@ -1,0 +1,44 @@
+
+
+var goodObject = {
+  "type": "physicalActivity",
+
+  "time": "2015-10-24T16:17:50.000Z", 
+  "timezoneOffset":-240,
+  "conversionOffset":0,
+  "deviceId": "runkeeper-A1234", 
+  "uploadId": "0001", 
+
+  "datapoint": {  
+        "header":{
+          "acquisition_provenance": {
+          "source_name": "Runkeeper HealthGraph API", 
+          "modality": "sensed", 
+          "external_id": "/fitnessActivities/679963655" 
+        }
+            
+        },
+        "body": {
+          "effective_time_frame": {
+          "time_interval": {
+            "start_date_time": "2015-10-24T12:17:50-04:00", 
+            "duration": {
+              "unit": "sec",
+              "value": 148.311  
+            }
+          }
+        },
+        "activity_name": "Running",  
+        "distance": { 
+            "unit": "m",
+            "value": 10.3929068646607 
+          }
+        },
+        "kcal_burned": { 
+          "unit": "kcal",
+          "value": 7     
+        },
+        "reported_activity_intensity": "moderate" 
+        
+      }
+}
