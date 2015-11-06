@@ -98,34 +98,7 @@ describe('schema/wizard.js', function(){
       });
     });
 
-    describe('(Target) + High/Low', function(){
-      var localGood = {};
-      beforeEach(function(){
-        localGood = _.cloneDeep(goodObject);
-      });
-
-      it('accepts a bgTarget with a target', function(done){
-        localGood.bgTarget.target = 4.5;
-        helper.run(localGood, done);
-      });
-
-      it('converts units', function(done){
-        localGood.units = 'mg/dL';
-        localGood.bgTarget = { low: 80, high: 100, target: 90 };
-
-        helper.run(localGood, function(err, converted) {
-          if (err != null) {
-            return done(err);
-          }
-
-          expect(converted.bgTarget).deep.equals(
-            { low: 4.440598392836427, high: 5.550747991045533, target: 4.9956731919409805 }
-          );
-          done();
-        });
-      });
-    });
-
+    // Animas pumps
     describe('Target + Range', function(){
       var localGood = {};
 
@@ -150,6 +123,7 @@ describe('schema/wizard.js', function(){
       });
     });
 
+    // OmniPod
     describe('Target + High', function(){
       var localGood = {};
 
@@ -174,6 +148,7 @@ describe('schema/wizard.js', function(){
       });
     });
 
+    // Tandem
     describe('Target (only!)', function(){
       var localGood = {};
 

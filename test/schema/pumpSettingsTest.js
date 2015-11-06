@@ -218,6 +218,7 @@ describe('schema/pumpSettings.js', function () {
     });
   });
 
+  // Tandem
   describe('bgTargets', function() {
     var multiBgTargets = _.cloneDeep(goodObject);
     delete multiBgTargets.bgTarget;
@@ -240,19 +241,17 @@ describe('schema/pumpSettings.js', function () {
       multiConvert.units.bg = 'mg/dL';
       multiConvert.bgTargets = { 
         "weekday": [
-          { low: 80, high: 100, target: 90, start: 0 },
-          { low: 90, high: 110, target: 100, start: 10800000 }
+          { target: 90, start: 0 },
+          { target: 100, start: 10800000 }
         ],
         "weekend": [
-          { low: 80, high: 100, target: 90, start: 0 },
-          { low: 90, high: 110, target: 100, start: 10800000 }
+          { target: 90, start: 0 },
+          { target: 100, start: 21600000 }
         ]};
       helper.run(multiConvert, function(err, converted) {
         if (err != null) {
           return done(err);
         }
-        expect(converted.bgTargets.weekday[0].low).equals(4.440598392836427);
-        expect(converted.bgTargets.weekend[1].high).equals(6.1058227901500866);
         expect(converted.bgTargets.weekend[0].target).equals(4.9956731919409805);
         done(err);
       });
@@ -264,6 +263,7 @@ describe('schema/pumpSettings.js', function () {
     helper.rejectIfNeither(goodObject, 'bgTarget', 'bgTargets');
     helper.expectObjectField(goodObject, 'bgTarget');
 
+    // Medtronic
     describe('(Target) + High/Low', function(){
       var localGood = {};
       beforeEach(function(){
@@ -313,6 +313,7 @@ describe('schema/pumpSettings.js', function () {
       });
     });
 
+    // Animas
     describe('Target + Range', function(){
       var localGood = {};
 
@@ -362,6 +363,7 @@ describe('schema/pumpSettings.js', function () {
       });
     });
 
+    // OmniPod
     describe('Target + High', function(){
       var localGood = {};
 
