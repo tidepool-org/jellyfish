@@ -86,7 +86,7 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       conversionOffset: 0,
       deviceId: 'test',
-      uploadId: 'test',
+      uploadId: 'test'
     };
 
     var previousCutShort = {
@@ -100,7 +100,7 @@ describe('schema/basal.js', function(){
       timezoneOffset: 120,
       conversionOffset: 0,
       deviceId: 'test',
-      uploadId: 'test',
+      uploadId: 'test'
     };
 
     var goodObject = {
@@ -168,6 +168,16 @@ describe('schema/basal.js', function(){
           });
         });
 
+        it('does NOT update the duration of previous basal events if the new event extends the previous longer', function(done){
+          var localGoodObject = _.assign({}, goodObject, {time: '2014-01-01T02:02:00.000Z'});
+
+          helper.run(localGoodObject, function(err, obj){
+            expect(_.pick(obj, Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+
         it('maintains the duration of previous events if the new event happens after the older one', function(done){
           var localGoodObject = _.assign({}, goodObject, {time: '2014-01-01T02:00:00.000Z', previous: previousMatches});
 
@@ -227,6 +237,34 @@ describe('schema/basal.js', function(){
             .withArgs(localGoodObject, sinon.match.func)
             .callsArgWith(1, null, previousCutShort);
 
+
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+      });
+
+      describe('previous [final basal]', function(){
+        var prevId = schema.makeId(previousMatches);
+
+        beforeEach(function(){
+          helper.resetMocks();
+          sinon.stub(helper.streamDAO, 'getDatum');
+          helper.streamDAO.getDatum
+            .withArgs(prevId, goodObject._groupId, sinon.match.func)
+            .callsArgWith(2, null, _.assign({}, previousMatches, {
+              annotations: [{code: 'final-basal/fabricated-from-schedule'}]
+            }));
+        });
+
+        it('updates the duration of previous final basal events if the new event extends the previous longer than fabricated', function(done){
+          var localGoodObject = _.assign({}, goodObject, {time: '2014-01-01T01:02:00.000Z'});
+          var expectedPrevious = _.assign({}, previousMatches, {duration: 3720000});
 
           helper.run(localGoodObject, function(err, objs){
             expect(objs).length(2);
