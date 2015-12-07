@@ -7,7 +7,7 @@ The `rawUploads.js` script will list and download raw uploads for the specified 
 This script is executed via the command line. The command line environment must
 be setup as if `jellyfish` were running.
 
-To execute the script on the `devel`, `staging`, or `prod` environment:
+To execute the script on the `dev`, `stg`, or `prd` environment:
 
 1. In a terminal window, SSH into an app server within the environment.
 1. Switch user to `tidepool-deploy`.
