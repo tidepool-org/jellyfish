@@ -146,7 +146,6 @@
     "conversionOffset": 0,
     "type": "basal",
     "deliveryType": "scheduled",
-    "scheduleName": "Standard",
     "rate": 2.0,
     "duration": 18000000,
     "deviceId": "tools",
