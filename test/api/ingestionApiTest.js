@@ -84,7 +84,7 @@ describe('ingestion API', function () {
             dataBroker.addDatum(e, cb);
           },
           function(err) {
-            expect(err.text).to.equal('The minimum supported version is [0.99.0]. Version [tidepool-uploader 0.98.0] is no longer supported.');
+            expect(err.message).to.equal('The minimum supported version is [0.99.0]. Version [tidepool-uploader 0.98.0] is no longer supported.');
             expect(err.statusCode).to.equal(400);
             expect(err.code).to.equal('outdatedVersion');
             expect(err.errorField).to.equal('version');
