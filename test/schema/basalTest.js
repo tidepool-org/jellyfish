@@ -289,6 +289,17 @@ describe('schema/basal.js', function(){
             return done(err);
           });
         });
+
+        it('does not update the duration of previous final basal events if the new event has the same duration', function(done){
+          var localGoodObject = _.assign({}, goodObject);
+          var expectedPrevious = _.assign({}, previousMatches);
+
+          helper.run(localGoodObject, function(err, obj){
+            expect(_.pick(obj, Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
       });
     });
 
@@ -418,6 +429,59 @@ describe('schema/basal.js', function(){
 
             expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
             expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+      });
+
+      describe('previous [final basal]', function(){
+        var prevId = schema.makeId(previousMatches);
+
+        beforeEach(function(){
+          helper.resetMocks();
+          sinon.stub(helper.streamDAO, 'getDatum');
+          helper.streamDAO.getDatum
+            .withArgs(prevId, goodObject._groupId, sinon.match.func)
+            .callsArgWith(2, null, _.assign({}, previousMatches, {
+              annotations: [{code: 'final-basal/fabricated-from-schedule'}]
+            }));
+        });
+
+        it('updates the duration of previous final basal events if the new event extends the previous longer than fabricated', function(done){
+          var localGoodObject = _.assign({}, goodObject, {time: '2014-01-01T01:02:00.000Z'});
+          var expectedPrevious = _.assign({}, previousMatches, {duration: 3720000});
+
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+
+        it('updates the duration of previous final basal events if the new event cuts the previous short', function(done){
+          var localGoodObject = _.assign({}, goodObject, {time: '2014-01-01T00:58:00.000Z'});
+          var expectedPrevious = _.assign({}, previousMatches, {duration: 3480000});
+
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+
+        it('does not update the duration of previous final basal events if the new event has the same duration', function(done){
+          var localGoodObject = _.assign({}, goodObject);
+          var expectedPrevious = _.assign({}, previousMatches);
+
+          helper.run(localGoodObject, function(err, obj){
+            expect(_.pick(obj, Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
 
             return done(err);
           });
@@ -616,6 +680,17 @@ describe('schema/basal.js', function(){
 
             expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
             expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+
+            return done(err);
+          });
+        });
+
+        it('does not update the duration of previous final basal events if the new event has the same duration', function(done){
+          var localGoodObject = _.assign({}, goodObject);
+          var expectedPrevious = _.assign({}, previousMatches);
+
+          helper.run(localGoodObject, function(err, obj){
+            expect(_.pick(obj, Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
 
             return done(err);
           });
