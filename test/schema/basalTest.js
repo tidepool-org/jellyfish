@@ -294,8 +294,11 @@ describe('schema/basal.js', function(){
           var localGoodObject = _.assign({}, goodObject);
           var expectedPrevious = _.assign({}, previousMatches);
 
-          helper.run(localGoodObject, function(err, obj){
-            expect(_.pick(obj, Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
 
             return done(err);
           });
@@ -480,8 +483,11 @@ describe('schema/basal.js', function(){
           var localGoodObject = _.assign({}, goodObject);
           var expectedPrevious = _.assign({}, previousMatches);
 
-          helper.run(localGoodObject, function(err, obj){
-            expect(_.pick(obj, Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
 
             return done(err);
           });
@@ -689,8 +695,11 @@ describe('schema/basal.js', function(){
           var localGoodObject = _.assign({}, goodObject);
           var expectedPrevious = _.assign({}, previousMatches);
 
-          helper.run(localGoodObject, function(err, obj){
-            expect(_.pick(obj, Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
+          helper.run(localGoodObject, function(err, objs){
+            expect(objs).length(2);
+
+            expect(_.pick(objs[0], Object.keys(expectedPrevious))).deep.equals(expectedPrevious);
+            expect(_.pick(objs[1], Object.keys(localGoodObject))).deep.equals(_.omit(localGoodObject, 'previous'));
 
             return done(err);
           });
