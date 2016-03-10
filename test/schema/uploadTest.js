@@ -139,5 +139,5 @@ describe('schema/upload.js', function(){
       obj.timeProcessing = 'foo';
       helper.expectRejection(obj, 'timeProcessing', done);
     });
-  })
+  });
 });

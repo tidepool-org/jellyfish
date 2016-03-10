@@ -243,7 +243,7 @@ exports.testCommonFields = function(goodObject) {
     exports.okIfAbsent(goodObject, 'conversionOffset');
 
     it('rejects non-numerical conversionOffset', function(done){
-      exports.expectRejection(_.assign({}, goodObject, {conversionOffset: '-0500'}), 'conversionOffset', done)
+      exports.expectRejection(_.assign({}, goodObject, {conversionOffset: '-0500'}), 'conversionOffset', done);
     });
   });
 
@@ -251,7 +251,7 @@ exports.testCommonFields = function(goodObject) {
     exports.okIfAbsent(goodObject, 'clockDriftOffset');
 
     it('rejects non-numerical clockDriftOffset', function(done){
-      exports.expectRejection(_.assign({}, goodObject, {clockDriftOffset: '-123456'}), 'clockDriftOffset', done)
+      exports.expectRejection(_.assign({}, goodObject, {clockDriftOffset: '-123456'}), 'clockDriftOffset', done);
     });
   });
 
@@ -273,7 +273,7 @@ exports.testCommonFields = function(goodObject) {
     exports.okIfAbsent(goodObject, '_active');
 
     it('rejects data with _active set', function(done){
-      exports.expectRejection(_.assign({}, goodObject, {_active: true}), '_active', done)
+      exports.expectRejection(_.assign({}, goodObject, {_active: true}), '_active', done);
     });
   });
 
@@ -281,7 +281,7 @@ exports.testCommonFields = function(goodObject) {
     exports.okIfAbsent(goodObject, '_version');
 
     it('rejects data with _version set', function(done){
-      exports.expectRejection(_.assign({}, goodObject, {_version: 2}), '_version', done)
+      exports.expectRejection(_.assign({}, goodObject, {_version: 2}), '_version', done);
     });
   });
 
@@ -289,7 +289,7 @@ exports.testCommonFields = function(goodObject) {
     exports.okIfAbsent(goodObject, '_schemaVersion');
 
     it('rejects data with _schemaVersion set', function(done){
-      exports.expectRejection(_.assign({}, goodObject, {_schemaVersion: 2}), '_schemaVersion', done)
+      exports.expectRejection(_.assign({}, goodObject, {_schemaVersion: 2}), '_schemaVersion', done);
     });
   });
 };
