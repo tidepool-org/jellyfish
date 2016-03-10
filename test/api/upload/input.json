@@ -18,6 +18,7 @@
         ],
         "deviceModel": "MiniMed 530G 551",
         "deviceId": "multiple",
-        "deviceSerialNumber": "multiple"
+        "deviceSerialNumber": "multiple",
+        "timeProcessing": "utc-bootstrapping"
     }
 ]

@@ -38,6 +38,7 @@ var goodObject = {
   deviceSerialNumber: '12345',
   deviceTags: ['insulin-pump'],
   deviceId: '123-my-upload-id',
+  timeProcessing: 'utc-bootstrapping',
   _groupId: 'g'
 };
 
@@ -129,4 +130,14 @@ describe('schema/upload.js', function(){
     helper.expectStringField(goodObject, 'deviceSerialNumber');
   });
 
+  describe('timeProcessing', function() {
+    helper.rejectIfAbsent(goodObject, 'timeProcessing');
+    helper.expectStringField(goodObject, 'timeProcessing');
+
+    it('only accepts approved values', function(done) {
+      var obj = _.cloneDeep(goodObject);
+      obj.timeProcessing = 'foo';
+      helper.expectRejection(obj, 'timeProcessing', done);
+    });
+  })
 });
