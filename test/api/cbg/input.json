@@ -32,5 +32,13 @@
         "units": "mg/dl",
         "deviceId": "tools",
         "uploadId": "tools"
+    },
+    {
+        "time": "2015-12-21T11:23:08Z",
+        "type": "cbg",
+        "value": 69,
+        "units": "mg\/dL",
+        "deviceId": "DexHealthKit_Dexcom:com.dexcom.Share2:3.0.4.17",
+        "uploadId": "upid_HealthKit_org.tidepool.blipnotes:1.1:242_2016-03-10T10:25:55-06:00"
     }
 ]
