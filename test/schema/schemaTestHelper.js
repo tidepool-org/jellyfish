@@ -237,6 +237,17 @@ exports.testCommonFields = function(goodObject) {
     it('rejects non-numerical timezoneOffset', function(done){
       exports.expectRejection(_.assign({}, goodObject, {timezoneOffset: '+08:00'}), 'timezoneOffset', done);
     });
+
+    it('accepts 0 as a valid timezoneOffset', function(done){
+      exports.run(_.assign({}, goodObject, {timezoneOffset: 0}), function(err, val){
+        if (Array.isArray(val)) {
+          expect(val).length(1);
+          val = val[0];
+        }
+        expect(val.timezoneOffset).equals(0);
+        done(err);
+      });      
+    });
   });
 
   describe('conversionOffset', function(){
@@ -245,6 +256,17 @@ exports.testCommonFields = function(goodObject) {
     it('rejects non-numerical conversionOffset', function(done){
       exports.expectRejection(_.assign({}, goodObject, {conversionOffset: '-0500'}), 'conversionOffset', done);
     });
+
+    it('accepts 0 as a valid conversionOffset', function(done){
+      exports.run(_.assign({}, goodObject, {conversionOffset: 0}), function(err, val){
+        if (Array.isArray(val)) {
+          expect(val).length(1);
+          val = val[0];
+        }
+        expect(val.conversionOffset).equals(0);
+        done(err);
+      });      
+    });
   });
 
   describe('clockDriftOffset', function(){
@@ -252,6 +274,17 @@ exports.testCommonFields = function(goodObject) {
 
     it('rejects non-numerical clockDriftOffset', function(done){
       exports.expectRejection(_.assign({}, goodObject, {clockDriftOffset: '-123456'}), 'clockDriftOffset', done);
+    });
+
+    it('accepts 0 as a valid clockDriftOffset', function(done){
+      exports.run(_.assign({}, goodObject, {clockDriftOffset: 0}), function(err, val){
+        if (Array.isArray(val)) {
+          expect(val).length(1);
+          val = val[0];
+        }
+        expect(val.clockDriftOffset).equals(0);
+        done(err);
+      });      
     });
   });
 
