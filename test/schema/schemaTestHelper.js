@@ -191,6 +191,24 @@ exports.expectUnitConversion = function(goodObject, field) {
 };
 
 exports.testCommonFields = function(goodObject) {
+  describe('deviceTime', function(){
+    it('accepts timestamps in ISO 8601 format w/no timezone info', function(done){
+      exports.run(_.assign({}, goodObject, {deviceTime: '2015-01-01T00:05:25'}), function(err, val){
+        if (Array.isArray(val)) {
+          expect(val).length(1);
+          val = val[0];
+        }
+        expect(val.deviceTime).equals('2015-01-01T00:05:25');
+        done(err);
+      });
+    });
+    it('rejects non-string time', function(done){
+      exports.expectRejection(
+        _.assign({}, goodObject, {time: new Date('2014-01-01T01:01:00.000Z').valueOf()}), 'time', done
+      );
+    });
+  });
+
   describe('time', function(){
     exports.rejectIfAbsent(goodObject, 'time');
 
@@ -215,9 +233,58 @@ exports.testCommonFields = function(goodObject) {
   });
 
   describe('timezoneOffset', function(){
-    exports.rejectIfAbsent(goodObject, 'timezoneOffset');
+    exports.okIfAbsent(goodObject, 'timezoneOffset');
     it('rejects non-numerical timezoneOffset', function(done){
       exports.expectRejection(_.assign({}, goodObject, {timezoneOffset: '+08:00'}), 'timezoneOffset', done);
+    });
+
+    it('accepts 0 as a valid timezoneOffset', function(done){
+      exports.run(_.assign({}, goodObject, {timezoneOffset: 0}), function(err, val){
+        if (Array.isArray(val)) {
+          expect(val).length(1);
+          val = val[0];
+        }
+        expect(val.timezoneOffset).equals(0);
+        done(err);
+      });      
+    });
+  });
+
+  describe('conversionOffset', function(){
+    exports.okIfAbsent(goodObject, 'conversionOffset');
+
+    it('rejects non-numerical conversionOffset', function(done){
+      exports.expectRejection(_.assign({}, goodObject, {conversionOffset: '-0500'}), 'conversionOffset', done);
+    });
+
+    it('accepts 0 as a valid conversionOffset', function(done){
+      exports.run(_.assign({}, goodObject, {conversionOffset: 0}), function(err, val){
+        if (Array.isArray(val)) {
+          expect(val).length(1);
+          val = val[0];
+        }
+        expect(val.conversionOffset).equals(0);
+        done(err);
+      });      
+    });
+  });
+
+  describe('clockDriftOffset', function(){
+    exports.okIfAbsent(goodObject, 'clockDriftOffset');
+
+    it('rejects non-numerical clockDriftOffset', function(done){
+      exports.expectRejection(_.assign({}, goodObject, {clockDriftOffset: '-123456'}), 'clockDriftOffset', done);
+    });
+
+    it('accepts 0 as a valid clockDriftOffset', function(done){
+      exports.run(_.assign({}, goodObject, {clockDriftOffset: 0}), function(err, val){
+        if (Array.isArray(val)) {
+          expect(val).length(1);
+          val = val[0];
+        }
+        expect(val.clockDriftOffset).equals(0);
+        done(err);
+      });      
     });
   });
 
@@ -232,6 +299,30 @@ exports.testCommonFields = function(goodObject) {
     exports.rejectIfAbsent(goodObject, 'uploadId');
     it('rejects non-string uploadId', function(done){
       exports.expectRejection(_.assign({}, goodObject, {uploadId: 1337}), 'uploadId', done);
+    });
+  });
+
+  describe('_active', function(){
+    exports.okIfAbsent(goodObject, '_active');
+
+    it('rejects data with _active set', function(done){
+      exports.expectRejection(_.assign({}, goodObject, {_active: true}), '_active', done);
+    });
+  });
+
+  describe('_version', function(){
+    exports.okIfAbsent(goodObject, '_version');
+
+    it('rejects data with _version set', function(done){
+      exports.expectRejection(_.assign({}, goodObject, {_version: 2}), '_version', done);
+    });
+  });
+
+  describe('_schemaVersion', function(){
+    exports.okIfAbsent(goodObject, '_schemaVersion');
+
+    it('rejects data with _schemaVersion set', function(done){
+      exports.expectRejection(_.assign({}, goodObject, {_schemaVersion: 2}), '_schemaVersion', done);
     });
   });
 };

@@ -47,5 +47,18 @@
         "_version": 0,
         "_active": true,
         "_schemaVersion": 0
+    },
+    {
+        "time": "2015-12-21T11:23:08Z",
+        "type": "cbg",
+        "value": 3.830016113821418,
+        "units": "mmol/L",
+        "deviceId": "DexHealthKit_Dexcom:com.dexcom.Share2:3.0.4.17",
+        "uploadId": "upid_HealthKit_org.tidepool.blipnotes:1.1:242_2016-03-10T10:25:55-06:00",
+        "_groupId": "1234",
+        "id": "nsikjhfaprplpq78hc7di2lu5qpt1e3k",
+        "_version": 0,
+        "_active": true,
+        "_schemaVersion": 0
     }
 ]
