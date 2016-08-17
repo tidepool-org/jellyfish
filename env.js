@@ -133,7 +133,7 @@ module.exports = (function () {
 
   env.mongo = {
     // A standard Mongo connection string used to connect to Mongo, of all things
-    connectionString: config.fromEnvironment('MONGO_CONNECTION_STRING', 'mongodb://localhost/streams')
+    connectionString: config.fromEnvironment('MONGO_CONNECTION_STRING', 'mongodb://localhost/data')
   };
 
   env.discovery = {

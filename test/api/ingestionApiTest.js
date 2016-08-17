@@ -27,7 +27,7 @@ var _ = require('lodash');
 var expect = require('salinity').expect;
 
 var mongoClient = require('../../lib/mongo/mongoClient.js')(
-  { connectionString: 'mongodb://localhost/test_ingestion', closeDelay: 0 }
+  { connectionString: 'mongodb://localhost/data_test', closeDelay: 0 }
 );
 var streamDAO = require('../../lib/streamDAO.js')(mongoClient);
 var dataBroker = require('../../lib/dataBroker.js')(streamDAO);
