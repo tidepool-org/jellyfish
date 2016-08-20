@@ -1,15 +1,15 @@
 /*
  * == BSD2 LICENSE ==
  * Copyright (c) 2014, Tidepool Project
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the associated License, which is identical to the BSD 2-Clause
  * License as published by the Open Source Initiative at opensource.org.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the License for more details.
- * 
+ *
  * You should have received a copy of the License along with this program; if
  * not, you can obtain one from Tidepool Project at tidepool.org.
  * == BSD2 LICENSE ==
@@ -32,6 +32,7 @@ var mongoClient = require('../../lib/mongo/mongoClient.js')(
 var streamDAO = require('../../lib/streamDAO.js')(mongoClient);
 var dataBroker = require('../../lib/dataBroker.js')(streamDAO);
 
+var userId = "abcd";
 var groupId = "1234";
 
 describe('ingestion API', function () {
@@ -55,6 +56,7 @@ describe('ingestion API', function () {
       async.mapSeries(
         input,
         function(e, cb){
+          e._userId = userId;
           e._groupId = groupId;
           dataBroker.addDatum(e, cb);
         },
@@ -66,7 +68,7 @@ describe('ingestion API', function () {
           mongoClient.withCollection('deviceData', done, function(coll, cb){
             coll.find().sort({"time": 1, "id": 1, "_version": 1}).toArray(function(err, results){
               expect(results.map(function(e){ return _.omit(e, 'createdTime', 'modifiedTime', "_id", '_archivedTime'); }))
-                .deep.equals(output.map(function(e){ e._groupId = groupId; return e; }));
+                .deep.equals(output.map(function(e){ e._userId = userId; e._groupId = groupId; return e; }));
               cb(err);
             });
           });
@@ -80,6 +82,7 @@ describe('ingestion API', function () {
         async.mapSeries(
           badInput,
           function(e, cb){
+            e._userId = userId;
             e._groupId = groupId;
             dataBroker.addDatum(e, cb);
           },

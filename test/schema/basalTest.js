@@ -44,6 +44,7 @@ describe('schema/basal.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
 
@@ -114,6 +115,7 @@ describe('schema/basal.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g',
       previous: previousMatches
     };
@@ -353,6 +355,7 @@ describe('schema/basal.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g',
       previous: previousMatches,
       suppressed: previousCutShort
@@ -544,6 +547,7 @@ describe('schema/basal.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g',
       previous: previousMatches,
       suppressed: previousCutShort

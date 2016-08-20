@@ -39,6 +39,7 @@ var goodObject = {
   deviceTags: ['insulin-pump'],
   deviceId: '123-my-upload-id',
   timeProcessing: 'utc-bootstrapping',
+  _userId: 'u',
   _groupId: 'g'
 };
 
@@ -57,6 +58,7 @@ var badTidepoolUploaderObject = {
   deviceSerialNumber: '12345',
   deviceTags: ['insulin-pump'],
   deviceId: '123-my-upload-id',
+  _userId: 'u',
   _groupId: 'g'
 };
 

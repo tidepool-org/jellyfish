@@ -33,6 +33,7 @@ var goodObject = {
   deviceId: 'test',
   uploadId: 'test',
   value: 1.12,
+  _userId: 'u',
   _groupId: 'g',
   units: 'mmol/L'
 };

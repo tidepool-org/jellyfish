@@ -20,6 +20,7 @@
         "deviceId": "multiple",
         "deviceSerialNumber": "multiple",
         "timeProcessing": "utc-bootstrapping",
+        "_userId": "abcd",
         "_groupId": "1234",
         "id": "7h3jc5jj5nl3bcu1gvs4j4k442pup1ef",
         "_version": 0,

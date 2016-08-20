@@ -43,6 +43,7 @@ describe('schema/deviceEvent.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
 
@@ -91,6 +92,7 @@ describe('schema/deviceEvent.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
 
@@ -105,6 +107,7 @@ describe('schema/deviceEvent.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
 
@@ -119,6 +122,7 @@ describe('schema/deviceEvent.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
 
@@ -283,6 +287,7 @@ describe('schema/deviceEvent.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
 
@@ -315,6 +320,7 @@ describe('schema/deviceEvent.js', function(){
         conversionOffset: 0,
         deviceId: 'test',
         uploadId: 'test',
+        _userId: 'u',
         _groupId: 'g'
       }}), 'status');
     });
@@ -333,6 +339,7 @@ describe('schema/deviceEvent.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
 
@@ -349,6 +356,7 @@ describe('schema/deviceEvent.js', function(){
         conversionOffset: 0,
         deviceId: 'test',
         uploadId: 'test',
+        _userId: 'u',
         _groupId: 'g'
       }}), 'status');
     });
@@ -367,6 +375,7 @@ describe('schema/deviceEvent.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
 
@@ -402,6 +411,7 @@ describe('schema/deviceEvent.js', function(){
       conversionOffset: 120000,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
 

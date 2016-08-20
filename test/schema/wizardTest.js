@@ -51,6 +51,7 @@ var goodObject = {
     deviceId: 'test'
   },
   units: 'mg/dL',
+  _userId: 'u',
   _groupId: 'g'
 };
 

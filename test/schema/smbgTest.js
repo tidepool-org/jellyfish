@@ -36,6 +36,7 @@ var goodObject = {
   uploadId: 'test',
   value: 1.12,
   units: 'mg/dL',
+  _userId: 'u',
   _groupId: 'g'
 };
 

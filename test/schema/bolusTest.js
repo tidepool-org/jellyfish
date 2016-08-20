@@ -43,6 +43,7 @@ describe('schema/bolus.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
 
@@ -72,6 +73,7 @@ describe('schema/bolus.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
     var objId = schema.makeId(goodObject);
@@ -143,6 +145,7 @@ describe('schema/bolus.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
     var objId = schema.makeId(goodObject);
@@ -256,6 +259,7 @@ describe('schema/bolus.js', function(){
       conversionOffset: 0,
       deviceId: 'test',
       uploadId: 'test',
+      _userId: 'u',
       _groupId: 'g'
     };
     var objId = schema.makeId(goodObject);

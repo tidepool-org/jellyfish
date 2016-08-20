@@ -58,6 +58,7 @@ var goodObject = {
           "rate": 0.16652243973136602
       }
   },
+  _userId: 'u',
   _groupId: 'g'
 };
 

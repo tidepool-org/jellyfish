@@ -59,6 +59,7 @@ var goodObject = {
     { "low": 5.5, "high": 6.7, "start": 0 },
     { "low": 5, "high": 6.1, "start": 18000000 }
   ],
+  _userId: 'u',
   _groupId: 'g'
 };
 
@@ -201,7 +202,7 @@ describe('schema/pumpSettings.js', function () {
     it('still converts units in multiple schedules', function(done) {
       var multiConvert = _.cloneDeep(multiIS);
       multiConvert.units.bg = 'mg/dL';
-      multiConvert.insulinSensitivities = { 
+      multiConvert.insulinSensitivities = {
         "weekday": [  { "amount": 35, "start": 0 },
           { "amount": 35, "start": 18000000 }  ],
         "weekend": [ { "amount": 50, "start": 0 },
@@ -239,7 +240,7 @@ describe('schema/pumpSettings.js', function () {
     it('still converts units with multiple schedules', function(done) {
       var multiConvert = _.cloneDeep(multiBgTargets);
       multiConvert.units.bg = 'mg/dL';
-      multiConvert.bgTargets = { 
+      multiConvert.bgTargets = {
         "weekday": [
           { target: 90, start: 0 },
           { target: 100, start: 10800000 }

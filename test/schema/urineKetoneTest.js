@@ -33,6 +33,7 @@ var goodObject = {
   deviceId: 'test',
   uploadId: 'test',
   value: 'small',
+  _userId: 'u',
   _groupId: 'g'
 };
 

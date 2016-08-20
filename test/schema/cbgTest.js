@@ -35,6 +35,7 @@ var goodObject = {
   value: 1.12,
   isig: 24.37,
   units: 'mg/dL',
+  _userId: 'u',
   _groupId: 'g'
 };
 
