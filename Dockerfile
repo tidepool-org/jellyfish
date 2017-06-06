@@ -27,7 +27,6 @@ RUN apk --no-cache add git \
  && apk del git
 COPY . /app
 
-VOLUME /app
 USER node
 
 CMD ["npm", "start"]
