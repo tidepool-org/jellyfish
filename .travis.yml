@@ -1,14 +1,35 @@
 sudo: false
 
 language: node_js
-node_js:
-  - "0.12.7"
-  - "stable"
-services: mongodb
-script:
-- ./node_modules/.bin/gulp
-- ./node_modules/.bin/mocha test
 
-matrix:
-  allow_failures:
-    - node_js: "stable"
+node_js:
+  - 0.12.18
+
+install:
+  - npm install
+
+addons:
+  apt:
+    sources:
+      - mongodb-3.2-precise
+    packages:
+      - mongodb-org-server
+  artifacts:
+    s3_region: us-west-2
+    paths:
+      - $(git ls-files -o deploy/*/*-*.tar.gz | tr "\n" ":")
+    target_paths:
+      - /
+
+services:
+  - mongodb
+
+script:
+  - npm run lint
+  - npm test
+  - ./artifact.sh
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
