@@ -15,7 +15,7 @@ ENV API_SECRET="This is a local API secret for everyone. BsscSHqSHiwrBMJsEGqbvXi
     SERVICE_NAME=jellyfish-local \
     SERVE_STATIC=dist \
     MINIMUM_UPLOADER_VERSION="0.99.0" \
-    SCHEMA_VERSION=1 \
+    SCHEMA_VERSION=3 \
     SALT_DEPLOY=itNkczadZ1EeC9fUWR3LnbKFagtYYLOk \
     MONGO_CONNECTION_STRING="mongodb://mongo/data"
 
