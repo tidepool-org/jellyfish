@@ -22,14 +22,10 @@ addons:
       - /
 
 services:
+  - docker
   - mongodb
 
 script:
   - npm run lint
   - npm test
   - ./artifact.sh
-
-notifications:
-  email:
-    on_success: change
-    on_failure: always
