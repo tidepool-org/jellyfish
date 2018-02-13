@@ -11,7 +11,7 @@ install:
 addons:
   apt:
     sources:
-      - mongodb-3.2-precise
+      - mongodb-3.2-trusty
     packages:
       - mongodb-org-server
   artifacts:
