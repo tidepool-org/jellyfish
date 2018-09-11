@@ -11,7 +11,7 @@ install:
 addons:
   apt:
     sources:
-      - mongodb-3.2-precise
+      - mongodb-3.2-trusty
     packages:
       - mongodb-org-server
   artifacts:
@@ -22,14 +22,10 @@ addons:
       - /
 
 services:
+  - docker
   - mongodb
 
 script:
   - npm run lint
   - npm test
   - ./artifact.sh
-
-notifications:
-  email:
-    on_success: change
-    on_failure: always
