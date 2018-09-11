@@ -22,9 +22,12 @@ ENV API_SECRET="This is a local API secret for everyone. BsscSHqSHiwrBMJsEGqbvXi
 WORKDIR /app
 
 COPY package.json /app/package.json
-RUN apk --no-cache add git \
+RUN apk --no-cache update \
+ && apk --no-cache upgrade \
+ && apk --no-cache add git \
  && yarn install \
- && apk del git
+ && apk del git \
+ && yarn cache clean
 COPY . /app
 
 USER node
