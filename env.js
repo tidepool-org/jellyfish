@@ -137,7 +137,8 @@ module.exports = (function () {
   };
 
   env.discovery = {
-    host: config.fromEnvironment('DISCOVERY_HOST')
+    host: config.fromEnvironment('DISCOVERY_HOST'),
+    skipHakken: config.fromEnvironment('SKIP_HAKKEN', false)
   };
 
   // The service name to expose to discovery
