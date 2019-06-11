@@ -362,7 +362,7 @@ describe('aws/s3', function() {
           expect(updates._storage.region).to.equal(region);
           expect(updates._storage.bucket).to.equal(bucket);
           expect(updates._storage.key).to.not.be.null;
-          var decryptedKey = storage.decrypt(new Buffer(updates._storage.key, 'hex'), 'aes256', privatePair);
+          var decryptedKey = storage.decrypt(new Buffer.from(updates._storage.key, 'hex'), 'aes256', privatePair);
           expect(path.basename(decryptedKey)).to.equal(fileName);
           sinon.assert.calledOnce(s3Stub);
           sinon.assert.calledWith(s3Stub, sinon.match.has('accessKeyId', env.awsCredentials.accessKeyId));

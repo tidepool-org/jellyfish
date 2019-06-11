@@ -253,15 +253,15 @@ describe('storage', function() {
       });
 
       it('should throw an Error when the encryption is null', function() {
-        expect(subject.decrypt.bind(new Buffer('d2aab4e56b11426639cb2ee6a553d85e', 'hex'), null, {hash: 'ABCDEF'})).to.throw(Error);
+        expect(subject.decrypt.bind(new Buffer.from('d2aab4e56b11426639cb2ee6a553d85e', 'hex'), null, {hash: 'ABCDEF'})).to.throw(Error);
       });
 
       it('should throw an Error when the privatePair is null', function() {
-        expect(subject.decrypt.bind(new Buffer('d2aab4e56b11426639cb2ee6a553d85e', 'hex'), 'aes256', null)).to.throw(Error);
+        expect(subject.decrypt.bind(new Buffer.from('d2aab4e56b11426639cb2ee6a553d85e', 'hex'), 'aes256', null)).to.throw(Error);
       });
 
       it('should decrypt an encrypted string', function() {
-        expect(subject.decrypt(new Buffer('d2aab4e56b11426639cb2ee6a553d85e', 'hex'), 'aes256', {hash: 'ABCDEF'})).to.equal('Encrypted Text');
+        expect(subject.decrypt(new Buffer.from('d2aab4e56b11426639cb2ee6a553d85e', 'hex'), 'aes256', {hash: 'ABCDEF'})).to.equal('Encrypted Text');
       });
     });
   });
