@@ -47,9 +47,10 @@
     "user-api-client": "0.4.2"
   },
   "devDependencies": {
-    "gulp": "^4.0.2",
-    "gulp-jshint": "^2.1.0",
-    "jshint-stylish": "^2.2.1",
+    "gulp": "4.0.2",
+    "gulp-jshint": "2.1.0",
+    "jshint": "2.10.2",
+    "jshint-stylish": "2.2.1",
     "mocha": "6.1.4",
     "salinity": "0.0.8"
   }
