@@ -8,7 +8,7 @@
     "jshint": "gulp jshint",
     "jshint-watch": "gulp jshint-watch",
     "build": "npm install",
-    "test": "node_modules/.bin/mocha test",
+    "test": "node_modules/.bin/mocha test --exit",
     "lint": "gulp jshint"
   },
   "directories": {
