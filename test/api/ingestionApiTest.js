@@ -42,7 +42,7 @@ describe('ingestion API', function () {
 
   beforeEach(function (done) {
     mongoClient.withCollection('deviceData', done, function (coll, cb) {
-      coll.deleteMany({}, cb);
+      coll.remove(cb);
     });
   });
 

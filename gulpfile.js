@@ -25,9 +25,9 @@ gulp.task('jshint', function() {
   return stream;
 });
 
-gulp.task('jshint-watch', gulp.series('jshint', function(cb){
+gulp.task('jshint-watch', ['jshint'], function(cb){
   console.log('Watching files for changes...');
   gulp.watch(jsFiles, ['jshint']);
-}));
+});
 
-gulp.task('default', gulp.series('jshint'));
+gulp.task('default', ['jshint']);
