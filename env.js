@@ -20,6 +20,7 @@
 var fs = require('fs');
 
 var config = require('amoeba').config;
+var cs = require('amoeba').mongo.toConnectionString;
 
 function maybeReplaceWithContentsOfFile(obj, field) {
   var potentialFile = obj[field];
@@ -132,8 +133,7 @@ module.exports = (function () {
   };
 
   env.mongo = {
-    // A standard Mongo connection string used to connect to Mongo, of all things
-    connectionString: config.fromEnvironment('MONGO_CONNECTION_STRING', 'mongodb://localhost/data')
+    connectionString: cs('data')
   };
 
   env.discovery = {
