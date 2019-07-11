@@ -1,6 +1,6 @@
 {
   "name": "jellyfish",
-  "version": "0.12.6",
+  "version": "0.13.0",
   "description": "Jellyfish are known for their user friendliness with uploads",
   "main": "app.js",
   "scripts": {
@@ -25,7 +25,7 @@
   "author": "Tidepool contributors",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "amoeba": "0.4.7",
+    "amoeba": "0.6.0",
     "async": "3.0.1",
     "aws-sdk": "2.469.0",
     "body-parser": "1.19.0",
@@ -42,9 +42,9 @@
     "rx": "4.1.0",
     "semver": "6.1.1",
     "sundial": "1.6.0",
-    "tidepool-gatekeeper": "0.2.3",
-    "tidepool-seagull-client": "0.1.6",
-    "user-api-client": "0.4.2"
+    "tidepool-gatekeeper": "0.2.4",
+    "tidepool-seagull-client": "0.1.8",
+    "user-api-client": "0.4.4"
   },
   "devDependencies": {
     "gulp": "4.0.2",
