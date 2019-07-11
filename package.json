@@ -43,8 +43,8 @@
     "semver": "6.1.1",
     "sundial": "1.6.0",
     "tidepool-gatekeeper": "0.2.4",
-    "tidepool-seagull-client": "0.1.7",
-    "user-api-client": "0.4.2"
+    "tidepool-seagull-client": "0.1.8",
+    "user-api-client": "0.4.4"
   },
   "devDependencies": {
     "gulp": "4.0.2",
