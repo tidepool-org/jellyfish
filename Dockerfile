@@ -1,4 +1,4 @@
-FROM node:6.10.3-alpine
+FROM node:10.14.2-alpine
 
 RUN apk --no-cache update && \
     apk --no-cache upgrade

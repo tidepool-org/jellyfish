@@ -20,6 +20,7 @@
 var fs = require('fs');
 
 var config = require('amoeba').config;
+var cs = require('amoeba').mongoUtil.toConnectionString;
 
 function maybeReplaceWithContentsOfFile(obj, field) {
   var potentialFile = obj[field];
@@ -132,12 +133,12 @@ module.exports = (function () {
   };
 
   env.mongo = {
-    // A standard Mongo connection string used to connect to Mongo, of all things
-    connectionString: config.fromEnvironment('MONGO_CONNECTION_STRING', 'mongodb://localhost/data')
+    connectionString: cs('data')
   };
 
   env.discovery = {
-    host: config.fromEnvironment('DISCOVERY_HOST')
+    host: config.fromEnvironment('DISCOVERY_HOST'),
+    skipHakken: config.fromEnvironment('SKIP_HAKKEN', false)
   };
 
   // The service name to expose to discovery

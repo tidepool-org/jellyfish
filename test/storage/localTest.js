@@ -288,7 +288,7 @@ describe('local', function() {
           expect(updates._storage.type).to.equal('local');
           expect(updates._storage.encryption).to.equal('aes256');
           expect(updates._storage.path).to.not.be.null;
-          var decryptedPath = storage.decrypt(new Buffer(updates._storage.path, 'hex'), 'aes256', privatePair);
+          var decryptedPath = storage.decrypt(new Buffer.from(updates._storage.path, 'hex'), 'aes256', privatePair);
           expect(path.basename(decryptedPath)).to.equal(fileName);
           var decryptedText = storage.decrypt(fs.readFileSync(decryptedPath), 'aes256', privatePair);
           expect(decryptedText).to.equal(text);

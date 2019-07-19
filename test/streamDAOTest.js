@@ -37,7 +37,7 @@ describe('streamDAO', function(){
 
   beforeEach(function(done){
     mongoClient.withCollection('deviceData', done, function(coll, cb) {
-      coll.remove(cb);
+      coll.deleteMany({}, cb);
     });
   });
 
