@@ -9,7 +9,9 @@
     "jshint-watch": "gulp jshint-watch",
     "build": "npm install",
     "test": "node_modules/.bin/mocha test --exit",
-    "lint": "gulp jshint"
+    "lint": "gulp jshint",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "directories": {
     "lib": "./lib"
@@ -35,7 +37,7 @@
     "compression": "1.7.4",
     "express": "4.17.1",
     "hakken": "0.1.12",
-    "lodash": "4.17.11",
+    "lodash": "4.17.12",
     "moment": "2.24.0",
     "mongodb": "3.2.7",
     "request": "2.88.0",
@@ -43,8 +45,9 @@
     "semver": "6.1.1",
     "sundial": "1.6.0",
     "tidepool-gatekeeper": "0.2.4",
-    "tidepool-seagull-client": "0.1.8",
-    "user-api-client": "0.4.4"
+    "tidepool-seagull-client": "0.1.9",
+    "user-api-client": "0.4.4",
+    "snyk": "^1.194.0"
   },
   "devDependencies": {
     "gulp": "4.0.2",
@@ -53,5 +56,6 @@
     "jshint-stylish": "2.2.1",
     "mocha": "6.1.4",
     "salinity": "0.0.8"
-  }
+  },
+  "snyk": true
 }
