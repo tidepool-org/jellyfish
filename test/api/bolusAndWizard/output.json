@@ -13,8 +13,7 @@
         "_groupId": "1234",
         "id": "oi4effqrtdsk8g353dcstbeg06pip5kp",
         "_version": 0,
-        "_active": false,
-        "_schemaVersion": 0
+        "_active": false
     },
     {
         "deviceTime": "2014-06-11T11:20:00",
@@ -31,7 +30,6 @@
         "id": "oi4effqrtdsk8g353dcstbeg06pip5kp",
         "_version": 1,
         "_active": true,
-        "_schemaVersion": 0,
         "expectedNormal": 2.5
     },
     {
@@ -48,8 +46,7 @@
         "_groupId": "1234",
         "id": "hvnk1ngku6sqcpgav3t08f0m8lmhk6hv",
         "_version": 0,
-        "_active": true,
-        "_schemaVersion": 0
+        "_active": true
     },
     {
         "deviceTime": "2014-06-11T18:00:00",
@@ -76,7 +73,6 @@
         "_groupId": "1234",
         "id": "vnputuqq0jtfhvi8tm7jinum5s24kkdq",
         "_version": 0,
-        "_active": true,
-        "_schemaVersion": 0
+        "_active": true
     }
 ]

@@ -14,8 +14,7 @@
         "_groupId": "1234",
         "id": "64h7169livcae35c10d32ai721ugse79",
         "_version": 0,
-        "_active": true,
-        "_schemaVersion": 0
+        "_active": true
     },
     {
         "type": "deviceEvent",
@@ -31,8 +30,7 @@
         "_groupId": "1234",
         "id": "f4t0qjh45tgjep3vjsm2cn0isqg5u6ie",
         "_version": 0,
-        "_active": true,
-        "_schemaVersion": 0
+        "_active": true
     },
     {
         "type": "deviceEvent",
@@ -56,8 +54,7 @@
         ],
         "id": "qdmhpmdd2v5v8uuv6otmqp7sjqlmb1cr",
         "_version": 0,
-        "_active": false,
-        "_schemaVersion": 0
+        "_active": false
     },
     {
         "type": "deviceEvent",
@@ -78,7 +75,6 @@
         "id": "qdmhpmdd2v5v8uuv6otmqp7sjqlmb1cr",
         "_version": 1,
         "_active": true,
-        "_schemaVersion": 0,
         "duration": 14000
     },
     {
@@ -96,8 +92,7 @@
         "_groupId": "1234",
         "id": "ep1kqd57okpgke6c0g7al5j1f80cqg5m",
         "_version": 0,
-        "_active": true,
-        "_schemaVersion": 0
+        "_active": true
     },
     {
         "type": "deviceEvent",
@@ -121,7 +116,6 @@
         "_groupId": "1234",
         "id": "j80h9aqiioe8d8e41sh4ujf7ek28rppi",
         "_version": 0,
-        "_active": true,
-        "_schemaVersion": 0
+        "_active": true
     }
 ]
