@@ -317,13 +317,5 @@ exports.testCommonFields = function(goodObject) {
       exports.expectRejection(_.assign({}, goodObject, {_version: 2}), '_version', done);
     });
   });
-
-  describe('_schemaVersion', function(){
-    exports.okIfAbsent(goodObject, '_schemaVersion');
-
-    it('rejects data with _schemaVersion set', function(done){
-      exports.expectRejection(_.assign({}, goodObject, {_schemaVersion: 2}), '_schemaVersion', done);
-    });
-  });
 };
 
