@@ -320,12 +320,12 @@ atob@^2.1.1:
   resolved "https://registry.npmjs.org/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-aws-sdk@2.664.0:
-  version "2.664.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.664.0.tgz#d0abfc446cb4aa2dafe5d1febb73469c4cb30849"
-  integrity sha512-Lkez6O9Y7WuN2pjd/5eCtZejZTgB7zAPBFXjmu6yJQwb6V+iR9UclFjYkcMgTnrhw+eNOQdV60X5EdKl64A45Q==
+aws-sdk@2.710.0:
+  version "2.710.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.710.0.tgz#82c086587679382f80dfad743da7f0582fcd381b"
+  integrity sha512-GQTPH0DzJMpvvtZ3VO+grkKVdL/nqjWsIfcVf1c3oedvEjW24wSXQEs6KWAGbpG2jbHsYKH7kZ4XXuq428LVAw==
   dependencies:
-    buffer "4.9.1"
+    buffer "4.9.2"
     events "1.1.1"
     ieee754 "1.1.13"
     jmespath "0.15.0"
@@ -487,10 +487,10 @@ buffer-from@^1.0.0:
   resolved "https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.1.tgz#32713bc028f75c02fdb710d7c7bcec1f2c6070ef"
   integrity sha512-MQcXEUbCKtEo7bhqEs6560Hyd4XaovZlO/k9V3hjVUF/zwW7KBVdSK4gIt/bzwS9MbR5qob+F5jusZsb0YQK2A==
 
-buffer@4.9.1:
-  version "4.9.1"
-  resolved "https://registry.npmjs.org/buffer/-/buffer-4.9.1.tgz#6d1bb601b07a4efced97094132093027c95bc298"
-  integrity sha1-bRu2AbB6TvztlwlBMgkwJ8lbwpg=
+buffer@4.9.2:
+  version "4.9.2"
+  resolved "https://registry.npmjs.org/buffer/-/buffer-4.9.2.tgz#230ead344002988644841ab0244af8c44bbe3ef8"
+  integrity sha512-xq+q3SRMOxGivLhBNaUdC64hDTQwejJ+H0T/NB1XMtTVEwNTrfFF3gAxiyW0Bu/xWEGhjVKgUcMhCrUy2+uCWg==
   dependencies:
     base64-js "^1.0.2"
     ieee754 "^1.1.4"
@@ -503,6 +503,16 @@ bunyan@1.8.12, bunyan@^1.8.12:
   optionalDependencies:
     dtrace-provider "~0.8"
     moment "^2.10.6"
+    mv "~2"
+    safe-json-stringify "~1"
+
+bunyan@1.8.14:
+  version "1.8.14"
+  resolved "https://registry.npmjs.org/bunyan/-/bunyan-1.8.14.tgz#3d8c1afea7de158a5238c7cb8a66ab6b38dd45b4"
+  integrity sha512-LlahJUxXzZLuw/hetUQJmRgZ1LF6+cr5TPpRj6jf327AsiIq2jhYEH4oqUUkVKTor+9w2BT3oxVwhzE5lw9tcg==
+  optionalDependencies:
+    dtrace-provider "~0.8"
+    moment "^2.19.3"
     mv "~2"
     safe-json-stringify "~1"
 
@@ -2261,10 +2271,10 @@ jshint-stylish@2.2.1:
     string-length "^1.0.0"
     text-table "^0.2.0"
 
-jshint@2.11.0:
-  version "2.11.0"
-  resolved "https://registry.npmjs.org/jshint/-/jshint-2.11.0.tgz#7f3d99820b8b653eaaec7015a563b2d8101cbbc8"
-  integrity sha512-ooaD/hrBPhu35xXW4gn+o3SOuzht73gdBuffgJzrZBJZPGgGiiTvJEgTyxFvBO2nz0+X1G6etF8SzUODTlLY6Q==
+jshint@2.11.1:
+  version "2.11.1"
+  resolved "https://registry.npmjs.org/jshint/-/jshint-2.11.1.tgz#28ec7d1cf7baaae5ce7bd37b9a70ed6cfd938570"
+  integrity sha512-WXWePB8ssAH3DlD05IoqolsY6arhbll/1+i2JkRPpihQAuiNaR/gSt8VKIcxpV5m6XChP0hCwESQUqpuQMA8Tg==
   dependencies:
     cli "~1.0.0"
     console-browserify "1.1.x"
@@ -2638,15 +2648,20 @@ moment-timezone@0.4.1:
   dependencies:
     moment ">= 2.6.0"
 
-moment@2.24.0, "moment@>= 2.6.0", moment@^2.10.6:
+moment@2.27.0, moment@^2.19.3:
+  version "2.27.0"
+  resolved "https://registry.npmjs.org/moment/-/moment-2.27.0.tgz#8bff4e3e26a236220dfe3e36de756b6ebaa0105d"
+  integrity sha512-al0MUK7cpIcglMv3YF13qSgdAIqxHTO7brRtaz3DlSULbqfazqkc5kEjNrLDOM7fsjshoFIihnU8snrP7zUvhQ==
+
+"moment@>= 2.6.0", moment@^2.10.6:
   version "2.24.0"
   resolved "https://registry.npmjs.org/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
 
-mongodb@3.5.6:
-  version "3.5.6"
-  resolved "https://registry.npmjs.org/mongodb/-/mongodb-3.5.6.tgz#a1be2d9796c8a8a5b0e6bcbc6baaaa406bd5c0d5"
-  integrity sha512-sh3q3GLDLT4QmoDLamxtAECwC3RGjq+oNuK1ENV8+tnipIavss6sMYt77hpygqlMOCt0Sla5cl7H4SKCVBCGEg==
+mongodb@3.5.9:
+  version "3.5.9"
+  resolved "https://registry.npmjs.org/mongodb/-/mongodb-3.5.9.tgz#799b72be8110b7e71a882bb7ce0d84d05429f772"
+  integrity sha512-vXHBY1CsGYcEPoVWhwgxIBeWqP3dSu9RuRDsoLRPTITrcrgm1f0Ubu1xqF9ozMwv53agmEiZm0YGo+7WL3Nbug==
   dependencies:
     bl "^2.2.0"
     bson "^1.1.4"
