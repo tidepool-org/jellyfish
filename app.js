@@ -29,13 +29,13 @@ var log = require('./lib/log.js')('app.js');
   var httpClient = amoeba.httpClient();
   
   var userApiClient = require('user-api-client').client( config.userApi, {
-    get: function() { return [{"protocol": "http", "host": config.userApi.service}] }
+    get: function() { return [{"protocol": "http", "host": config.userApi.service}]; }
   }
   );
 
   var seagullClient = require('tidepool-seagull-client')(
     {
-      get: function() { return [{"protocol": "http", "host": config.seagull.service}] }
+      get: function() { return [{"protocol": "http", "host": config.seagull.service}]; }
     },
     {},
     httpClient
@@ -46,7 +46,7 @@ var log = require('./lib/log.js')('app.js');
     httpClient,
     userApiClient.withServerToken.bind(userApiClient),
     {
-      get: function() { return [{"protocol": "http", "host": config.gatekeeper.service}] }
+      get: function() { return [{"protocol": "http", "host": config.gatekeeper.service}]; }
     }
   );
 
