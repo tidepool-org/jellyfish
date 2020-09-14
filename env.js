@@ -56,19 +56,17 @@ module.exports = (function () {
   }
 
   env.userApi = {
-    // The config object to discover user-api.  This is just passed through to hakken.watchFromConfig()
-    serviceSpec: JSON.parse(config.fromEnvironment("USER_API_SERVICE")),
+    service: config.fromEnvironment('TIDEPOOL_AUTH_CLIENT_ADDRESS', 'shoreline:9107'),
 
     // Name of this server to pass to user-api when getting a server token
     serverName: config.fromEnvironment("SERVER_NAME", "jellyfish:default"),
 
     // The secret to use when getting a server token from user-api
-    serverSecret: config.fromEnvironment("SERVER_SECRET")
+    serverSecret: config.fromEnvironment("TIDEPOOL_SERVER_SECRET")
   };
 
   env.gatekeeper = {
-    // The config object to discover gatekeeper.  This is just passed through to hakken.watchFromConfig()
-    serviceSpec: JSON.parse(config.fromEnvironment('GATEKEEPER_SERVICE'))
+    service: config.fromEnvironment('TIDEPOOL_PERMISSION_CLIENT_ADDRESS', 'gatekeeper:9123')
   };
 
   /**
@@ -128,24 +126,12 @@ module.exports = (function () {
   env.saltDeploy = config.fromEnvironment('SALT_DEPLOY');
 
   env.seagull = {
-    // The config object to discover seagull.  This is just passed through to hakken.watchFromConfig()
-    serviceSpec: JSON.parse(config.fromEnvironment("SEAGULL_SERVICE"))
+    service: config.fromEnvironment('TIDEPOOL_SEAGULL_CLIENT_ADDRESS', 'seagull:9120')
   };
 
   env.mongo = {
     connectionString: cs('data')
   };
-
-  env.discovery = {
-    host: config.fromEnvironment('DISCOVERY_HOST'),
-    skipHakken: config.fromEnvironment('SKIP_HAKKEN', false)
-  };
-
-  // The service name to expose to discovery
-  env.serviceName = config.fromEnvironment('SERVICE_NAME', 'jellyfish');
-
-  // The local host to expose to discovery
-  env.publishHost = config.fromEnvironment('PUBLISH_HOST');
 
   // Location of temporary storage, these are things like uploaded dexcom files and
   // the files used to communicate errors from child processes back to the main process.

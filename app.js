@@ -25,17 +25,18 @@ var log = require('./lib/log.js')('app.js');
 
 (function(){
   var lifecycle = amoeba.lifecycle();
-  var hakken = lifecycle.add('hakken', require('hakken')(config.discovery, log).client());
 
   var httpClient = amoeba.httpClient();
-
-  var userApiClient = require('user-api-client').client(
-    config.userApi,
-    lifecycle.add('user-api-watch', hakken.watchFromConfig(config.userApi.serviceSpec))
+  
+  var userApiClient = require('user-api-client').client( config.userApi, {
+    get: function() { return [{"protocol": "http", "host": config.userApi.service}] }
+  }
   );
 
   var seagullClient = require('tidepool-seagull-client')(
-    lifecycle.add('seagull-watch', hakken.watchFromConfig(config.seagull.serviceSpec)),
+    {
+      get: function() { return [{"protocol": "http", "host": config.seagull.service}] }
+    },
     {},
     httpClient
   );
@@ -44,7 +45,9 @@ var log = require('./lib/log.js')('app.js');
   var gatekeeperClient = gatekeeper.client(
     httpClient,
     userApiClient.withServerToken.bind(userApiClient),
-    lifecycle.add('gatekeeper-watch', hakken.watchFromConfig(config.gatekeeper.serviceSpec))
+    {
+      get: function() { return [{"protocol": "http", "host": config.gatekeeper.service}] }
+    }
   );
 
   var mongoClient = require('./lib/mongo/mongoClient.js')(config.mongo);
@@ -61,35 +64,6 @@ var log = require('./lib/log.js')('app.js');
 
   process.on('uncaughtException', function(err){
     log.error(err, 'Uncaught exception bubbled all the way up!');
-  });
-
-  lifecycle.add(
-  'servicePublish!',
-  {
-    start: function(cb) {
-      var serviceDescriptor = { service: config.serviceName };
-      if (config.httpsPort != null) {
-        serviceDescriptor.host = config.publishHost + ':' + config.httpsPort;
-        serviceDescriptor.protocol = 'https';
-      } else if (config.httpPort != null) {
-        serviceDescriptor.host = config.publishHost + ':' + config.httpPort;
-        serviceDescriptor.protocol = 'http';
-      }
-
-      log.info('Publishing service[%j]', serviceDescriptor);
-      hakken.publish(serviceDescriptor);
-
-      if (cb != null) {
-        cb();
-      }
-    },
-    close: function(cb) {
-      log.warn('Calling publish close function');
-      if (cb != null) {
-        cb();
-      }
-      setTimeout(process.exit.bind(0), 2000);
-    }
   });
 
   lifecycle.start();

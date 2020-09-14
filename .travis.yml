@@ -14,12 +14,6 @@ addons:
       - mongodb-3.2-trusty
     packages:
       - mongodb-org-server
-  artifacts:
-    s3_region: us-west-2
-    paths:
-      - $(git ls-files -o deploy/*/*-*.tar.gz | tr "\n" ":")
-    target_paths:
-      - /
 
 services:
   - docker

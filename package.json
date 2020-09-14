@@ -34,7 +34,6 @@
     "common": "0.2.5",
     "compression": "1.7.4",
     "express": "4.17.1",
-    "hakken": "0.1.12",
     "lodash": "4.17.15",
     "moment": "2.27.0",
     "mongodb": "3.5.9",
