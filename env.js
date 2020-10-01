@@ -56,107 +56,26 @@ module.exports = (function () {
   }
 
   env.userApi = {
-    // The config object to discover user-api.  This is just passed through to hakken.watchFromConfig()
-    serviceSpec: JSON.parse(config.fromEnvironment("USER_API_SERVICE")),
+    service: config.fromEnvironment('TIDEPOOL_AUTH_CLIENT_ADDRESS', 'shoreline:9107'),
 
     // Name of this server to pass to user-api when getting a server token
     serverName: config.fromEnvironment("SERVER_NAME", "jellyfish:default"),
 
     // The secret to use when getting a server token from user-api
-    serverSecret: config.fromEnvironment("SERVER_SECRET")
+    serverSecret: config.fromEnvironment("TIDEPOOL_SERVER_SECRET")
   };
 
   env.gatekeeper = {
-    // The config object to discover gatekeeper.  This is just passed through to hakken.watchFromConfig()
-    serviceSpec: JSON.parse(config.fromEnvironment('GATEKEEPER_SERVICE'))
+    service: config.fromEnvironment('TIDEPOOL_PERMISSION_CLIENT_ADDRESS', 'gatekeeper:9123')
   };
-
-  /**
-   * Credentials for AWS.  Only required if env.storage.default is 'aws/s3'.
-   *
-   * The AWS_CREDENTIALS value should be a JSON string hash containing the
-   * properties 'accessKeyId' and 'secretAccessKey'.
-   *
-   * An example of a complete AWS_CREDENTIALS value:
-   *
-   * '{"accessKeyId": "<your-access-key-id>", "secretAccessKey": "<your-secret-access-key>"}'
-   */
-  env.awsCredentials = JSON.parse(config.fromEnvironment('AWS_CREDENTIALS', '{}'));
-
-  /**
-   * A JSON object that describes where to store intermediate files (data files
-   * to be processed).
-   *
-   * There are currently two known types of storage, 'local' and 'aws/s3'.
-   *
-   * The STORAGE_TYPES value should be a JSON string hash with one key/value pair
-   * for each storage type. The key should be the name of the storage type and the
-   * value should be a hash with the necessary configuration for the storage type.
-   * Every hash MUST contain the type property.
-   *
-   * The 'local' storage type hash should be of the form:
-   *
-   * {"type": "local", "encryption": "aes256", "directory": "./data"}
-   *
-   * "type" - MUST be "local"
-   * "encryption" - either "none" or "aes256"
-   * "directory" - relative path to base directory for upload storage
-   *
-   * The 'aws/s3' storage type hash should be of the form:
-   *
-   * {"type": "aws/s3", "encryption": "aes256", "region": us-west-2", "bucket": "doesnotexist.tidepool.org"}
-   *
-   * "type" - MUST be "aws/s3"
-   * "encryption" - either "none or "aes256"
-   * "region" - AWS region associated with the AWS bucket (eg. "us-west-2")
-   * "bucket" - AWS bucket for upload storage
-   *
-   * An example of a complete STORAGE_TYPES value:
-   *
-   * '{"local": {"type": "local", "encryption": "aes256", "directory": "./data"}, "aws/s3": {"type": "aws/s3", "encryption": "aes256", "region": "us-west-2", "bucket": "doesnotexist.tidepool.org"}}'
-   *
-   * The STORAGE_DEFAULT should be the storage type ('local' or 'aws/s3') used
-   * for new uploads. Existing uploads remember their storage location for
-   * future downloads.
-   */
-  env.storage = {
-    types: JSON.parse(config.fromEnvironment('STORAGE_TYPES', '{"local": {"type": "local", "encryption": "none", "directory": "./data"}}')),
-    default: config.fromEnvironment('STORAGE_DEFAULT', 'local')
-  };
-
-  // Configurable salt for encryption
-  env.saltDeploy = config.fromEnvironment('SALT_DEPLOY');
 
   env.seagull = {
-    // The config object to discover seagull.  This is just passed through to hakken.watchFromConfig()
-    serviceSpec: JSON.parse(config.fromEnvironment("SEAGULL_SERVICE"))
+    service: config.fromEnvironment('TIDEPOOL_SEAGULL_CLIENT_ADDRESS', 'seagull:9120')
   };
 
   env.mongo = {
     connectionString: cs('data')
   };
-
-  env.discovery = {
-    host: config.fromEnvironment('DISCOVERY_HOST'),
-    skipHakken: config.fromEnvironment('SKIP_HAKKEN', false)
-  };
-
-  // The service name to expose to discovery
-  env.serviceName = config.fromEnvironment('SERVICE_NAME', 'jellyfish');
-
-  // The local host to expose to discovery
-  env.publishHost = config.fromEnvironment('PUBLISH_HOST');
-
-  // Location of temporary storage, these are things like uploaded dexcom files and
-  // the files used to communicate errors from child processes back to the main process.
-  env.tempStorage = config.fromEnvironment('TEMP_STORAGE', '/tmp/jellyfish');
-
-  // Serve static build of client app from this directory
-  // (use "dist" if you haven't changed default build directory)
-  env.serveStatic = config.fromEnvironment('SERVE_STATIC', null);
-  if (env.serveStatic === '') {
-    env.serveStatic = null;
-  }
 
   return env;
 })();

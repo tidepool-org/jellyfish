@@ -13,7 +13,7 @@ FROM base as dependencies
 COPY package.json .
 COPY package-lock.json .
 RUN \
-  # Build and separate all dependancies required for production
+  # Build and separate all dependencies required for production
   npm install --production && cp -R node_modules production_node_modules \
   # Build all modules, including `devDependancies`
   && npm install

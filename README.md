@@ -38,19 +38,6 @@ $ npm run jshint-watch
 
 The client app is built as a static site in the `dist/` directory.
 
-[Shio](https://github.com/tidepool-org/shio)'s `build.sh` script will take care of building the client app itself with:
-
-```bash
-$ npm run build-app
-```
-
-Shio's `start.sh` script then builds the config from environment variables as a separate file with:
-
-```bash
-$ npm run build-config
-```
-
-After that, the client app is ready to be served from the `dist/` directory by the production server:
 
 ```bash
 $ SERVE_STATIC=dist npm start
