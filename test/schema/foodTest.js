@@ -15,7 +15,7 @@
  * == BSD2 LICENSE ==
  */
 
- /* global describe, before, beforeEach, it, after */
+/* global describe, before, beforeEach, it, after */
 
 'use strict';
 
@@ -26,21 +26,69 @@ var helper = require('./schemaTestHelper.js');
 
 var goodObject = {
   type: 'food',
-  time: '2014-01-01T01:00:00.000Z',
+  time: '2020-10-01T01:00:00.000Z',
+  deviceTime: '2020-10-01T01:00:00',
   timezoneOffset: 120,
   conversionOffset: 0,
   deviceId: 'test',
   uploadId: 'test',
-  carbs: 73,
+  nutrition: {
+    carbohydrate: {
+      net: 15.5,
+      units: 'grams',
+    },
+  },
+  payload: { howdy: 'bob' },
   _userId: 'u',
   _groupId: 'g'
 };
 
-describe('schema/food.js', function(){
-  describe('carbs', function(){
-    helper.rejectIfAbsent(goodObject, 'carbs');
-    helper.expectNumericalField(goodObject, 'carbs');
+describe('schema/food.js', function () {
+  describe('nutrition', function () {
+    helper.rejectIfAbsent(goodObject, 'nutrition');
+    helper.expectObjectField(goodObject, 'nutrition');
 
+    it('carbohydrate', function (done) {
+      var localGood = _.cloneDeep(goodObject);
+      helper.rejectIfAbsent(localGood, 'carbohydrate');
+      helper.expectObjectField(localGood, 'carbohydrate');
+      helper.rejectIfAbsent(localGood.carbohydrate, 'net');
+      helper.expectNumericalField(localGood.carbohydrate, 'net');
+      helper.rejectIfAbsent(localGood.carbohydrate, 'units');
+      helper.expectStringField(localGood.carbohydrate, 'units');
+      helper.expectFieldIn(localGood.carbohydrate, 'units', ['grams']);
+      done();
+    });
+
+    it('reject invalid high carbohydrate value', function (done) {
+      var localGood = _.cloneDeep(goodObject);
+      localGood.nutrition.carbohydrate.net = 1001;
+      helper.expectRejection(localGood, 'carbohydrate', done);
+    });
+
+    it('accepts max carbohydrate value', function (done) {
+      var localGood = _.cloneDeep(goodObject);
+      localGood.nutrition.carbohydrate.net = 1000;
+      helper.run(localGood, done);
+    });
+
+    it('reject invalid low carbohydrate value', function (done) {
+      var localGood = _.cloneDeep(goodObject);
+      localGood.nutrition.carbohydrate.net = -1;
+      helper.expectRejection(localGood, 'carbohydrate', done);
+    });
+
+    it('accepts min carbohydrate value', function (done) {
+      var localGood = _.cloneDeep(goodObject);
+      localGood.nutrition.carbohydrate.net = 0;
+      helper.run(localGood, done);
+    });
+
+    it('reject invalid carbohydrate unit', function (done) {
+      var localGood = _.cloneDeep(goodObject);
+      localGood.nutrition.carbohydrate.units = 'oz';
+      helper.expectRejection(localGood, 'carbohydrate', done);
+    });
   });
 
   helper.testCommonFields(goodObject);
