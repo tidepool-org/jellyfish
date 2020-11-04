@@ -38,6 +38,7 @@ var goodObject = {
       units: 'grams',
     },
   },
+  name: 'Apple',
   payload: { howdy: 'bob' },
   _userId: 'u',
   _groupId: 'g'
@@ -47,6 +48,8 @@ describe('schema/food.js', function () {
   describe('nutrition', function () {
     helper.rejectIfAbsent(goodObject, 'nutrition');
     helper.expectObjectField(goodObject, 'nutrition');
+    helper.okIfAbsent(goodObject, 'name');
+    helper.expectStringField(goodObject, 'name');
 
     it('carbohydrate', function (done) {
       var localGood = _.cloneDeep(goodObject);
@@ -88,6 +91,14 @@ describe('schema/food.js', function () {
       var localGood = _.cloneDeep(goodObject);
       localGood.nutrition.carbohydrate.units = 'oz';
       helper.expectRejection(localGood, 'carbohydrate', done);
+    });
+  });
+
+  describe('name', function () {
+    it('reject invalid name', function (done) {
+      var localGood = _.cloneDeep(goodObject);
+      localGood.name = 'this name is more than one hundred characters long, and should be rejected by the schema validator for sure';
+      helper.expectRejection(localGood, 'name', done);
     });
   });
 
