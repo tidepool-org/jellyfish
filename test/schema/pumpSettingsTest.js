@@ -69,6 +69,16 @@ describe('schema/pumpSettings.js', function () {
     helper.expectStringField(goodObject, 'activeSchedule');
   });
 
+  describe('automationEnabled', function () {
+    helper.expectStringField(goodObject, 'activeSchedule');
+
+    it('rejects automationEnabled that is not true/false', function(done){
+      var localGood = _.cloneDeep(goodObject);
+      localGood.automationEnabled = 'wobble';
+      helper.expectRejection(localGood, 'automationEnabled', done);
+    });
+  });
+
   describe('units', function () {
     helper.rejectIfAbsent(goodObject, 'units');
     helper.expectObjectField(goodObject, 'units');
