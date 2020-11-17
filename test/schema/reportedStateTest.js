@@ -49,6 +49,8 @@ describe('schema/reportedState.js', function () {
     helper.expectObjectField(localGood, 'states[0]');
     helper.rejectIfAbsent(localGood.states[0], 'state');
     helper.expectStringField(localGood.states[0], 'state');
+    helper.expectFieldIn(localGood.states[0], 'state',
+      ['alcohol', 'cycle', 'hyperglycemiaSymptoms', 'hypoGlycemiaSymptioms', 'illness', 'stress', 'other']);
     done();
   });
 
@@ -67,6 +69,18 @@ describe('schema/reportedState.js', function () {
   it('reject if state is not a string', function (done) {
     var localGood = _.cloneDeep(goodObject);
     localGood.states[0].state = 1;
+    helper.expectRejection(localGood, 'state', done);
+  });
+
+  it('reject invalid state', function (done) {
+    var localGood = _.cloneDeep(goodObject);
+    localGood.states[0].state = 'foo';
+    helper.expectRejection(localGood, 'state', done);
+  });
+
+  it('reject other state without stateOther', function (done) {
+    var localGood = _.cloneDeep(goodObject);
+    localGood.states[0].state = 'other';
     helper.expectRejection(localGood, 'state', done);
   });
 
