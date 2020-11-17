@@ -60,5 +60,26 @@ describe('schema/physicalActivity.js', function () {
     helper.expectRejection(localGood, 'duration', done);
   });
 
+  it('reject invalid time in seconds', function (done) {
+    var localGood = _.cloneDeep(goodObject);
+    localGood.duration.units = 'seconds';
+    localGood.duration.value = 999999;
+    helper.expectRejection(localGood, 'duration', done);
+  });
+
+  it('reject invalid time in minutes', function (done) {
+    var localGood = _.cloneDeep(goodObject);
+    localGood.duration.units = 'minutes';
+    localGood.duration.value = 999999;
+    helper.expectRejection(localGood, 'duration', done);
+  });
+
+  it('reject invalid time in hours', function (done) {
+    var localGood = _.cloneDeep(goodObject);
+    localGood.duration.units = 'hours';
+    localGood.duration.value = 999;
+    helper.expectRejection(localGood, 'duration', done);
+  });
+
   helper.testCommonFields(goodObject);
 });
