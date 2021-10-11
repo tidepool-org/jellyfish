@@ -16,6 +16,7 @@
  */
 
  /* global describe, before, beforeEach, it, after */
+ /* jshint esversion: 6 */
 
 'use strict';
 
