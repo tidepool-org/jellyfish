@@ -36,7 +36,7 @@ var dataBroker = require('../../lib/dataBroker.js')(streamDAO);
 var userId = "abcd";
 var groupId = "1234";
 
-const reviver = (key, value) => (key === "time") ? new Date(value) : value;
+const convertDateStrings = (key, value) => (key === "time") ? new Date(value) : value;
 
 describe('ingestion API', function () {
   before(function(done){
@@ -54,7 +54,7 @@ describe('ingestion API', function () {
     var path = __dirname + '/' + dir;
     it(dir, function (done) {
       var input = JSON.parse(fs.readFileSync(path + '/input.json'));
-      var output = JSON.parse(fs.readFileSync(path + '/output.json'), reviver);
+      var output = JSON.parse(fs.readFileSync(path + '/output.json'), convertDateStrings);
 
       async.mapSeries(
         input,

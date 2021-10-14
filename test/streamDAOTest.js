@@ -63,7 +63,7 @@ describe('streamDAO', function(){
 
         streamDAO.getDatum('abcd', 'g', function(err, datum){
           expect(datum).to.exist;
-          expect(new Date(datum.createdTime).valueOf()).that.is.within(now, Date.now());
+          expect(new Date(datum.createdTime).valueOf()).that.is.within(now, new Date());
           expect(_.omit(datum, 'createdTime', '_id')).to.deep.equals(
             { id: 'abcd', v: 1, _userId: 'u', _groupId: 'g', _version: 0, _active: true }
           );
@@ -110,7 +110,7 @@ describe('streamDAO', function(){
 
         streamDAO.getDatum('abcd', 'g', function(err, datum){
           expect(datum).to.exist;
-          expect(new Date(datum.modifiedTime).valueOf()).that.is.within(now, Date.now());
+          expect(new Date(datum.modifiedTime).valueOf()).that.is.within(now, new Date());
           expect(_.omit(datum, 'modifiedTime', '_archivedTime', '_id')).to.deep.equals(
             { id: 'abcd', f: 'a', v: 2828, _userId: 'u', _groupId: 'g', createdTime: createdTime, _version: 1, _active: true }
           );
@@ -166,9 +166,9 @@ describe('streamDAO', function(){
 
   describe('getDatumBefore', function(){
     var events = [
-      { id: 'ab', time: '2014-01-01T00:00:00.000Z', type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g', val: 0 },
-      { id: 'abc', time: '2014-01-01T01:00:00.000Z', type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g', val: 1 },
-      { id: 'abcd', time: '2014-01-01T02:00:00.000Z', type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g', val: 2 }
+      { id: 'ab', time: new Date('2014-01-01T00:00:00.000Z'), type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g', val: 0 },
+      { id: 'abc', time: new Date('2014-01-01T01:00:00.000Z'), type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g', val: 1 },
+      { id: 'abcd', time: new Date('2014-01-01T02:00:00.000Z'), type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g', val: 2 }
     ];
 
     beforeEach(function(done){
@@ -177,7 +177,7 @@ describe('streamDAO', function(){
 
     it('returns null if nothing before', function(done){
       streamDAO.getDatumBefore(
-        { time: '2014-01-01T00:00:00.000Z', type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g' },
+        { time: new Date('2014-01-01T00:00:00.000Z'), type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g' },
         function(err, datum){
           expect(datum).to.equal.null;
           done(err);
@@ -186,7 +186,7 @@ describe('streamDAO', function(){
     });
 
     describe('find previous', function(){
-      var matchingEvent = { time: '2014-01-01T01:30:00.000Z', type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g' };
+      var matchingEvent = { time: new Date('2014-01-01T01:30:00.000Z'), type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g' };
 
       it('returns the previous event', function(done){
         streamDAO.getDatumBefore(
