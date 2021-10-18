@@ -166,9 +166,9 @@ describe('streamDAO', function(){
 
   describe('getDatumBefore', function(){
     var events = [
-      { id: 'ab', time: new Date('2014-01-01T00:00:00.000Z'), type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g', val: 0 },
-      { id: 'abc', time: new Date('2014-01-01T01:00:00.000Z'), type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g', val: 1 },
-      { id: 'abcd', time: new Date('2014-01-01T02:00:00.000Z'), type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g', val: 2 }
+      { id: 'ab', time: '2014-01-01T00:00:00.000Z', type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g', val: 0 },
+      { id: 'abc', time: '2014-01-01T01:00:00.000Z', type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g', val: 1 },
+      { id: 'abcd', time: '2014-01-01T02:00:00.000Z', type: 'none', deviceId: 'a', source: 's', _userId: 'u', _groupId: 'g', val: 2 }
     ];
 
     beforeEach(function(done){
