@@ -1,5 +1,5 @@
 ### Stage 0 - Base image
-FROM node:12.18.4-alpine as base
+FROM node:12.22.0-alpine as base
 WORKDIR /app
 RUN apk --no-cache update && \
     apk --no-cache upgrade && \
