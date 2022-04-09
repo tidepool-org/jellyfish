@@ -36,7 +36,7 @@
     "compression": "1.7.4",
     "express": "4.17.1",
     "lodash": "^4.17.20",
-    "moment": "2.29.1",
+    "moment": "2.29.2",
     "mongodb": "3.6.2",
     "request": "2.88.2",
     "rx": "4.1.0",
