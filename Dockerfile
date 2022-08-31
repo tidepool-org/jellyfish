@@ -3,7 +3,7 @@ FROM node:16-alpine as base
 WORKDIR /app
 RUN apk --no-cache update && \
     apk --no-cache upgrade && \
-    apk add --no-cache --virtual .build-dependencies python make g++ && \
+    apk add --no-cache --virtual .build-dependencies python3 make g++ && \
     mkdir -p node_modules && chown -R node:node .
 
 
