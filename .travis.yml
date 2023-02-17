@@ -22,14 +22,6 @@ before_install:
 - ${PWD}/mongodb-linux-x86_64-ubuntu2004-${MONGODB}/bin/mongod --dbpath /tmp/data --bind_ip 127.0.0.1 --logpath ${PWD}/mongod.log &> /dev/null &
 - until nc -z localhost 27017; do echo Waiting for MongoDB; sleep 1; done
 
-addons:
-  artifacts:
-    s3_region: us-west-2
-    paths:
-      - $(git ls-files -o deploy/*/*-*.tar.gz | tr "\n" ":")
-    target_paths:
-      - /
-
 services:
   - docker
 
