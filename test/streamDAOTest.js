@@ -36,9 +36,18 @@ describe('streamDAO', function(){
   });
 
   beforeEach(function(done){
-    mongoClient.withCollection('deviceData', done, function(coll, cb) {
-      coll.deleteMany({}, cb);
-    });
+    async.parallel([
+      (cb) => {
+        mongoClient.withCollection('deviceData', cb, function (coll, cb) {
+          coll.deleteMany({}, cb);
+        });
+      },
+      (cb) => {
+        mongoClient.withCollection('deviceDataSets', cb, function (coll, cb) {
+          coll.deleteMany({}, cb);
+        });
+      }
+    ], done);
   });
 
   beforeEach(function(done){

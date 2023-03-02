@@ -15,7 +15,9 @@ var jsFiles = [
 
 gulp.task('jshint', function() {
   var stream = gulp.src(jsFiles)
-    .pipe(jshint())
+    .pipe(jshint({
+      esversion: 11
+    }))
     .pipe(jshint.reporter('jshint-stylish'));
 
   if (process.env.CI) {
