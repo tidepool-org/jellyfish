@@ -243,42 +243,40 @@ describe('streamDAO', function(){
 
   describe('setSummaryOutdated', function(){
     it('setting existing outdated summary outdated leaves it unchanged', function(done){
-      streamDAO.setSummaryOutdated('12345', function(err, outdatedSinceTime){
+      streamDAO.setSummaryOutdated('12345', 'cgm', function(err, outdatedSinceTime){
         expect(err).to.not.exist;
         expect(outdatedSinceTime).to.exist;
 
         var outdatedSinceOne = outdatedSinceTime;
 
-        setTimeout(function(){
-          streamDAO.setSummaryOutdated('12345', function(err, outdatedSinceTime){
-            expect(err).to.not.exist;
-            expect(outdatedSinceTime).to.exist;
+        streamDAO.setSummaryOutdated('12345', 'cgm',function(err, outdatedSinceTime){
+          expect(err).to.not.exist;
+          expect(outdatedSinceTime).to.exist;
 
-            expect(outdatedSinceOne.getTime()).to.equal(outdatedSinceTime.getTime());
-            return done(err);
-          });
-        }, 100);
+          expect(outdatedSinceOne.getTime()).to.equal(outdatedSinceTime.getTime());
+          return done(err);
+        });
       });
     });
 
     it('setting existing summary outdated only adds the outdated flag', function(done){
-        var test_summary = {userId: '54321', extra: 'unchanged_value'};
-        streamDAO.insertSummary(test_summary, function(err){
-            expect(err).to.not.exist;
+      var test_summary = {userId: '54321', type: 'cgm', extra: 'unchanged_value'};
+      streamDAO.insertSummary(test_summary, function(err){
+        expect(err).to.not.exist;
 
-            streamDAO.setSummaryOutdated('54321', function(err, outdatedSinceTime){
-                expect(err).to.not.exist;
-                expect(outdatedSinceTime).to.exist;
+        streamDAO.setSummaryOutdated('54321', 'cgm',function(err, outdatedSinceTime){
+          expect(err).to.not.exist;
+          expect(outdatedSinceTime).to.exist;
 
-                streamDAO.getSummary('54321', function(err, summary){
-                    expect(err).to.not.exist;
-                    expect(summary).to.exist;
+          streamDAO.getSummary('54321', 'cgm', function(err, summary){
+              expect(err).to.not.exist;
+              expect(summary).to.exist;
 
-                    expect(summary.extra).to.equal(test_summary.extra);
-                    return done(err);
-                });
-            });
+              expect(summary.extra).to.equal(test_summary.extra);
+              return done(err);
+          });
         });
+      });
     });
 
   });
