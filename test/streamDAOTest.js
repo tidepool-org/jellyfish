@@ -169,6 +169,7 @@ describe('streamDAO', function(){
             );
             expect(elements.filter(function(e){ return e._active; })).to.have.length(1);
             expect(elements.filter(function(e){ return e._active; })[0]).to.have.property('id').equals('abcd');
+            expect(elements.filter(function(e){ return e._active; })[0]).to.have.property('_version').equals(2);
 
             done(err);
           });
