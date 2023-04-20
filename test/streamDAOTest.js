@@ -65,6 +65,7 @@ describe('streamDAO', function(){
           expect(datum).to.exist;
           expect(new Date(datum.createdTime).valueOf()).that.is.within(now, new Date());
           expect(new Date(datum.modifiedTime).valueOf()).that.is.within(now, new Date());
+          expect(new Date(datum.modifiedTime).valueOf()).to.equal(new Date(datum.createdTime).valueOf());
           expect(_.omit(datum, 'createdTime', 'modifiedTime', '_id')).to.deep.equals(
             { id: 'abcd', v: 1, _userId: 'u', _groupId: 'g', _version: 0, _active: true }
           );
