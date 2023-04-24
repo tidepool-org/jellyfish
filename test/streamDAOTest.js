@@ -64,7 +64,9 @@ describe('streamDAO', function(){
         streamDAO.getDatum('abcd', 'g', function(err, datum){
           expect(datum).to.exist;
           expect(new Date(datum.createdTime).valueOf()).that.is.within(now, new Date());
-          expect(_.omit(datum, 'createdTime', '_id')).to.deep.equals(
+          expect(new Date(datum.modifiedTime).valueOf()).that.is.within(now, new Date());
+          expect(new Date(datum.modifiedTime).valueOf()).to.equal(new Date(datum.createdTime).valueOf());
+          expect(_.omit(datum, 'createdTime', 'modifiedTime', '_id')).to.deep.equals(
             { id: 'abcd', v: 1, _userId: 'u', _groupId: 'g', _version: 0, _active: true }
           );
 
@@ -120,7 +122,7 @@ describe('streamDAO', function(){
             coll.find({_id: overwrittenId}).toArray(function(err, elements){
               expect(elements).to.have.length(1);
               expect(elements[0]._archivedTime).that.is.within(now, Date.now());
-              expect(_.omit(elements[0], '_archivedTime')).to.deep.equals(
+              expect(_.omit(elements[0], 'modifiedTime', '_archivedTime')).to.deep.equals(
                 { _id: overwrittenId, id: 'abcd', f: 'a', _userId: 'u', _groupId: 'g', v: 1, createdTime: createdTime, _version: 0, _active: false }
               );
 
