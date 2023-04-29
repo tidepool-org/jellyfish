@@ -3,5 +3,6 @@
     "eqnull": true,
     "expr": true,
     "globalstrict": true,
-    "node": true
+    "node": true,
+    "esversion": 11
 }

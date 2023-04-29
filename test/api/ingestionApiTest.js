@@ -16,7 +16,6 @@
  */
 
  /* global describe, before, beforeEach, it, after */
- /* jshint esversion: 6 */
 
 'use strict';
 
@@ -45,6 +44,12 @@ describe('ingestion API', function () {
 
   beforeEach(function (done) {
     mongoClient.withCollection('deviceData', done, function (coll, cb) {
+      coll.deleteMany({}, cb);
+    });
+  });
+
+  beforeEach(function (done) {
+    mongoClient.withCollection('summary', done, function (coll, cb) {
       coll.deleteMany({}, cb);
     });
   });
