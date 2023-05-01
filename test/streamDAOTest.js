@@ -251,11 +251,9 @@ describe('streamDAO', function(){
 
   describe('CGM setSummaryOutdated', function(){
     it('setting summary outdated creates a summary', function(done){
-      streamDAO.setSummaryOutdated('56789', 'cgm', function(err, outdatedSinceTime){
+      streamDAO.setSummaryOutdated('56789', 'cgm', function(err, typ, outdatedSinceTime){
         expect(err).to.not.exist;
         expect(outdatedSinceTime).to.exist;
-
-        var outdatedSinceOne = outdatedSinceTime;
 
         streamDAO.getSummary('56789', 'cgm',function(err, summary){
           expect(err).to.not.exist;
@@ -268,13 +266,13 @@ describe('streamDAO', function(){
     });
 
     it('setting existing outdated summary outdated leaves it unchanged', function(done){
-      streamDAO.setSummaryOutdated('12345', 'cgm', function(err, outdatedSinceTime){
+      streamDAO.setSummaryOutdated('12345', 'cgm', function(err, typ, outdatedSinceTime){
         expect(err).to.not.exist;
         expect(outdatedSinceTime).to.exist;
 
-        var outdatedSinceOne = outdatedSinceTime;
+        let outdatedSinceOne = outdatedSinceTime;
 
-        streamDAO.setSummaryOutdated('12345', 'cgm',function(err, outdatedSinceTime){
+        streamDAO.setSummaryOutdated('12345', 'cgm',function(err, typ, outdatedSinceTime){
           expect(err).to.not.exist;
           expect(outdatedSinceTime).to.exist;
 
@@ -285,11 +283,11 @@ describe('streamDAO', function(){
     });
 
     it('setting existing summary outdated only adds the outdated flag', function(done){
-      var test_summary = {userId: '54321', type: 'cgm', extra: 'unchanged_value'};
+      let test_summary = {userId: '54321', type: 'cgm', extra: 'unchanged_value'};
       streamDAO.insertSummary(test_summary, function(err){
         expect(err).to.not.exist;
 
-        streamDAO.setSummaryOutdated('54321', 'cgm',function(err, outdatedSinceTime){
+        streamDAO.setSummaryOutdated('54321', 'cgm',function(err, typ, outdatedSinceTime){
           expect(err).to.not.exist;
           expect(outdatedSinceTime).to.exist;
 
@@ -308,11 +306,9 @@ describe('streamDAO', function(){
 
   describe('BGM setSummaryOutdated', function(){
     it('setting summary outdated creates a summary', function(done){
-      streamDAO.setSummaryOutdated('56789', 'bgm', function(err, outdatedSinceTime){
+      streamDAO.setSummaryOutdated('56789', 'bgm', function(err, typ, outdatedSinceTime){
         expect(err).to.not.exist;
         expect(outdatedSinceTime).to.exist;
-
-        var outdatedSinceOne = outdatedSinceTime;
 
         streamDAO.getSummary('56789', 'bgm',function(err, summary){
           expect(err).to.not.exist;
@@ -325,13 +321,13 @@ describe('streamDAO', function(){
     });
 
     it('setting existing outdated summary outdated leaves it unchanged', function(done){
-      streamDAO.setSummaryOutdated('12345', 'bgm', function(err, outdatedSinceTime){
+      streamDAO.setSummaryOutdated('12345', 'bgm', function(err, typ, outdatedSinceTime){
         expect(err).to.not.exist;
         expect(outdatedSinceTime).to.exist;
 
         var outdatedSinceOne = outdatedSinceTime;
 
-        streamDAO.setSummaryOutdated('12345', 'bgm',function(err, outdatedSinceTime){
+        streamDAO.setSummaryOutdated('12345', 'bgm',function(err, typ, outdatedSinceTime){
           expect(err).to.not.exist;
           expect(outdatedSinceTime).to.exist;
 
@@ -342,11 +338,11 @@ describe('streamDAO', function(){
     });
 
     it('setting existing summary outdated only adds the outdated flag', function(done){
-      var test_summary = {userId: '54321', type: 'bgm', extra: 'unchanged_value'};
+      let test_summary = {userId: '54321', type: 'bgm', extra: 'unchanged_value'};
       streamDAO.insertSummary(test_summary, function(err){
         expect(err).to.not.exist;
 
-        streamDAO.setSummaryOutdated('54321', 'bgm',function(err, outdatedSinceTime){
+        streamDAO.setSummaryOutdated('54321', 'bgm',function(err, typ, outdatedSinceTime){
           expect(err).to.not.exist;
           expect(outdatedSinceTime).to.exist;
 
