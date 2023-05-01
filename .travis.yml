@@ -1,23 +1,29 @@
 sudo: false
 
+dist: focal
+
 language: node_js
 
 node_js:
-  - 14.20.0
+  - 14.21.2
 
 install:
   - npm install
 
-addons:
-  apt:
-    sources:
-      - mongodb-3.2-trusty
-    packages:
-      - mongodb-org-server
+env:
+  global:
+  - MONGODB=5.3.2
+
+before_install:
+- sudo apt-get remove -y mongodb-org mongodb-org-mongos mongodb-org-server mongodb-org-shell mongodb-org-tools
+- wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-${MONGODB}.tgz -O /tmp/mongodb.tgz
+- tar -xf /tmp/mongodb.tgz
+- mkdir /tmp/data
+- ${PWD}/mongodb-linux-x86_64-ubuntu2004-${MONGODB}/bin/mongod --dbpath /tmp/data --bind_ip 127.0.0.1 --logpath ${PWD}/mongod.log &> /dev/null &
+- until nc -z localhost 27017; do echo Waiting for MongoDB; sleep 1; done
 
 services:
   - docker
-  - mongodb
 
 script:
   - npm run lint
