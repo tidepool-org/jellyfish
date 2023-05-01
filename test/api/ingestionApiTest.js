@@ -60,18 +60,58 @@ describe('ingestion API', function () {
     it(dir, function (done) {
       var input = JSON.parse(fs.readFileSync(path + '/input.json'));
       var output = JSON.parse(fs.readFileSync(path + '/output.json'), convertDateStrings);
+      let updatedSummary = {cgm: false, bgm: false};
+
+      // we convert summary-relevant types to last year so that summaries are generated for them
+      if (dir === 'cbg' || dir === 'smbg') {
+        for (let i = 0; i < input.length; i++) {
+          let newDatumTime = new Date(input[i].time);
+          let today = new Date();
+          newDatumTime.setFullYear(today.getFullYear()-1);
+          input[i].time = newDatumTime.toISOString();
+          output[i].time = newDatumTime;
+        }
+      }
 
       async.mapSeries(
         input,
         function(e, cb){
           e._userId = userId;
           e._groupId = groupId;
-          dataBroker.addDatum(e, cb);
+          dataBroker.addDatum(e, updatedSummary, cb);
         },
         function(err){
           if (err != null) {
             return done(err);
           }
+
+          console.log('checking summaries');
+          if (dir === 'cbg') {
+            console.log('checking cgm');
+            streamDAO.getSummary(userId, 'cgm', function (err, summary){
+              console.log(summary);
+              expect(summary).to.exist();
+              expect(summary).type.equals('cgm');
+            });
+            streamDAO.getSummary(userId, 'bgm', function (err, summary){
+              console.log(summary);
+              expect(err).to.not.exist();
+              expect(summary).to.not.exist();
+            });
+          } else if (dir === 'smbg') {
+            console.log('checking bgm');
+            streamDAO.getSummary(userId, 'cgm', function (err, summary){
+              console.log(summary);
+              expect(err).to.not.exist();
+              expect(summary).to.not.exist();
+            });
+            streamDAO.getSummary(userId, 'bgm', function (err, summary){
+              console.log(summary);
+              expect(summary).to.exist();
+              expect(summary).type.equals('bgm');
+            });
+          }
+          console.log('checking data');
 
           mongoClient.withCollection('deviceData', done, function(coll, cb){
             coll.find().sort({"time": 1, "id": 1, "_version": 1}).toArray(function(err, results){
@@ -87,12 +127,13 @@ describe('ingestion API', function () {
     try {
       badInput = JSON.parse(fs.readFileSync(path + '/bad.json'));
       it(dir + ': outdated uploader version errors', function(done) {
+        let updatedSummary = {cgm: false, bgm: false};
         async.mapSeries(
           badInput,
           function(e, cb){
             e._userId = userId;
             e._groupId = groupId;
-            dataBroker.addDatum(e, cb);
+            dataBroker.addDatum(e, updatedSummary, cb);
           },
           function(err) {
             expect(err.message).to.equal('The minimum supported version is [0.99.0]. Version [tidepool-uploader 0.98.0] is no longer supported.');
