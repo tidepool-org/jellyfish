@@ -2,6 +2,6 @@
     "browser": true,
     "eqnull": true,
     "globalstrict": true,
-    "esversion": 8,
+    "esversion": 11,
     "node": true
 }

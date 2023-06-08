@@ -16,7 +16,6 @@
  */
 
  /* global describe, before, beforeEach, it, after */
- /* jshint esversion: 6 */
 
 'use strict';
 
@@ -49,19 +48,26 @@ describe('ingestion API', function () {
     });
   });
 
+  beforeEach(function (done) {
+    mongoClient.withCollection('summary', done, function (coll, cb) {
+      coll.deleteMany({}, cb);
+    });
+  });
+
   var files = fs.readdirSync(__dirname);
   function testDir(dir) {
     var path = __dirname + '/' + dir;
-    it(dir, function (done) {
-      var input = JSON.parse(fs.readFileSync(path + '/input.json'));
-      var output = JSON.parse(fs.readFileSync(path + '/output.json'), convertDateStrings);
+    var input = JSON.parse(fs.readFileSync(path + '/input.json'));
+    var output = JSON.parse(fs.readFileSync(path + '/output.json'), convertDateStrings);
+    let updatedSummary = {cgm: false, bgm: false};
 
+    it(dir, function (done) {
       async.mapSeries(
         input,
         function(e, cb){
           e._userId = userId;
           e._groupId = groupId;
-          dataBroker.addDatum(e, cb);
+          dataBroker.addDatum(e, updatedSummary, cb);
         },
         function(err){
           if (err != null) {
@@ -82,12 +88,13 @@ describe('ingestion API', function () {
     try {
       badInput = JSON.parse(fs.readFileSync(path + '/bad.json'));
       it(dir + ': outdated uploader version errors', function(done) {
+        let updatedSummary = {cgm: false, bgm: false};
         async.mapSeries(
           badInput,
           function(e, cb){
             e._userId = userId;
             e._groupId = groupId;
-            dataBroker.addDatum(e, cb);
+            dataBroker.addDatum(e, updatedSummary, cb);
           },
           function(err) {
             expect(err.message).to.equal('The minimum supported version is [0.99.0]. Version [tidepool-uploader 0.98.0] is no longer supported.');
