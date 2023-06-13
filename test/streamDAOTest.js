@@ -251,7 +251,7 @@ describe('streamDAO', function(){
 
   describe('CGM setSummaryOutdated', function(){
     it('setting summary outdated creates a summary', function(done){
-      streamDAO.setSummaryOutdated('56789', 'cgm', function(err, typ, outdatedSinceTime){
+      streamDAO.setSummaryOutdated('56789', 'cgm', function(err, outdatedSinceTime){
         expect(err).to.not.exist;
         expect(outdatedSinceTime).to.exist;
 
@@ -266,37 +266,55 @@ describe('streamDAO', function(){
     });
 
     it('setting existing outdated summary outdated leaves it unchanged', function(done){
-      streamDAO.setSummaryOutdated('12345', 'cgm', function(err, typ, outdatedSinceTime){
+      streamDAO.setSummaryOutdated('12345', 'cgm', function(err, outdatedSinceTime){
         expect(err).to.not.exist;
         expect(outdatedSinceTime).to.exist;
 
         let outdatedSinceOne = outdatedSinceTime;
 
-        streamDAO.setSummaryOutdated('12345', 'cgm',function(err, typ, outdatedSinceTime){
+        streamDAO.setSummaryOutdated('12345', 'cgm',function(err, outdatedSinceTime){
           expect(err).to.not.exist;
           expect(outdatedSinceTime).to.exist;
 
           expect(outdatedSinceOne.getTime()).to.equal(outdatedSinceTime.getTime());
-          return done(err);
+
+          streamDAO.getSummary('12345', 'cgm', function(err, summary){
+            expect(err).to.not.exist;
+            expect(summary).to.exist;
+
+            return done(err);
+          });
         });
       });
     });
 
     it('setting existing summary outdated only adds the outdated flag', function(done){
-      let test_summary = {userId: '54321', type: 'cgm', extra: 'unchanged_value'};
+      let test_summary = {userId: '54321', type: 'cgm', extra: 'unchanged_value',
+                               dates: {outdatedSince: null, hasOutdatedSince: false}};
       streamDAO.insertSummary(test_summary, function(err){
         expect(err).to.not.exist;
 
-        streamDAO.setSummaryOutdated('54321', 'cgm',function(err, typ, outdatedSinceTime){
+        streamDAO.getSummary('54321', 'cgm', function(err, summary){
           expect(err).to.not.exist;
-          expect(outdatedSinceTime).to.exist;
+          expect(summary).to.exist;
+          expect(summary.dates.outdatedSince).to.equal(null);
+          expect(summary.dates.hasOutdatedSince).to.equal(false);
 
-          streamDAO.getSummary('54321', 'cgm', function(err, summary){
+          expect(summary.extra).to.equal(test_summary.extra);
+
+          streamDAO.setSummaryOutdated('54321', 'cgm',function(err, outdatedSinceTime){
+            expect(err).to.not.exist;
+            expect(outdatedSinceTime).to.exist;
+
+            streamDAO.getSummary('54321', 'cgm', function(err, summary){
               expect(err).to.not.exist;
               expect(summary).to.exist;
+              expect(summary.dates.outdatedSince.getTime()).to.equal(outdatedSinceTime.getTime());
+              expect(summary.dates.hasOutdatedSince).to.equal(true);
 
               expect(summary.extra).to.equal(test_summary.extra);
               return done(err);
+            });
           });
         });
       });
@@ -306,7 +324,7 @@ describe('streamDAO', function(){
 
   describe('BGM setSummaryOutdated', function(){
     it('setting summary outdated creates a summary', function(done){
-      streamDAO.setSummaryOutdated('56789', 'bgm', function(err, typ, outdatedSinceTime){
+      streamDAO.setSummaryOutdated('56789', 'bgm', function(err, outdatedSinceTime){
         expect(err).to.not.exist;
         expect(outdatedSinceTime).to.exist;
 
@@ -321,13 +339,13 @@ describe('streamDAO', function(){
     });
 
     it('setting existing outdated summary outdated leaves it unchanged', function(done){
-      streamDAO.setSummaryOutdated('12345', 'bgm', function(err, typ, outdatedSinceTime){
+      streamDAO.setSummaryOutdated('12345', 'bgm', function(err, outdatedSinceTime){
         expect(err).to.not.exist;
         expect(outdatedSinceTime).to.exist;
 
         var outdatedSinceOne = outdatedSinceTime;
 
-        streamDAO.setSummaryOutdated('12345', 'bgm',function(err, typ, outdatedSinceTime){
+        streamDAO.setSummaryOutdated('12345', 'bgm',function(err, outdatedSinceTime){
           expect(err).to.not.exist;
           expect(outdatedSinceTime).to.exist;
 
@@ -338,20 +356,32 @@ describe('streamDAO', function(){
     });
 
     it('setting existing summary outdated only adds the outdated flag', function(done){
-      let test_summary = {userId: '54321', type: 'bgm', extra: 'unchanged_value'};
+      let test_summary = {userId: '54321', type: 'bgm', extra: 'unchanged_value',
+        dates: {outdatedSince: null, hasOutdatedSince: false}};
       streamDAO.insertSummary(test_summary, function(err){
         expect(err).to.not.exist;
 
-        streamDAO.setSummaryOutdated('54321', 'bgm',function(err, typ, outdatedSinceTime){
+        streamDAO.getSummary('54321', 'bgm', function(err, summary){
           expect(err).to.not.exist;
-          expect(outdatedSinceTime).to.exist;
+          expect(summary).to.exist;
+          expect(summary.dates.outdatedSince).to.equal(null);
+          expect(summary.dates.hasOutdatedSince).to.equal(false);
 
-          streamDAO.getSummary('54321', 'bgm', function(err, summary){
+          expect(summary.extra).to.equal(test_summary.extra);
+
+          streamDAO.setSummaryOutdated('54321', 'bgm',function(err, outdatedSinceTime){
             expect(err).to.not.exist;
-            expect(summary).to.exist;
+            expect(outdatedSinceTime).to.exist;
 
-            expect(summary.extra).to.equal(test_summary.extra);
-            return done(err);
+            streamDAO.getSummary('54321', 'bgm', function(err, summary){
+              expect(err).to.not.exist;
+              expect(summary).to.exist;
+              expect(summary.dates.outdatedSince.getTime()).to.equal(outdatedSinceTime.getTime());
+              expect(summary.dates.hasOutdatedSince).to.equal(true);
+
+              expect(summary.extra).to.equal(test_summary.extra);
+              return done(err);
+            });
           });
         });
       });
