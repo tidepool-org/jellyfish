@@ -67,7 +67,7 @@ describe('ingestion API', function () {
         function(e, cb){
           e._userId = userId;
           e._groupId = groupId;
-          dataBroker.addDatum(e, updatedSummary, cb);
+          dataBroker.addData(e, updatedSummary, cb);
         },
         function(err){
           if (err != null) {
@@ -94,7 +94,7 @@ describe('ingestion API', function () {
           function(e, cb){
             e._userId = userId;
             e._groupId = groupId;
-            dataBroker.addDatum(e, updatedSummary, cb);
+            dataBroker.addData(e, updatedSummary, cb);
           },
           function(err) {
             expect(err.message).to.equal('The minimum supported version is [0.99.0]. Version [tidepool-uploader 0.98.0] is no longer supported.');
