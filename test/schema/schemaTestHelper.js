@@ -27,7 +27,7 @@ var salinity = require('salinity');
 var expect = salinity.expect;
 var mockableObject = salinity.mockableObject;
 
-exports.streamDAO = mockableObject.make('getDatum', 'getDatumBefore');
+exports.streamDAO = mockableObject.make('getDatum', 'getDatumBefore', 'getDataInTimeRangeAndBefore', 'generateExternalId', 'ensureInternalId', 'generateInternalId');
 exports.schema = require('../../lib/schema')(exports.streamDAO);
 
 exports.resetMocks = function(){

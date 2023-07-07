@@ -29,8 +29,52 @@ var sinon = salinity.sinon;
 
 var helper = require('./schemaTestHelper.js');
 var schema = require('../../lib/schema/schema.js');
+var misc = require('../../lib/misc.js');
 
 describe('schema/basal.js', function(){
+  function resetMocks() {
+    helper.resetMocks();
+    sinon.stub(helper.streamDAO, 'ensureInternalId', function (datum) {
+      return misc.ensureInternalId(datum);
+    });
+
+    sinon.stub(helper.streamDAO, 'generateInternalId', function (externalId, groupId) {
+      return misc.generateInternalId(externalId, groupId);
+    });
+
+    sinon.stub(helper.streamDAO, 'generateExternalId', function (datum) {
+      return misc.generateExternalId(datum);
+    });
+  }
+
+  // Mock the streamDAO.getDataInTimeRangeAndBefore because that normally makes
+  // a db call for all data in a certain range.
+  function mock_getDataInTimeRangeAndBefore(streamDAO, groupId, returnedObjs) {
+    // Allow "re-mocking" to change any previous stubbed returned values w/o
+    // throwing an error.
+    if (typeof streamDAO.getDataInTimeRangeAndBefore.restore === 'function') {
+      streamDAO.getDataInTimeRangeAndBefore.restore();
+    }
+
+    // Since the object would in reality be fetched from the db, ensure
+    // the _id and id fields are set.
+    const array = (returnedObjs||[]).map(obj => {
+      const externalId = misc.generateExternalId(obj);
+      const internalId = misc.generateInternalId(externalId, groupId);
+      obj = Object.assign({}, obj, {_groupId: groupId, _id: internalId, id: externalId });
+      return obj;
+    });
+    const stub = sinon.stub(streamDAO, 'getDataInTimeRangeAndBefore');
+    stub
+      .withArgs(sinon.match.any, sinon.match.any, sinon.match.any, sinon.match.func)
+      .callsArgWith(3, null, array);
+  }
+
+  beforeEach(function(){
+      resetMocks();
+      mock_getDataInTimeRangeAndBefore(helper.streamDAO, '', []);
+    });
+
   describe('injected', function(){
     var goodObject = {
       type: 'basal',
@@ -121,11 +165,13 @@ describe('schema/basal.js', function(){
     };
 
     beforeEach(function(){
-      helper.resetMocks();
+      resetMocks();
       sinon.stub(helper.streamDAO, 'getDatum');
       helper.streamDAO.getDatum
         .withArgs(schema.makeId(previousMatches), goodObject._groupId, sinon.match.func)
         .callsArgWith(2, null, previousMatches);
+
+      mock_getDataInTimeRangeAndBefore(helper.streamDAO, '', []);
     });
 
     describe('rate', function(){
@@ -149,11 +195,13 @@ describe('schema/basal.js', function(){
         var prevId = schema.makeId(previousCutShort);
 
         beforeEach(function(){
-          helper.resetMocks();
+          resetMocks();
           sinon.stub(helper.streamDAO, 'getDatum');
           helper.streamDAO.getDatum
             .withArgs(prevId, goodObject._groupId, sinon.match.func)
             .callsArgWith(2, null, previousCutShort);
+
+          mock_getDataInTimeRangeAndBefore(helper.streamDAO, goodObject._groupId, [previousCutShort]);
         });
 
         it('updates the duration of previous events if the new event cuts off the older one', function(done){
@@ -171,6 +219,9 @@ describe('schema/basal.js', function(){
         });
 
         it('does NOT update the duration of previous basal events if the new event extends the previous longer', function(done){
+          resetMocks();
+          mock_getDataInTimeRangeAndBefore(helper.streamDAO, '', []);
+
           var localGoodObject = _.assign({}, goodObject, {time: '2014-01-01T02:02:00.000Z'});
 
           helper.run(localGoodObject, function(err, obj){
@@ -181,6 +232,14 @@ describe('schema/basal.js', function(){
         });
 
         it('maintains the duration of previous events if the new event happens after the older one', function(done){
+          resetMocks();
+          sinon.stub(helper.streamDAO, 'getDatum');
+          helper.streamDAO.getDatum
+            .withArgs(prevId, goodObject._groupId, sinon.match.func)
+            .callsArgWith(2, null, previousCutShort);
+
+          mock_getDataInTimeRangeAndBefore(helper.streamDAO, '', []);
+
           var localGoodObject = _.assign({}, goodObject, {time: '2014-01-01T02:00:00.000Z', previous: previousMatches});
 
           helper.run(localGoodObject, function(err, obj){
@@ -210,11 +269,13 @@ describe('schema/basal.js', function(){
             annotations: [{ code: 'basal/mismatched-series', nextId: 'a84k2igl7pul6cu9ap63bar175du1gfi' }]
           });
 
+          resetMocks();
           sinon.stub(helper.streamDAO, 'getDatumBefore');
           helper.streamDAO.getDatumBefore
             .withArgs(localGoodObject, sinon.match.func)
             .callsArgWith(1, null, previousCutShort);
 
+          mock_getDataInTimeRangeAndBefore(helper.streamDAO, goodObject._groupId, [previousCutShort]);
 
           helper.run(localGoodObject, function(err, objs){
             expect(objs).length(2);
@@ -234,11 +295,13 @@ describe('schema/basal.js', function(){
             expectedDuration: previousCutShort.duration
           });
 
+          resetMocks();
           sinon.stub(helper.streamDAO, 'getDatumBefore');
           helper.streamDAO.getDatumBefore
             .withArgs(localGoodObject, sinon.match.func)
             .callsArgWith(1, null, previousCutShort);
 
+          mock_getDataInTimeRangeAndBefore(helper.streamDAO, goodObject._groupId, [previousCutShort]);
 
           helper.run(localGoodObject, function(err, objs){
             expect(objs).length(2);
@@ -255,13 +318,17 @@ describe('schema/basal.js', function(){
         var prevId = schema.makeId(previousMatches);
 
         beforeEach(function(){
-          helper.resetMocks();
+          resetMocks();
           sinon.stub(helper.streamDAO, 'getDatum');
           helper.streamDAO.getDatum
             .withArgs(prevId, goodObject._groupId, sinon.match.func)
             .callsArgWith(2, null, _.assign({}, previousMatches, {
               annotations: [{code: 'final-basal/fabricated-from-schedule'}]
             }));
+          const newPreviousMatch = _.assign({}, previousMatches, {
+            annotations: [{code: 'final-basal/fabricated-from-schedule'}]
+          });
+          mock_getDataInTimeRangeAndBefore(helper.streamDAO, goodObject._groupId, [newPreviousMatch]);
         });
 
         it('updates the duration of previous final basal events if the new event extends the previous longer than fabricated', function(done){
@@ -362,11 +429,12 @@ describe('schema/basal.js', function(){
     };
 
     beforeEach(function(){
-      helper.resetMocks();
+      resetMocks();
       sinon.stub(helper.streamDAO, 'getDatum');
       helper.streamDAO.getDatum
         .withArgs(schema.makeId(previousMatches), goodObject._groupId, sinon.match.func)
         .callsArgWith(2, null, previousMatches);
+      mock_getDataInTimeRangeAndBefore(helper.streamDAO, '', []);
     });
 
     describe('duration', function(){
@@ -385,17 +453,18 @@ describe('schema/basal.js', function(){
         var prevId = schema.makeId(previousCutShort);
 
         beforeEach(function(){
-          helper.resetMocks();
+          resetMocks();
           sinon.stub(helper.streamDAO, 'getDatum');
           helper.streamDAO.getDatum
             .withArgs(prevId, goodObject._groupId, sinon.match.func)
             .callsArgWith(2, null, previousCutShort);
+          mock_getDataInTimeRangeAndBefore(helper.streamDAO, goodObject._groupId, [previousCutShort]);
         });
 
         it('updates the duration of previous events if the new event cuts off the older one', function(done){
           var localGoodObject = _.assign({}, goodObject, {previous: previousCutShort});
           var expectedPrevious = _.assign({}, previousCutShort, {duration: 3600000, expectedDuration: previousCutShort.duration});
-
+          mock_getDataInTimeRangeAndBefore(helper.streamDAO, goodObject._groupId, [previousCutShort]);
           helper.run(localGoodObject, function(err, objs){
             expect(objs).length(2);
 
@@ -445,13 +514,17 @@ describe('schema/basal.js', function(){
         var prevId = schema.makeId(previousMatches);
 
         beforeEach(function(){
-          helper.resetMocks();
+          resetMocks();
           sinon.stub(helper.streamDAO, 'getDatum');
           helper.streamDAO.getDatum
             .withArgs(prevId, goodObject._groupId, sinon.match.func)
             .callsArgWith(2, null, _.assign({}, previousMatches, {
               annotations: [{code: 'final-basal/fabricated-from-schedule'}]
             }));
+          const newPreviousMatch = _.assign({}, previousMatches, {
+            annotations: [{code: 'final-basal/fabricated-from-schedule'}]
+          });
+          mock_getDataInTimeRangeAndBefore(helper.streamDAO, goodObject._groupId, [newPreviousMatch]);
         });
 
         it('updates the duration of previous final basal events if the new event extends the previous longer than fabricated', function(done){
@@ -554,11 +627,12 @@ describe('schema/basal.js', function(){
     };
 
     beforeEach(function(){
-      helper.resetMocks();
+      resetMocks();
       sinon.stub(helper.streamDAO, 'getDatum');
       helper.streamDAO.getDatum
         .withArgs(schema.makeId(previousMatches), goodObject._groupId, sinon.match.func)
         .callsArgWith(2, null, previousMatches);
+      mock_getDataInTimeRangeAndBefore(helper.streamDAO, '', []);
     });
 
     describe('rate', function(){
@@ -598,11 +672,12 @@ describe('schema/basal.js', function(){
         var prevId = schema.makeId(previousCutShort);
 
         beforeEach(function(){
-          helper.resetMocks();
+          resetMocks();
           sinon.stub(helper.streamDAO, 'getDatum');
           helper.streamDAO.getDatum
             .withArgs(prevId, goodObject._groupId, sinon.match.func)
             .callsArgWith(2, null, previousCutShort);
+          mock_getDataInTimeRangeAndBefore(helper.streamDAO, goodObject._groupId, [previousCutShort]);
         });
 
         it('updates the duration of previous events if the new event cuts off the older one', function(done){
@@ -658,13 +733,17 @@ describe('schema/basal.js', function(){
         var prevId = schema.makeId(previousMatches);
 
         beforeEach(function(){
-          helper.resetMocks();
+          resetMocks();
           sinon.stub(helper.streamDAO, 'getDatum');
           helper.streamDAO.getDatum
             .withArgs(prevId, goodObject._groupId, sinon.match.func)
             .callsArgWith(2, null, _.assign({}, previousMatches, {
               annotations: [{code: 'final-basal/fabricated-from-schedule'}]
             }));
+          const newPreviousMatch = _.assign({}, previousMatches, {
+            annotations: [{code: 'final-basal/fabricated-from-schedule'}]
+          });
+          mock_getDataInTimeRangeAndBefore(helper.streamDAO, goodObject._groupId, [newPreviousMatch]);
         });
 
         it('updates the duration of previous final basal events if the new event extends the previous longer than fabricated', function(done){
