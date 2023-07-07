@@ -34,17 +34,9 @@ var misc = require('../../lib/misc.js');
 describe('schema/basal.js', function(){
   function resetMocks() {
     helper.resetMocks();
-    sinon.stub(helper.streamDAO, 'ensureInternalId', function (datum) {
-      return misc.ensureInternalId(datum);
-    });
-
-    sinon.stub(helper.streamDAO, 'generateInternalId', function (externalId, groupId) {
-      return misc.generateInternalId(externalId, groupId);
-    });
-
-    sinon.stub(helper.streamDAO, 'generateExternalId', function (datum) {
-      return misc.generateExternalId(datum);
-    });
+    sinon.stub(helper.streamDAO, 'ensureInternalId', misc.ensureInternalId);
+    sinon.stub(helper.streamDAO, 'generateInternalId', misc.generateInternalId);
+    sinon.stub(helper.streamDAO, 'generateExternalId', misc.generateExternalId);
   }
 
   // Mock the streamDAO.getDataInTimeRangeAndBefore because that normally makes
