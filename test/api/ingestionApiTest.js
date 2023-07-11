@@ -61,6 +61,44 @@ describe('ingestion API', function () {
     var output = JSON.parse(fs.readFileSync(path + '/output.json'), convertDateStrings);
     let updatedSummary = {cgm: false, bgm: false};
 
+    // datum types that explicitly support inserting in parallel.
+    const parallelTypes = ['deviceEvent', 'basal', 'bolus'];
+
+    if (parallelTypes.indexOf(dir) > -1) {
+      it(`${dir} parallel inserts`, function(done) {
+        const array = input.map(obj => Object.assign({}, obj, {_userId: userId, _groupId: groupId}));
+
+        dataBroker.addData(array, updatedSummary, (err, res) => {
+          if (err != null) {
+            return done(err);
+          }
+
+          mongoClient.withCollection('deviceData', done, function(coll, cb){
+            // Note we only check active data and do not check for _version.
+            // This is because in the old serial insertion way, if there are
+            // two datums, A and B, if A is inserted first, then B is
+            // inserted, and B modifies A, there will be 3 datums in total:
+            //
+            // A (_version == 0, _active == false)
+            // A (_version == 1, _active == true)
+            // B (_version == 0, _active == true).
+            //
+            // The parallel functions will "omit" the insertion of A, then
+            // update of A, and instead will just have a single insert of A
+            // with the latest data. Because of this, there is only one
+            // version for each unique id in an array of data.
+
+            coll.find({_active: true}).sort({"time": 1, "id": 1, "_version": 1}).toArray(function(err, results){
+              const filterdOutput = output.filter(obj => obj._active).map(obj => _.omit(obj, '_version'));
+              expect(results.map(function(e){ return _.omit(e, 'createdTime', 'modifiedTime', "_id", '_archivedTime', '_version'); }))
+                .deep.equals(filterdOutput.map(function(e){ e._userId = userId; e._groupId = groupId; return e; }));
+                cb(err);
+            });
+          });
+        });
+      });
+    }
+
     it(dir, function (done) {
       async.mapSeries(
         input,
@@ -84,6 +122,7 @@ describe('ingestion API', function () {
         }
       );
     });
+
     var badInput;
     try {
       badInput = JSON.parse(fs.readFileSync(path + '/bad.json'));
