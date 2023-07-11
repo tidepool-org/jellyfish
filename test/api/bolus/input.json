@@ -1,0 +1,68 @@
+[
+    {
+        "deviceTime": "2014-06-11T11:20:00",
+        "time": "2014-06-11T11:20:00.703Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
+        "type": "bolus",
+        "subType": "normal",
+        "normal": 2.5,
+        "deviceId": "tools",
+        "uploadId": "tools"
+    },
+    {
+        "deviceTime": "2014-06-11T11:20:20",
+        "time": "2014-06-11T11:20:20.703Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
+        "type": "bolus",
+        "subType": "normal",
+        "normal": 1.5,
+        "deviceId": "tools",
+        "uploadId": "tools",
+        "previous": {
+            "deviceTime": "2014-06-11T11:20:00",
+            "time": "2014-06-11T11:20:00.703Z",
+            "timezoneOffset": 0,
+            "conversionOffset": 0,
+            "type": "bolus",
+            "subType": "normal",
+            "normal": 2.5,
+            "deviceId": "tools",
+            "uploadId": "tools"
+        }
+    },
+    {
+        "deviceTime": "2014-06-11T18:00:00",
+        "time": "2014-06-11T18:00:00.000Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
+        "type": "bolus",
+        "subType": "normal",
+        "normal": 3.5,
+        "deviceId": "tools",
+        "uploadId": "tools"
+    },
+    {
+        "deviceTime": "2014-06-11T18:00:30",
+        "time": "2014-06-11T18:00:30.000Z",
+        "timezoneOffset": 0,
+        "conversionOffset": 0,
+        "type": "bolus",
+        "subType": "normal",
+        "normal": 3.5,
+        "deviceId": "tools",
+        "uploadId": "tools",
+        "previous": {
+            "deviceTime": "2014-06-11T18:00:00",
+            "time": "2014-06-11T18:00:00.000Z",
+            "timezoneOffset": 0,
+            "conversionOffset": 0,
+            "type": "bolus",
+            "subType": "normal",
+            "normal": 3.5,
+            "deviceId": "tools",
+            "uploadId": "tools"
+        }
+    }
+]
