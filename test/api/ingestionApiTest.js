@@ -31,6 +31,7 @@ var mongoClient = require('../../lib/mongo/mongoClient.js')(
 );
 var streamDAO = require('../../lib/streamDAO.js')(mongoClient);
 var dataBroker = require('../../lib/dataBroker.js')(streamDAO);
+var schemas = require('../../lib/schema')(streamDAO);
 
 var userId = "abcd";
 var groupId = "1234";
@@ -62,7 +63,7 @@ describe('ingestion API', function () {
     let updatedSummary = {cgm: false, bgm: false};
 
     // datum types that explicitly support inserting in parallel.
-    const parallelTypes = ['deviceEvent', 'basal', 'bolus'];
+    const parallelTypes = schemas.getGroupableDatumTypes();
 
     if (parallelTypes.indexOf(dir) > -1) {
       it(`${dir} parallel inserts`, function(done) {
