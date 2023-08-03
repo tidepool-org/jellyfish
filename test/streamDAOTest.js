@@ -36,9 +36,18 @@ describe('streamDAO', function(){
   });
 
   beforeEach(function(done){
-    mongoClient.withCollection('deviceData', done, function(coll, cb) {
-      coll.deleteMany({}, cb);
-    });
+    async.parallel([
+      (cb) => {
+        mongoClient.withCollection('deviceData', cb, function (coll, cb) {
+          coll.deleteMany({}, cb);
+        });
+      },
+      (cb) => {
+        mongoClient.withCollection('deviceDataSets', cb, function (coll, cb) {
+          coll.deleteMany({}, cb);
+        });
+      }
+    ], done);
   });
 
   beforeEach(function(done){
@@ -147,19 +156,26 @@ describe('streamDAO', function(){
           return done(err);
         }
 
-        if (count === 0) {
+        if (count < 2) {
           ++count;
           return;
         }
 
         mongoClient.withCollection('deviceData', done, function(coll, done){
           coll.find({f: 'a'}).toArray(function(err, elements){
-            expect(elements).to.have.length(3);
-            expect(elements.map(function(e){ return e._id; })).to.include.members(
-              [expectedId, expectedId + '_0', expectedId + '_1']
+            expect(elements).to.have.length(4);
+            // use to.have instead of to.include because we're expecting an
+            // exact number of elements.
+            expect(elements.map(function(e){ return e._id; })).to.have.members(
+              [expectedId, expectedId + '_0', expectedId + '_1', expectedId + '_2']
             );
             expect(elements.filter(function(e){ return e._active; })).to.have.length(1);
+            // Since all updates are executing concurrently we don't know
+            // which update will "win" out so check that the property 'v' is
+            // in one of the updated values.
+            expect(elements.filter(function(e){ return e._active; })[0]).to.have.property('v').within(2828, 2830);
             expect(elements.filter(function(e){ return e._active; })[0]).to.have.property('id').equals('abcd');
+            expect(elements.filter(function(e){ return e._active; })[0]).to.have.property('_version').equals(3);
 
             done(err);
           });
@@ -169,6 +185,7 @@ describe('streamDAO', function(){
       var expectedId = misc.generateId(['abcd', 'g']);
       streamDAO.updateDatum({id: 'abcd', f: 'a', v: 2828, _userId: 'u', _groupId: 'g'}, theCallback);
       streamDAO.updateDatum({id: 'abcd', f: 'a', v: 2829, _userId: 'u', _groupId: 'g'}, theCallback);
+      streamDAO.updateDatum({id: 'abcd', f: 'a', v: 2830, _userId: 'u', _groupId: 'g'}, theCallback);
     });
   });
 
