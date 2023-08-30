@@ -13,7 +13,11 @@
         "_groupId": "1234",
         "id": "si9lrlao50l4qi0hcc8bc5siaaq1se4a",
         "_version": 0,
-        "_active": true
+        "_active": true,
+        "deduplicator": {
+            "name": "org.tidepool.deduplicator.device.deactivate.hash",
+            "version": "1.1.0"
+        }
     },
     {
         "deviceTime": "2014-06-11T17:57:01",
@@ -28,6 +32,10 @@
         "_groupId": "1234",
         "id": "d3o9aav2c4b1tc8purlb493ff82c4q8p",
         "_version": 0,
-        "_active": true
+        "_active": true,
+        "deduplicator": {
+            "name": "org.tidepool.deduplicator.device.deactivate.hash",
+            "version": "1.1.0"
+        }
     }
 ]

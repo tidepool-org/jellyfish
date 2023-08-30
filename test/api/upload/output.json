@@ -25,9 +25,10 @@
         "id": "7h3jc5jj5nl3bcu1gvs4j4k442pup1ef",
         "_version": 0,
         "_active": true,
-        "_deduplicator": {
+        "deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
-            "version": "1.1.0"
+            "version": "1.1.0",
+            "hash": ""
         }
     }
 ]
