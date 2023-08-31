@@ -16,7 +16,7 @@
         "id": "kmm427pfbrc6rugtmbuli8j4q61u17uk",
         "_version": 0,
         "_active": true,
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }
@@ -38,7 +38,7 @@
         "id": "cjou7vscvp8ogv34d6vejootulqfn3jd",
         "_version": 0,
         "_active": false,
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }
@@ -61,7 +61,7 @@
         "_version": 1,
         "_active": true,
         "expectedDuration": 21600000,
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }
@@ -96,7 +96,7 @@
         "id": "tn33bjb0241j9qh4jg9vdnf1g6k1g9r8",
         "_version": 0,
         "_active": false,
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }
@@ -132,7 +132,7 @@
         "_version": 1,
         "_active": true,
         "expectedDuration": 21600000,
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }
@@ -167,7 +167,7 @@
         "id": "ga58m84ggkscldj30lehrg74n313skcj",
         "_version": 0,
         "_active": true,
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }
@@ -189,7 +189,7 @@
         "id": "lsqqotp92j1d25d3d3ac53dsh6rgjg94",
         "_version": 0,
         "_active": false,
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }
@@ -218,7 +218,7 @@
                 "nextId": "kftn188l8rjuvma3qkd3iqg34t0plajp"
             }
         ],
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }
@@ -239,7 +239,7 @@
         "id": "kftn188l8rjuvma3qkd3iqg34t0plajp",
         "_version": 0,
         "_active": true,
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }

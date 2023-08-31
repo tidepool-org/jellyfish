@@ -15,7 +15,7 @@
         "id": "e2ihon9nqcro96c4uugb4ftdnr07nqok",
         "_version": 0,
         "_active": true,
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }
@@ -35,7 +35,7 @@
         "id": "c14eds071pp5gsirfmgmsclbcahs8th0",
         "_version": 0,
         "_active": true,
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }
@@ -55,7 +55,7 @@
         "id": "rk2htms97m7hipdu5lrso7ufd3pedm6n",
         "_version": 0,
         "_active": true,
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }
@@ -75,7 +75,7 @@
         "id": "urrkdln86rl4vhqckps6gnupg5njqk6n",
         "_version": 0,
         "_active": true,
-        "deduplicator": {
+        "_deduplicator": {
             "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "1.1.0"
         }
