@@ -101,7 +101,6 @@ describe('streamDAO', function () {
                 'createdTime',
                 'modifiedTime',
                 '_id',
-                'deduplicator'
               )
             ).to.deep.equals({
               id: 'abcd',
@@ -110,6 +109,10 @@ describe('streamDAO', function () {
               _groupId: 'g',
               _version: 0,
               _active: true,
+              _deduplicator:{
+                name: 'org.tidepool.deduplicator.device.deactivate.hash',
+                version: '1.1.0'
+              },
             });
 
             done(err);
@@ -180,7 +183,6 @@ describe('streamDAO', function () {
                 'modifiedTime',
                 '_archivedTime',
                 '_id',
-                'deduplicator'
               )
             ).to.deep.equals({
               id: 'abcd',
@@ -191,6 +193,10 @@ describe('streamDAO', function () {
               createdTime: createdTime,
               _version: 1,
               _active: true,
+              _deduplicator:{
+                name: 'org.tidepool.deduplicator.device.deactivate.hash',
+                version: '1.1.0'
+              },
             });
 
             var overwrittenId = datum._id + '_0';
@@ -218,7 +224,10 @@ describe('streamDAO', function () {
                       createdTime: createdTime,
                       _version: 0,
                       _active: false,
-                      deduplicator:{}
+                      _deduplicator:{
+                        name: 'org.tidepool.deduplicator.device.deactivate.hash',
+                        version: '1.1.0'
+                      },
                     });
 
                     done(err);
