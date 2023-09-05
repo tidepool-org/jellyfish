@@ -218,6 +218,7 @@ describe('streamDAO', function () {
                       createdTime: createdTime,
                       _version: 0,
                       _active: false,
+                      deduplicator:{}
                     });
 
                     done(err);
