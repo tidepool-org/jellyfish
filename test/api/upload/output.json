@@ -6,7 +6,7 @@
         "timezoneOffset": 780,
         "conversionOffset": 0,
         "timezone": "Pacific/Auckland",
-        "version": "tidepool-uploader 0.200.0",
+        "version": "tidepool-uploader 2.53.0",
         "uploadId": "1234",
         "byUser": "Bob",
         "deviceTags": [
