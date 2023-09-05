@@ -82,11 +82,10 @@ describe('ingestion API', function () {
           if (err != null) {
             return done(err);
           }
-
           const collectionName = input[0].type == 'upload' ? 'deviceDataSets' : 'deviceData';
           mongoClient.withCollection(collectionName, done, function(coll, cb){
             coll.find().sort({"time": 1, "id": 1, "_version": 1}).toArray(function(err, results){
-              expect(results.map(function(e){ return _.omit(e, 'createdTime', 'modifiedTime', "_id", '_archivedTime'); }))
+              expect(results.map(function(e){ return _.omit(e, 'createdTime', 'modifiedTime', "_id", '_archivedTime','_deduplicator.hash'); }))
                 .deep.equals(output.map(function(e){ e._userId = userId; e._groupId = groupId; return e; }));
               cb(err);
             });

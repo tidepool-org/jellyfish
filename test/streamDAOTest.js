@@ -111,7 +111,13 @@ describe('streamDAO', function () {
               _active: true,
               _deduplicator:{
                 name: 'org.tidepool.deduplicator.device.deactivate.hash',
-                version: '1.1.0'
+                version: '1.1.0',
+                hash: misc.generateHash([
+                  datum._userId,
+                  datum.deviceId,
+                  datum.time,
+                  datum.type
+                ]),
               },
             });
 
@@ -195,7 +201,13 @@ describe('streamDAO', function () {
               _active: true,
               _deduplicator:{
                 name: 'org.tidepool.deduplicator.device.deactivate.hash',
-                version: '1.1.0'
+                version: '1.1.0',
+                hash: misc.generateHash([
+                  datum._userId,
+                  datum.deviceId,
+                  datum.time,
+                  datum.type,
+                ]),
               },
             });
 
@@ -226,7 +238,13 @@ describe('streamDAO', function () {
                       _active: false,
                       _deduplicator:{
                         name: 'org.tidepool.deduplicator.device.deactivate.hash',
-                        version: '1.1.0'
+                        version: '1.1.0',
+                        hash: misc.generateHash([
+                          datum._userId,
+                          datum.deviceId,
+                          datum.time,
+                          datum.type,
+                        ]),
                       },
                     });
 
