@@ -25,6 +25,7 @@ var _ = require('lodash');
 var expect = require('salinity').expect;
 
 var misc = require('../lib/misc.js');
+var schema = require('../lib/schema/schema.js');
 var mongoClient = require('../lib/mongo/mongoClient.js')({
   connectionString: 'mongodb://localhost/data_test',
   closeDelay: 0,
@@ -112,12 +113,7 @@ describe('streamDAO', function () {
               _deduplicator:{
                 name: 'org.tidepool.deduplicator.device.deactivate.hash',
                 version: '1.1.0',
-                hash: misc.generateHash([
-                  datum._userId,
-                  datum.deviceId,
-                  datum.time,
-                  datum.type
-                ]),
+                hash: '', // will have no hash as not a registered data type with id fields
               },
             });
 
@@ -202,12 +198,7 @@ describe('streamDAO', function () {
               _deduplicator:{
                 name: 'org.tidepool.deduplicator.device.deactivate.hash',
                 version: '1.1.0',
-                hash: misc.generateHash([
-                  datum._userId,
-                  datum.deviceId,
-                  datum.time,
-                  datum.type,
-                ]),
+                hash: schema.generateHash(datum),
               },
             });
 
@@ -239,12 +230,7 @@ describe('streamDAO', function () {
                       _deduplicator:{
                         name: 'org.tidepool.deduplicator.device.deactivate.hash',
                         version: '1.1.0',
-                        hash: misc.generateHash([
-                          datum._userId,
-                          datum.deviceId,
-                          datum.time,
-                          datum.type,
-                        ]),
+                        hash: schema.generateHash(datum),
                       },
                     });
 
