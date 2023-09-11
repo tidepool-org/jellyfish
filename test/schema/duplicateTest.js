@@ -58,7 +58,7 @@ describe('schema/duplicate.js', function () {
   });
   describe('generateHash', function () {
     var reference = {
-      type: 'smbg',
+      type: 'test-datum',
       time: new Date('2013-11-27'),
       timezoneOffset: 120,
       deviceId: 'test',
@@ -69,12 +69,12 @@ describe('schema/duplicate.js', function () {
       _groupId: 'g',
     };
     before(function (done) {
-      schema.registerFieldsForDuplicator('smbg', ['units', 'value']);
+      schema.registerFieldsForDuplicator('test-datum', ['units', 'value']);
       done();
     });
     it('generates hash from registered fields', function (done) {
       const hashed = schema.generateHash(reference);
-      expect(hashed).to.equal('yb31CCUYldjtVHja8SiEeXPGohiA4dOtxLbbk43KTLY=');
+      expect(hashed).to.equal('ZKCTDPCV0bDi7B2SxXBQypsBueCLi1ZHp+aLWjhwhrE=');
       done();
     });
     it('errors if missing a required field', function (done) {
@@ -84,7 +84,7 @@ describe('schema/duplicate.js', function () {
         schema.generateHash(referenceCopy);
       } catch (error) {
         expect(error.message).to.equal(
-          "Can't generate hash, field[_userId] didn't exist on datum of type[smbg]"
+          "Can't generate hash, field[_userId] didn't exist on datum of type[test-datum]"
         );
         done();
       }
