@@ -47,12 +47,9 @@ describe('schema/duplicate.js', function () {
     });
     it('adds base fields for type', function (done) {
       schema.registerFieldsForDuplicator('myothertype');
-      expect(JSON.stringify(schema.getIdHashFields('myothertype'))).to.equal(JSON.stringify([
-        '_userId',
-        'deviceId',
-        'time',
-        'type',
-      ]));
+      expect(JSON.stringify(schema.getIdHashFields('myothertype'))).to.equal(
+        JSON.stringify(['_userId', 'deviceId', 'time', 'type'])
+      );
       done();
     });
   });
@@ -74,7 +71,7 @@ describe('schema/duplicate.js', function () {
     });
     it('generates hash from registered fields', function (done) {
       const hashed = schema.generateHash(reference);
-      expect(hashed).to.equal('ZKCTDPCV0bDi7B2SxXBQypsBueCLi1ZHp+aLWjhwhrE=');
+      expect(hashed).to.equal('JorcBmH46w117h6rZnj3WfUYrPH+7Sq1Txam6oR3R98=');
       done();
     });
     it('errors if missing a required field', function (done) {
@@ -88,6 +85,27 @@ describe('schema/duplicate.js', function () {
         );
         done();
       }
+    });
+  });
+  describe('compare with platform hash', function () {
+    var platformSMBG = {
+      deviceId: 'Contour7800-5455830',
+      id: 'cfe71577180f1c5e273609dddff35e93',
+      payload: { logIndices: [1] },
+      time: '2018-01-11T13:25:00.000Z',
+      type: 'smbg',
+      _userId: '1099e49b7e',
+      units: 'mmol/L',
+      value: 5.9,
+    }; 
+    before(function (done) {
+      schema.registerFieldsForDuplicator('smbg', ['units', 'value']);
+      done();
+    });
+    it('generates the same as platform', function (done) {
+      const hashed = schema.generateHash(platformSMBG);
+      expect(hashed).to.equal('zDzfGi/9PRvFiTFjgkZ6+wWA+mvAAJQdza/gdb9GwZ4=');
+      done();
     });
   });
 });

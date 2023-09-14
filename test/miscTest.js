@@ -38,5 +38,9 @@ describe('misc', function () {
       const hash = misc.generateHash(['one', 'two', 'three', 'four', 'five']);
       expect(hash).to.equal('8HUIFZUXmOuySpngHvl+fJECoeELTiCRxwNxxgDzmVQ=');
     });
+    it('returns same hash as platform', function () {
+      const hash = misc.generateHash(['1099e49b7e', 'Contour7800-5455830', '2018-01-11T13:25:00Z', 'smbg', 'mmol/L', '5.9']);
+      expect(hash).to.equal('zDzfGi/9PRvFiTFjgkZ6+wWA+mvAAJQdza/gdb9GwZ4=');
+    });
   });
 });
