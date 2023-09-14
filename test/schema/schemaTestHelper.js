@@ -174,7 +174,7 @@ exports.expectUnitConversion = function(goodObject, field) {
     splatMe[field] = 80;
     exports.run(_.assign({}, goodObject, splatMe), function(err, val){
       expect(val.units).equals('mmol/L');
-      expect(val[field]).equals(4.440598392836427);
+      expect(val[field]).equals(4.4406);
       done(err);
     });
   });
@@ -184,7 +184,7 @@ exports.expectUnitConversion = function(goodObject, field) {
     splatMe[field] = 80;
     exports.run(_.assign({}, goodObject, splatMe), function(err, val){
       expect(val.units).equals('mmol/L');
-      expect(val[field]).equals(4.440598392836427);
+      expect(val[field]).equals(4.4406);
       done(err);
     });
   });

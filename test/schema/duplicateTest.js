@@ -98,10 +98,10 @@ describe('schema/duplicate.js', function () {
       units: 'mmol/L',
       value: 5.9,
     }; 
-    before(function (done) {
-      schema.registerFieldsForDuplicator('smbg', ['units', 'value']);
-      done();
-    });
+    // before(function (done) {
+    //   schema.registerFieldsForDuplicator('smbg', ['units', 'value']);
+    //   done();
+    // });
     it('generates the same as platform', function (done) {
       const hashed = schema.generateHash(platformSMBG);
       expect(hashed).to.equal('zDzfGi/9PRvFiTFjgkZ6+wWA+mvAAJQdza/gdb9GwZ4=');

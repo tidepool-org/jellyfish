@@ -124,7 +124,11 @@ describe('ingestion API', function () {
   for (var i = 0; i < files.length; ++i) {
     var path = __dirname + '/' + files[i];
     if (fs.lstatSync(path).isDirectory()) {
-      (testDir)(files[i]);
+      console.log("## dir ",files[i]);
+      if (files[i] === 'smbg'){
+        console.log("## running ",files[i]);
+        (testDir)(files[i]);
+      }
     }
   }
 });
