@@ -74,7 +74,7 @@
         "units": "mmol/L",
         "carbInput": 40,
         "insulinOnBoard": 0.8,
-        "insulinSensitivity": 4.16306,
+        "insulinSensitivity": 4.16307,
         "payload": {
             "someValue": 1234
         },
