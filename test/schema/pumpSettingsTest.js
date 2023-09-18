@@ -183,8 +183,8 @@ describe('schema/pumpSettings.js', function () {
       localGood.insulinSensitivity[1].amount = 50;
 
       helper.run(localGood, function(err, converted) {
-        expect(converted.insulinSensitivity[0].amount).equals(1.9427617968659368);
-        expect(converted.insulinSensitivity[1].amount).equals(2.7753739955227665);
+        expect(converted.insulinSensitivity[0].amount).equals(1.94277);
+        expect(converted.insulinSensitivity[1].amount).equals(2.77538);
         done(err);
       });
     });
@@ -220,8 +220,8 @@ describe('schema/pumpSettings.js', function () {
         if (err != null) {
           return done(err);
         }
-        expect(converted.insulinSensitivities.weekday[0].amount).equals(1.9427617968659368);
-        expect(converted.insulinSensitivities.weekend[1].amount).equals(2.7753739955227665);
+        expect(converted.insulinSensitivities.weekday[0].amount).equals(1.94277);
+        expect(converted.insulinSensitivities.weekend[1].amount).equals(2.77538);
         done(err);
       });
     });
@@ -261,7 +261,7 @@ describe('schema/pumpSettings.js', function () {
         if (err != null) {
           return done(err);
         }
-        expect(converted.bgTargets.weekend[0].target).equals(4.9956731919409805);
+        expect(converted.bgTargets.weekend[0].target).equals(4.99568);
         done(err);
       });
     });
@@ -313,8 +313,8 @@ describe('schema/pumpSettings.js', function () {
 
           expect(converted.bgTarget).deep.equals(
             [
-              { low: 4.440598392836427, high: 5.550747991045533, target: 4.9956731919409805, start: 0 },
-              { low: 4.9956731919409805, high: 6.1058227901500866, target: 5.550747991045533, start: 10800000 }
+              { low: 4.4406, high: 5.55075, target: 4.99568, start: 0 },
+              { low: 4.99568, high: 6.10583, target: 5.55075, start: 10800000 }
             ]
           );
           done();
@@ -363,8 +363,8 @@ describe('schema/pumpSettings.js', function () {
         helper.run(localGood, function(err, converted) {
           expect(converted.bgTarget).deep.equals(
             [
-              { target: 4.440598392836427, range: 0.5550747991045534, start: 0 },
-              { target: 4.9956731919409805, range: 0.5550747991045534, start: 43200000 }
+              { target: 4.4406, range: 0.55508, start: 0 },
+              { target: 4.99568, range: 0.55508, start: 43200000 }
             ]
           );
           done(err);
@@ -413,8 +413,8 @@ describe('schema/pumpSettings.js', function () {
         helper.run(localGood, function(err, converted) {
           expect(converted.bgTarget).deep.equals(
             [
-              { target: 5.550747991045533, high: 7.771047187463747, start: 0 },
-              { target: 4.9956731919409805, high: 6.1058227901500866, start: 43200000 }
+              { target: 5.55075, high: 7.77105, start: 0 },
+              { target: 4.99568, high: 6.10583, start: 43200000 }
             ]
           );
           done(err);

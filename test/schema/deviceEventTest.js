@@ -63,7 +63,7 @@ describe('schema/deviceEvent.js', function(){
       it('converts units from mg/dL to mmol/L', function(done){
         helper.run(_.assign({}, goodObject, {value: 80, units: 'mg/dL'}), function(err, val){
           expect(val.units).equals('mmol/L');
-          expect(val.value).equals(4.440598392836427);
+          expect(val.value).equals(4.4406);
           done(err);
         });
       });
@@ -71,7 +71,7 @@ describe('schema/deviceEvent.js', function(){
       it('converts units from mg/dl to mmol/L', function(done){
         helper.run(_.assign({}, goodObject, {value: 80, units: 'mg/dl'}), function(err, val){
           expect(val.units).equals('mmol/L');
-          expect(val.value).equals(4.440598392836427);
+          expect(val.value).equals(4.4406);
           done(err);
         });
       });

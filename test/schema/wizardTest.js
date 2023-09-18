@@ -70,7 +70,7 @@ describe('schema/wizard.js', function(){
         }
 
         expect(converted.units).to.equal('mmol/L');
-        expect(converted.bgInput).to.equal(5.550747991045533);
+        expect(converted.bgInput).to.equal(5.55075);
         done();
       });
     });
@@ -117,7 +117,7 @@ describe('schema/wizard.js', function(){
 
         helper.run(localGood, function(err, converted) {
           expect(converted.bgTarget).deep.equals(
-            { target: 4.440598392836427, range: 0.5550747991045534 }
+            { target: 4.4406, range: 0.55508 }
           );
           done(err);
         });
@@ -142,7 +142,7 @@ describe('schema/wizard.js', function(){
 
         helper.run(localGood, function(err, converted) {
           expect(converted.bgTarget).deep.equals(
-              { target: 5.550747991045533, high: 7.771047187463747 }
+              { target: 5.55075, high: 7.77105 }
           );
           done(err);
         });
@@ -167,7 +167,7 @@ describe('schema/wizard.js', function(){
 
         helper.run(localGood, function(err, converted) {
           expect(converted.bgTarget).deep.equals(
-            { target: 5.550747991045533 }
+            { target: 5.55075 }
           );
           done(err);
         });
@@ -207,7 +207,7 @@ describe('schema/wizard.js', function(){
         }
 
         expect(converted.units).to.equal('mmol/L');
-        expect(converted.insulinSensitivity).to.equal(2.7753739955227665);
+        expect(converted.insulinSensitivity).to.equal(2.77538);
         done();
       });
     });
