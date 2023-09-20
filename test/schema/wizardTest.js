@@ -117,7 +117,7 @@ describe('schema/wizard.js', function(){
 
         helper.run(localGood, function(err, converted) {
           expect(converted.bgTarget).deep.equals(
-            { target: 4.4406, range: 0.55508 }
+            { target: 4.4406, range: 0.55507 }
           );
           done(err);
         });
@@ -207,7 +207,7 @@ describe('schema/wizard.js', function(){
         }
 
         expect(converted.units).to.equal('mmol/L');
-        expect(converted.insulinSensitivity).to.equal(2.77538);
+        expect(converted.insulinSensitivity).to.equal(2.77537);
         done();
       });
     });

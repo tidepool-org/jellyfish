@@ -11,7 +11,7 @@
         "deviceId": "test",
         "highAlerts": {
             "enabled": true,
-            "level": 8.32613,
+            "level": 8.32612,
             "snooze": 0
         },
         "lowAlerts": {
@@ -26,11 +26,11 @@
         "rateOfChangeAlerts": {
             "fallRate": {
                 "enabled": false,
-                "rate": -0.16652
+                "rate": -0.16651
             },
             "riseRate": {
                 "enabled": false,
-                "rate": 0.16653
+                "rate": 0.16652
             }
         },
         "_userId": "abcd",

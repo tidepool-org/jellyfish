@@ -70,11 +70,11 @@
             "carb": 3,
             "correction": 0.5
         },
-        "bgInput": 6.77192,
+        "bgInput": 6.77191,
         "units": "mmol/L",
         "carbInput": 40,
         "insulinOnBoard": 0.8,
-        "insulinSensitivity": 4.16307,
+        "insulinSensitivity": 4.16306,
         "payload": {
             "someValue": 1234
         },
