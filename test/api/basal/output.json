@@ -16,10 +16,7 @@
         "id": "kmm427pfbrc6rugtmbuli8j4q61u17uk",
         "_version": 0,
         "_active": true,
-        "_deduplicator": {
-            "name": "org.tidepool.deduplicator.device.deactivate.hash",
-            "version": "1.1.0"
-        }
+        "_deduplicator": {}
     },
     {
         "deviceTime": "2014-06-11T06:00:00",
@@ -38,10 +35,7 @@
         "id": "cjou7vscvp8ogv34d6vejootulqfn3jd",
         "_version": 0,
         "_active": false,
-        "_deduplicator": {
-            "name": "org.tidepool.deduplicator.device.deactivate.hash",
-            "version": "1.1.0"
-        }
+        "_deduplicator": {}
     },
     {
         "deviceTime": "2014-06-11T06:00:00",
@@ -61,10 +55,7 @@
         "_version": 1,
         "_active": true,
         "expectedDuration": 21600000,
-        "_deduplicator": {
-            "name": "org.tidepool.deduplicator.device.deactivate.hash",
-            "version": "1.1.0"
-        }
+        "_deduplicator": {}
     },
     {
         "deviceTime": "2014-06-11T09:00:00",
@@ -96,10 +87,7 @@
         "id": "tn33bjb0241j9qh4jg9vdnf1g6k1g9r8",
         "_version": 0,
         "_active": false,
-        "_deduplicator": {
-            "name": "org.tidepool.deduplicator.device.deactivate.hash",
-            "version": "1.1.0"
-        }
+        "_deduplicator": {}
     },
     {
         "deviceTime": "2014-06-11T09:00:00",
@@ -132,10 +120,7 @@
         "_version": 1,
         "_active": true,
         "expectedDuration": 21600000,
-        "_deduplicator": {
-            "name": "org.tidepool.deduplicator.device.deactivate.hash",
-            "version": "1.1.0"
-        }
+        "_deduplicator": {}
     },
     {
         "deviceTime": "2014-06-11T12:00:00",
@@ -167,10 +152,7 @@
         "id": "ga58m84ggkscldj30lehrg74n313skcj",
         "_version": 0,
         "_active": true,
-        "_deduplicator": {
-            "name": "org.tidepool.deduplicator.device.deactivate.hash",
-            "version": "1.1.0"
-        }
+        "_deduplicator": {}
     },
     {
         "deviceTime": "2014-06-11T15:00:00",
@@ -189,10 +171,7 @@
         "id": "lsqqotp92j1d25d3d3ac53dsh6rgjg94",
         "_version": 0,
         "_active": false,
-        "_deduplicator": {
-            "name": "org.tidepool.deduplicator.device.deactivate.hash",
-            "version": "1.1.0"
-        }
+        "_deduplicator": {}
     },
     {
         "deviceTime": "2014-06-11T15:00:00",
@@ -218,10 +197,7 @@
                 "nextId": "kftn188l8rjuvma3qkd3iqg34t0plajp"
             }
         ],
-        "_deduplicator": {
-            "name": "org.tidepool.deduplicator.device.deactivate.hash",
-            "version": "1.1.0"
-        }
+        "_deduplicator": {}
     },
     {
         "deviceTime": "2014-06-11T19:00:00",
@@ -239,9 +215,6 @@
         "id": "kftn188l8rjuvma3qkd3iqg34t0plajp",
         "_version": 0,
         "_active": true,
-        "_deduplicator": {
-            "name": "org.tidepool.deduplicator.device.deactivate.hash",
-            "version": "1.1.0"
-        }
+        "_deduplicator": {}
     }
 ]

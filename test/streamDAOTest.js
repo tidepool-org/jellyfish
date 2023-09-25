@@ -111,8 +111,6 @@ describe('streamDAO', function () {
               _version: 0,
               _active: true,
               _deduplicator:{
-                name: 'org.tidepool.deduplicator.device.deactivate.hash',
-                version: '1.1.0',
                 hash: '', // will have no hash as not a registered data type with id fields
               },
             });
@@ -196,8 +194,6 @@ describe('streamDAO', function () {
               _version: 1,
               _active: true,
               _deduplicator:{
-                name: 'org.tidepool.deduplicator.device.deactivate.hash',
-                version: '1.1.0',
                 hash: schema.generateHash(datum),
               },
             });
@@ -228,8 +224,6 @@ describe('streamDAO', function () {
                       _version: 0,
                       _active: false,
                       _deduplicator:{
-                        name: 'org.tidepool.deduplicator.device.deactivate.hash',
-                        version: '1.1.0',
                         hash: schema.generateHash(datum),
                       },
                     });
