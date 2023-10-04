@@ -104,4 +104,21 @@ describe('schema/duplicate.js', function () {
       done();
     });
   });
+  describe('uses truncated value for hash', function () {
+    var jellyfishSMBG = {
+      deviceId: 'Contour7800-5455830',
+      id: 'cfe71577180f1c5e273609dddff35e93',
+      payload: { logIndices: [1] },
+      time: '2018-01-11T13:25:00.000Z',
+      type: 'smbg',
+      _userId: '1099e49b7e',
+      units: 'mmol/L',
+      value: 5.550747991045533,
+    };
+    it('generates the same as platform', function (done) {
+      const hashed = schema.generateHash(jellyfishSMBG);
+      expect(hashed).to.equal('mdlLEnFPP+xOHpt33XNSl955nNuhHTPS7Or925P1LRI=');
+      done();
+    });
+  });
 });
