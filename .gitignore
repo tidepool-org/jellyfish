@@ -22,4 +22,3 @@ uploads
 deploy/
 dist/
 artifact_node.sh
-package-lock.json
