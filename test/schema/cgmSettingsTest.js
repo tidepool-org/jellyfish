@@ -51,7 +51,7 @@ var goodObject = {
   "rateOfChangeAlerts": {
       "fallRate": {
           "enabled": false,
-          "rate": -0.16652243973136602
+          "rate": -0.16652243973136602243973136602
       },
       "riseRate": {
           "enabled": false,

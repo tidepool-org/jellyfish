@@ -11,12 +11,12 @@
         "deviceId": "test",
         "highAlerts": {
             "enabled": true,
-            "level": 8.32612,
+            "level": 8.3261219865683,
             "snooze": 0
         },
         "lowAlerts": {
             "enabled": true,
-            "level": 3.60799,
+            "level": 3.6079861941795968,
             "snooze": 0
         },
         "outOfRangeAlerts": {
@@ -26,11 +26,11 @@
         "rateOfChangeAlerts": {
             "fallRate": {
                 "enabled": false,
-                "rate": -0.16651
+                "rate": -0.16652243973136602
             },
             "riseRate": {
                 "enabled": false,
-                "rate": 0.16652
+                "rate": 0.16652243973136602
             }
         },
         "_userId": "abcd",
