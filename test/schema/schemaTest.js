@@ -25,19 +25,118 @@ var expect = salinity.expect;
 
 var schema = require('../../lib/schema/schema.js');
 
-describe('schema/convertMgToMmolPrecision', function () {
-    it('give the same presion as the platform does', function (done) {
-      expect(schema.convertMgToMmolPrecision(400.0)).to.equal(22.20299);
-      expect(schema.convertMgToMmolPrecision(297.0)).to.equal(16.48572);
-      expect(schema.convertMgToMmolPrecision(150.0)).to.equal(8.32612);
-      expect(schema.convertMgToMmolPrecision(122.0)).to.equal(6.77191);
-      expect(schema.convertMgToMmolPrecision(100.0)).to.equal(5.55075);
-      expect(schema.convertMgToMmolPrecision(80.0)).to.equal(4.44060); 
-      expect(schema.convertMgToMmolPrecision(75.0)).to.equal(4.16306);
-      expect(schema.convertMgToMmolPrecision(65.0)).to.equal(3.60799);
-      expect(schema.convertMgToMmolPrecision(50.0)).to.equal(2.77537);
-      expect(schema.convertMgToMmolPrecision(40.0)).to.equal(2.22030);
-      expect(schema.convertMgToMmolPrecision(3.0)).to.equal(0.16652);
+describe('schema/convertPlatformMgToMmol', function () {
+  it('give the same precision as the platform does', function (done) {
+    expect(schema.convertPlatformMgToMmol(400.0)).to.equal(22.20299);
+    expect(schema.convertPlatformMgToMmol(297.0)).to.equal(16.48572);
+    expect(schema.convertPlatformMgToMmol(150.0)).to.equal(8.32612);
+    expect(schema.convertPlatformMgToMmol(122.0)).to.equal(6.77191);
+    expect(schema.convertPlatformMgToMmol(100.0)).to.equal(5.55075);
+    expect(schema.convertPlatformMgToMmol(80.0)).to.equal(4.44060);
+    expect(schema.convertPlatformMgToMmol(75.0)).to.equal(4.16306);
+    expect(schema.convertPlatformMgToMmol(65.0)).to.equal(3.60799);
+    expect(schema.convertPlatformMgToMmol(50.0)).to.equal(2.77537);
+    expect(schema.convertPlatformMgToMmol(40.0)).to.equal(2.22030);
+    expect(schema.convertPlatformMgToMmol(3.0)).to.equal(0.16652);
+    done();
+  });
+});
+
+describe('schema/registerFieldsForPlatformDuplicator', function () {
+  it('adds custom fields for a type', function (done) {
+    try {
+      schema.registerFieldsForPlatformDuplicator('mytype', ['value']);
+    } catch (error) {
+      done(error);
+    }
+    done();
+  });
+  it('errors if the type is already registered', function (done) {
+    try {
+      schema.registerFieldsForPlatformDuplicator('mytype', ['value']);
+    } catch (error) {
+      expect(error.message).to.equal(
+        'Id hash fields for type[mytype] already defined[["_userId","deviceId","time","type","value"]], cannot set[["value"]]'
+      );
+      done();
+    }
+  });
+  it('adds base fields for type', function (done) {
+    schema.registerFieldsForPlatformDuplicator('myothertype');
+    expect(JSON.stringify(schema.getPlatformHashFields('myothertype'))).to.equal(
+      JSON.stringify(['_userId', 'deviceId', 'time', 'type'])
+    );
+    done();
+  });
+});
+describe('schema/generatePlatformHash', function () {
+  var reference = {
+    type: 'test-datum',
+    time: new Date('2013-11-27'),
+    timezoneOffset: 120,
+    deviceId: 'test',
+    uploadId: 'test',
+    value: 1.12,
+    units: 'mmol/L',
+    _userId: 'u',
+    _groupId: 'g',
+  };
+  before(function (done) {
+    schema.registerFieldsForPlatformDuplicator('test-datum', [
+      'units',
+      'value',
+    ]);
+    done();
+  });
+  it('generates hash from registered fields', function (done) {
+    const hashed = schema.generatePlatformHash(reference);
+    expect(hashed).to.equal('JorcBmH46w117h6rZnj3WfUYrPH+7Sq1Txam6oR3R98=');
+    done();
+  });
+  it('errors if missing a required field', function (done) {
+    const referenceCopy = reference;
+    delete referenceCopy._userId;
+    try {
+      schema.generatePlatformHash(referenceCopy);
+    } catch (error) {
+      expect(error.message).to.equal(
+        "Can't generate hash, field[_userId] didn't exist on datum of type[test-datum]"
+      );
+      done();
+    }
+  });
+  describe('compare with platform hash', function () {
+    var platformSMBG = {
+      deviceId: 'Contour7800-5455830',
+      id: 'cfe71577180f1c5e273609dddff35e93',
+      payload: { logIndices: [1] },
+      time: '2018-01-11T13:25:00.000Z',
+      type: 'smbg',
+      _userId: '1099e49b7e',
+      units: 'mmol/L',
+      value: 5.9,
+    };
+    it('generates the same as platform', function (done) {
+      const hashed = schema.generatePlatformHash(platformSMBG);
+      expect(hashed).to.equal('zDzfGi/9PRvFiTFjgkZ6+wWA+mvAAJQdza/gdb9GwZ4=');
       done();
     });
+  });
+  describe('uses truncated value for hash', function () {
+    var jellyfishSMBG = {
+      deviceId: 'Contour7800-5455830',
+      id: 'cfe71577180f1c5e273609dddff35e93',
+      payload: { logIndices: [1] },
+      time: '2018-01-11T13:25:00.000Z',
+      type: 'smbg',
+      _userId: '1099e49b7e',
+      units: 'mmol/L',
+      value: 5.550747991045533,
+    };
+    it('generates the same as platform', function (done) {
+      const hashed = schema.generatePlatformHash(jellyfishSMBG);
+      expect(hashed).to.equal('mdlLEnFPP+xOHpt33XNSl955nNuhHTPS7Or925P1LRI=');
+      done();
+    });
+  });
 });

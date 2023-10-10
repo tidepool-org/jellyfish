@@ -194,7 +194,7 @@ describe('streamDAO', function () {
               _version: 1,
               _active: true,
               _deduplicator:{
-                hash: schema.generateHash(datum),
+                hash: schema.generatePlatformHash(datum),
               },
             });
 
@@ -224,7 +224,7 @@ describe('streamDAO', function () {
                       _version: 0,
                       _active: false,
                       _deduplicator:{
-                        hash: schema.generateHash(datum),
+                        hash: schema.generatePlatformHash(datum),
                       },
                     });
 
