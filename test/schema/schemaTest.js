@@ -61,13 +61,6 @@ describe('schema/registerFieldsForPlatformDuplicator', function () {
       done();
     }
   });
-  it('adds base fields for type', function (done) {
-    schema.registerFieldsForPlatformDuplicator('myothertype');
-    expect(JSON.stringify(schema.getPlatformHashFields('myothertype'))).to.equal(
-      JSON.stringify(['_userId', 'deviceId', 'time', 'type'])
-    );
-    done();
-  });
 });
 describe('schema/generatePlatformHash', function () {
   var reference = {

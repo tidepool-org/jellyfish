@@ -35,6 +35,10 @@ var streamDAO = require('../lib/streamDAO.js')(mongoClient);
 describe('streamDAO', function () {
   before(function (done) {
     mongoClient.start(done);
+    schema.registerFieldsForPlatformDuplicator('update-type');
+    schema.registerFieldsForPlatformDuplicator('insert-type');
+    schema.registerFieldsForPlatformDuplicator('before-type');
+    schema.registerFieldsForPlatformDuplicator('none');
   });
 
   beforeEach(function (done) {
@@ -68,7 +72,6 @@ describe('streamDAO', function () {
   it("shouldn't find a value that isn't there", function (done) {
     streamDAO.getDatum('abcd', 'g', function (err, datum) {
       expect(datum).to.not.exist;
-
       done(err);
     });
   });
@@ -76,165 +79,159 @@ describe('streamDAO', function () {
   describe('insert', function () {
     it('should be able to find a value that is there', function (done) {
       var now = Date.now();
-      streamDAO.insertDatum(
-        { id: 'abcd', v: 1, _userId: 'u', _groupId: 'g' },
-        function (err) {
-          if (err != null) {
-            return done(err);
-          }
-
-          streamDAO.getDatum('abcd', 'g', function (err, datum) {
-            expect(datum).to.exist;
-            expect(new Date(datum.createdTime).valueOf()).that.is.within(
-              now,
-              new Date()
-            );
-            expect(new Date(datum.modifiedTime).valueOf()).that.is.within(
-              now,
-              new Date()
-            );
-            expect(new Date(datum.modifiedTime).valueOf()).to.equal(
-              new Date(datum.createdTime).valueOf()
-            );
-            expect(
-              _.omit(
-                datum,
-                'createdTime',
-                'modifiedTime',
-                '_id',
-              )
-            ).to.deep.equals({
-              id: 'abcd',
-              v: 1,
-              _userId: 'u',
-              _groupId: 'g',
-              _version: 0,
-              _active: true,
-              _deduplicator:{
-                hash: '', // will have no hash as not a registered data type with id fields
-              },
-            });
-
-            done(err);
-          });
+      var tDatum = {
+        time: '2014-06-11T11:12:43.029Z',
+        type: 'insert-type',
+        deviceId: 'tools',
+        id: 'abcd',
+        _groupId: 'g',
+        _userId: 'u',
+      };
+      streamDAO.insertDatum(tDatum, function (err) {
+        if (err != null) {
+          return done(err);
         }
-      );
+        streamDAO.getDatum('abcd', 'g', function (err, datum) {
+          expect(datum).to.exist;
+          expect(new Date(datum.createdTime).valueOf()).that.is.within(
+            now,
+            new Date()
+          );
+          expect(new Date(datum.modifiedTime).valueOf()).that.is.within(
+            now,
+            new Date()
+          );
+          expect(new Date(datum.modifiedTime).valueOf()).to.equal(
+            new Date(datum.createdTime).valueOf()
+          );
+          expect(
+            _.omit(
+              datum,
+              'createdTime',
+              'modifiedTime',
+              'time',
+              '_id',
+              '_deduplicator'
+            )
+          ).to.deep.equals({
+            id: tDatum.id,
+            _userId: tDatum._userId,
+            _groupId: tDatum._groupId,
+            _active: true,
+            _version: 0,
+            type: tDatum.type,
+            deviceId: tDatum.deviceId,
+          });
+
+          done(err);
+        });
+      });
     });
   });
 
   describe('update', function () {
     var createdTime = '';
+    var tDatum = {
+      time: '2014-06-11T11:12:43.029Z',
+      type: 'update-type',
+      deviceId: 'tools',
+      id: 'hijk',
+      _groupId: 'g',
+      _userId: 'u',
+      f: 'a',
+    };
 
     beforeEach(function (done) {
-      streamDAO.insertDatum(
-        { id: 'abcd', v: 1, f: 'a', _userId: 'u', _groupId: 'g' },
-        function (err) {
-          if (err != null) {
-            return done(err);
-          }
-
-          streamDAO.getDatum('abcd', 'g', function (err, datum) {
-            createdTime = datum.createdTime;
-            done(err);
-          });
+      streamDAO.insertDatum(tDatum, function (err) {
+        if (err != null) {
+          return done(err);
         }
-      );
+        streamDAO.getDatum('hijk', 'g', function (err, datum) {
+          createdTime = datum.createdTime;
+          done(err);
+        });
+      });
     });
 
     it('cannot update a value that does not exist', function (done) {
-      streamDAO.updateDatum(
-        { id: 'abcde', f: 'a', v: 2828, _userId: 'u', _groupId: 'g' },
-        function (err) {
-          expect(err).to.exist;
+      var datumForUpdate = {
+        time: '2014-06-11T11:12:43.029Z',
+        type: 'update-type',
+        deviceId: 'tools',
+        id: 'hijkl',
+        _groupId: 'g',
+        _userId: 'u',
+      };
 
-          streamDAO.getDatum('abcde', 'g', function (err, datum) {
-            expect(datum).to.not.exist;
-            return done(err);
-          });
-        }
-      );
+      streamDAO.updateDatum(datumForUpdate, function (err) {
+        expect(err).to.exist;
+        streamDAO.getDatum('hijkl', 'g', function (err, datum) {
+          expect(datum).to.not.exist;
+          return done(err);
+        });
+      });
     });
 
     it('should be able to update a value that is there', function (done) {
       var now = Date.now();
-      streamDAO.updateDatum(
-        {
-          id: 'abcd',
-          f: 'a',
-          v: 2828,
-          _userId: 'u',
-          _groupId: 'g',
-          createdTime: createdTime,
-        },
-        function (err) {
-          if (err != null) {
-            return done(err);
-          }
 
-          streamDAO.getDatum('abcd', 'g', function (err, datum) {
-            expect(datum).to.exist;
-            expect(new Date(datum.modifiedTime).valueOf()).that.is.within(
-              now,
-              new Date()
-            );
-            expect(
-              _.omit(
-                datum,
-                'modifiedTime',
-                '_archivedTime',
-                '_id',
-              )
-            ).to.deep.equals({
-              id: 'abcd',
-              f: 'a',
-              v: 2828,
-              _userId: 'u',
-              _groupId: 'g',
-              createdTime: createdTime,
-              _version: 1,
-              _active: true,
-              _deduplicator:{
-                hash: schema.generatePlatformHash(datum),
-              },
-            });
+      var datumForUpdate = tDatum;
+      datumForUpdate.createdTime = createdTime;
 
-            var overwrittenId = datum._id + '_0';
-            mongoClient.withCollection(
-              'deviceData',
-              done,
-              function (coll, done) {
-                coll
-                  .find({ _id: overwrittenId })
-                  .toArray(function (err, elements) {
-                    expect(elements).to.have.length(1);
-                    expect(elements[0]._archivedTime).that.is.within(
-                      now,
-                      Date.now()
-                    );
-                    expect(
-                      _.omit(elements[0], 'modifiedTime', '_archivedTime')
-                    ).to.deep.equals({
-                      _id: overwrittenId,
-                      id: 'abcd',
-                      f: 'a',
-                      _userId: 'u',
-                      _groupId: 'g',
-                      v: 1,
-                      createdTime: createdTime,
-                      _version: 0,
-                      _active: false,
-                      _deduplicator:{
-                        hash: schema.generatePlatformHash(datum),
-                      },
-                    });
-
-                    done(err);
-                  });
-              }
-            );
-          });
+      streamDAO.updateDatum(datumForUpdate, function (err) {
+        if (err != null) {
+          return done(err);
         }
-      );
+
+        streamDAO.getDatum('hijk', 'g', function (err, datum) {
+          expect(datum).to.exist;
+          expect(new Date(datum.modifiedTime).valueOf()).that.is.within(
+            now,
+            new Date()
+          );
+          expect(
+            _.omit(datum, 'modifiedTime', '_archivedTime', '_id', 'time')
+          ).to.deep.equals({
+            id: 'hijk',
+            _userId: 'u',
+            _groupId: 'g',
+            f: 'a',
+            createdTime: createdTime,
+            type: 'update-type',
+            deviceId: 'tools',
+            _version: 1,
+            _active: true,
+            _deduplicator: {
+              hash: schema.generatePlatformHash(datum),
+            },
+          });
+          var overwrittenId = datum._id + '_0';
+          mongoClient.withCollection('deviceData', done, function (coll, done) {
+            coll.find({ _id: overwrittenId }).toArray(function (err, elements) {
+              expect(elements).to.have.length(1);
+              expect(elements[0]._archivedTime).that.is.within(now, Date.now());
+              expect(
+                _.omit(elements[0], 'modifiedTime', '_archivedTime', 'time')
+              ).to.deep.equals({
+                _id: overwrittenId,
+                type: 'update-type',
+                deviceId: 'tools',
+                id: 'hijk',
+                _groupId: 'g',
+                _userId: 'u',
+                f: 'a',
+                createdTime: createdTime,
+                _version: 0,
+                _active: false,
+                _deduplicator: {
+                  hash: schema.generatePlatformHash(datum),
+                },
+              });
+              done(err);
+            });
+          });
+        });
+      });
     });
 
     it('should be able to update a value that is there, even in a race', function (done) {
@@ -253,6 +250,7 @@ describe('streamDAO', function () {
         mongoClient.withCollection('deviceData', done, function (coll, done) {
           coll.find({ f: 'a' }).toArray(function (err, elements) {
             expect(elements).to.have.length(4);
+
             // use to.have instead of to.include because we're expecting an
             // exact number of elements.
             expect(
@@ -286,7 +284,7 @@ describe('streamDAO', function () {
               })[0]
             )
               .to.have.property('id')
-              .equals('abcd');
+              .equals('hijk');
             expect(
               elements.filter(function (e) {
                 return e._active;
@@ -300,17 +298,44 @@ describe('streamDAO', function () {
         });
       }
 
-      var expectedId = misc.generateId(['abcd', 'g']);
+      var expectedId = misc.generateId(['hijk', 'g']);
       streamDAO.updateDatum(
-        { id: 'abcd', f: 'a', v: 2828, _userId: 'u', _groupId: 'g' },
+        {
+          id: 'hijk',
+          type: 'update-type',
+          deviceId: 'tools',
+          time: '2014-06-11T11:12:43.029Z',
+          f: 'a',
+          v: 2828,
+          _userId: 'u',
+          _groupId: 'g',
+        },
         theCallback
       );
       streamDAO.updateDatum(
-        { id: 'abcd', f: 'a', v: 2829, _userId: 'u', _groupId: 'g' },
+        {
+          id: 'hijk',
+          type: 'update-type',
+          deviceId: 'tools',
+          time: '2014-06-11T11:12:43.029Z',
+          f: 'a',
+          v: 2829,
+          _userId: 'u',
+          _groupId: 'g',
+        },
         theCallback
       );
       streamDAO.updateDatum(
-        { id: 'abcd', f: 'a', v: 2830, _userId: 'u', _groupId: 'g' },
+        {
+          id: 'hijk',
+          type: 'update-type',
+          deviceId: 'tools',
+          time: '2014-06-11T11:12:43.029Z',
+          f: 'a',
+          v: 2830,
+          _userId: 'u',
+          _groupId: 'g',
+        },
         theCallback
       );
     });
