@@ -21,4 +21,4 @@ uploads
 
 deploy/
 dist/
-artifact_node.sh
+artifact_docker.sh

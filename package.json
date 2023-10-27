@@ -1,15 +1,12 @@
 {
   "name": "jellyfish",
-  "version": "0.14.0",
+  "version": "0.14.1-alpha.2",
   "description": "Jellyfish are known for their user friendliness with uploads",
   "main": "app.js",
   "scripts": {
+    "lint": "jshint lib test",
     "start": "node app",
-    "jshint": "gulp jshint",
-    "jshint-watch": "gulp jshint-watch",
-    "build": "npm install",
-    "test": "node_modules/.bin/mocha test --recursive --exit",
-    "lint": "gulp jshint"
+    "test": "mocha"
   },
   "directories": {
     "lib": "./lib"
@@ -26,34 +23,29 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "@godaddy/terminus": "^4.5.0",
-    "amoeba": "^0.9.0",
-    "async": "^3.2.2",
+    "amoeba": "1.1.1-alpha.2",
+    "async": "3.2.4",
     "aws-sdk": "^2.814.0",
-    "body-parser": "1.19.1",
+    "body-parser": "1.20.2",
     "bunyan": "1.8.14",
-    "busboy": "0.3.1",
-    "common": "0.2.5",
     "compression": "1.7.4",
     "errorhandler": "^1.5.1",
-    "express": "4.17.1",
-    "lodash": "^4.17.21",
+    "express": "^4.18.2",
+    "lodash": "4.17.21",
     "moment": "^2.29.4",
     "mongodb": "^5.0.1",
     "mongodb-legacy": "^5.0.0",
-    "request": "2.88.2",
     "rx": "4.1.0",
-    "semver": "7.3.2",
-    "sundial": "1.6.0",
-    "tidepool-gatekeeper": "0.2.4",
-    "tidepool-seagull-client": "0.1.9",
-    "user-api-client": "0.5.0"
+    "semver": "7.5.4",
+    "sundial": "1.7.2-alpha.2",
+    "tidepool-gatekeeper": "0.2.6-alpha.2",
+    "tidepool-seagull-client": "0.1.11-alpha.2",
+    "user-api-client": "0.5.1-alpha.2"
   },
   "devDependencies": {
-    "gulp": "4.0.2",
-    "gulp-jshint": "2.1.0",
-    "jshint": "2.13.6",
+    "jshint": "^2.12.0",
     "jshint-stylish": "2.2.1",
-    "mocha": "10.2.0",
-    "salinity": "0.0.8"
+    "mocha": "^10.2.0",
+    "salinity": "0.0.9-alpha.2"
   }
 }
