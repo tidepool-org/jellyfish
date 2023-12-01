@@ -70,6 +70,7 @@
         "_groupId": "1234",
         "id": "254a6gvhik3oucn5p5fblabem9rckbvg",
         "_version": 0,
-        "_active": true
+        "_active": true,
+        "_deduplicator": {}
     }
 ]
