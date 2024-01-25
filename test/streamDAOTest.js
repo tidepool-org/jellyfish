@@ -342,12 +342,14 @@ describe('streamDAO', function(){
   describe('BGM setSummaryOutdated', function(){
     it('setting summary outdated creates a summary', function(done){
       streamDAO.setSummaryOutdated('56789', 'bgm', function(err, outdatedSinceTime){
+        console.log(err);
         expect(err).to.not.exist;
         expect(outdatedSinceTime).to.exist;
 
         streamDAO.getSummary('56789', 'bgm',function(err, summary){
           expect(err).to.not.exist;
           expect(summary).to.exist;
+          console.log(summary);
 
           expect(summary.dates.outdatedSince.getTime()).to.equal(outdatedSinceTime.getTime());
           return done(err);
