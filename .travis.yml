@@ -3,7 +3,7 @@ dist: jammy
 language: node_js
 
 node_js:
-  - 20.11.0
+  - 20.11.1
 
 services:
   - docker
