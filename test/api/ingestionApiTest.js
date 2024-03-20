@@ -53,14 +53,17 @@ describe('ingestion API', function () {
         mongoClient.withCollection('deviceDataSets', cb, function (coll, cb) {
           coll.deleteMany({}, cb);
         });
-      }
+      },
+      (cb) => {
+        mongoClient.withCollection('summary', cb, function (coll, cb) {
+          coll.deleteMany({}, cb);
+        });
+      },
     ], done);
   });
 
-  beforeEach(function (done) {
-    mongoClient.withCollection('summary', done, function (coll, cb) {
-      coll.deleteMany({}, cb);
-    });
+  after(function(done){
+    mongoClient.close(done);
   });
 
   var files = fs.readdirSync(__dirname);
@@ -68,7 +71,6 @@ describe('ingestion API', function () {
     var path = __dirname + '/' + dir;
     var input = JSON.parse(fs.readFileSync(path + '/input.json'));
     var output = JSON.parse(fs.readFileSync(path + '/output.json'), convertDateStrings);
-    let updatedSummary = {cgm: false, bgm: false};
 
     it(dir, function (done) {
       async.mapSeries(
@@ -76,14 +78,14 @@ describe('ingestion API', function () {
         function(e, cb){
           e._userId = userId;
           e._groupId = groupId;
-          dataBroker.addDatum(e, updatedSummary, cb);
+          dataBroker.addDatum(e, cb);
         },
         function(err){
           if (err != null) {
             return done(err);
           }
 
-          const collectionName = input[0].type == 'upload' ? 'deviceDataSets' : 'deviceData';
+          const collectionName = input[0].type === 'upload' ? 'deviceDataSets' : 'deviceData';
           mongoClient.withCollection(collectionName, done, function(coll, cb){
             coll.find().sort({"time": 1, "id": 1, "_version": 1}).toArray(function(err, results){
               expect(results.map(function(e){ return _.omit(e, 'createdTime', 'modifiedTime', "_id", '_archivedTime'); }))
@@ -98,13 +100,12 @@ describe('ingestion API', function () {
     try {
       badInput = JSON.parse(fs.readFileSync(path + '/bad.json'));
       it(dir + ': outdated uploader version errors', function(done) {
-        let updatedSummary = {cgm: false, bgm: false};
         async.mapSeries(
           badInput,
           function(e, cb){
             e._userId = userId;
             e._groupId = groupId;
-            dataBroker.addDatum(e, updatedSummary, cb);
+            dataBroker.addDatum(e, cb);
           },
           function(err) {
             expect(err.message).to.equal('The minimum supported version is [2.53.0]. Version [tidepool-uploader 0.98.0] is no longer supported.');
