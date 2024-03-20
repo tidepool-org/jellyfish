@@ -53,14 +53,17 @@ describe('ingestion API', function () {
         mongoClient.withCollection('deviceDataSets', cb, function (coll, cb) {
           coll.deleteMany({}, cb);
         });
-      }
+      },
+      (cb) => {
+        mongoClient.withCollection('summary', cb, function (coll, cb) {
+          coll.deleteMany({}, cb);
+        });
+      },
     ], done);
   });
 
-  beforeEach(function (done) {
-    mongoClient.withCollection('summary', done, function (coll, cb) {
-      coll.deleteMany({}, cb);
-    });
+  after(function(done){
+    mongoClient.close(done);
   });
 
   var files = fs.readdirSync(__dirname);
@@ -82,7 +85,7 @@ describe('ingestion API', function () {
             return done(err);
           }
 
-          const collectionName = input[0].type == 'upload' ? 'deviceDataSets' : 'deviceData';
+          const collectionName = input[0].type === 'upload' ? 'deviceDataSets' : 'deviceData';
           mongoClient.withCollection(collectionName, done, function(coll, cb){
             coll.find().sort({"time": 1, "id": 1, "_version": 1}).toArray(function(err, results){
               expect(results.map(function(e){ return _.omit(e, 'createdTime', 'modifiedTime', "_id", '_archivedTime'); }))

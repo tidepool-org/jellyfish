@@ -46,14 +46,13 @@ describe('streamDAO', function(){
         mongoClient.withCollection('deviceDataSets', cb, function (coll, cb) {
           coll.deleteMany({}, cb);
         });
+      },
+      (cb) => {
+        mongoClient.withCollection('summary', cb, function (coll, cb) {
+          coll.deleteMany({}, cb);
+        });
       }
     ], done);
-  });
-
-  beforeEach(function(done){
-    mongoClient.withCollection('summary', done, function(coll, cb) {
-      coll.deleteMany({}, cb);
-    });
   });
 
   after(function(done){
