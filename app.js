@@ -18,7 +18,6 @@
 'use strict';
 
 var amoeba = require('amoeba');
-var httpClient = amoeba.httpClient();
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');

@@ -22,3 +22,4 @@ uploads
 deploy/
 dist/
 artifact_node.sh
+yarn.lock
