@@ -1,6 +1,6 @@
 {
   "name": "jellyfish",
-  "version": "0.14.1-alpha.5",
+  "version": "0.14.1-alpha.6",
   "description": "Jellyfish are known for their user friendliness with uploads",
   "main": "app.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "@godaddy/terminus": "^4.5.0",
-    "amoeba": "1.2.1-alpha.3",
+    "amoeba": "1.2.1-alpha.4",
     "async": "3.2.4",
     "aws-sdk": "^2.814.0",
     "body-parser": "1.20.2",
@@ -37,10 +37,10 @@
     "mongodb-legacy": "^5.0.0",
     "rx": "4.1.0",
     "semver": "7.5.4",
-    "sundial": "1.7.2-alpha.4",
-    "tidepool-gatekeeper": "0.2.6-alpha.5",
-    "tidepool-seagull-client": "0.1.11-alpha.5",
-    "user-api-client": "0.5.1-alpha.5"
+    "sundial": "1.7.2-alpha.5",
+    "tidepool-gatekeeper": "0.2.6-alpha.6",
+    "tidepool-seagull-client": "0.1.11-alpha.6",
+    "user-api-client": "0.5.1-alpha.6"
   },
   "devDependencies": {
     "jshint": "^2.12.0",
