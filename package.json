@@ -23,11 +23,11 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "@godaddy/terminus": "^4.5.0",
-    "amoeba": "1.2.1-alpha.4",
+    "amoeba": "1.2.2",
     "async": "3.2.4",
     "aws-sdk": "^2.814.0",
     "body-parser": "1.20.2",
-    "bunyan": "1.8.14",
+    "bunyan": "1.8.15",
     "compression": "1.7.4",
     "errorhandler": "^1.5.1",
     "express": "^4.18.2",
@@ -37,15 +37,18 @@
     "mongodb-legacy": "^5.0.0",
     "rx": "4.1.0",
     "semver": "7.5.4",
-    "sundial": "1.7.2-alpha.5",
-    "tidepool-gatekeeper": "0.2.6-alpha.6",
-    "tidepool-seagull-client": "0.1.11-alpha.6",
-    "user-api-client": "0.5.1-alpha.6"
+    "sundial": "1.7.3",
+    "tidepool-gatekeeper": "0.2.6",
+    "tidepool-seagull-client": "0.1.11",
+    "user-api-client": "0.5.1"
   },
   "devDependencies": {
     "jshint": "^2.12.0",
     "jshint-stylish": "2.2.1",
-    "mocha": "^10.2.0",
-    "salinity": "0.0.9-alpha.4"
+    "mocha": "^10.3.0",
+    "salinity": "0.0.9"
+  },
+  "overrides": {
+    "serialize-javascript@>=6.0.0 <6.0.2": "6.0.2"
   }
 }
