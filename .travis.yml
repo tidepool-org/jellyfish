@@ -3,7 +3,7 @@ dist: jammy
 language: node_js
 
 node_js:
-  - 20.11.1
+  - 20.12.1
 
 services:
   - docker
@@ -11,7 +11,7 @@ services:
 env:
   global:
     - MONGODB=mongodb-linux-x86_64-ubuntu2204-6.0.14
-    - MONGOSH=mongosh-2.2.2-linux-x64
+    - MONGOSH=mongosh-2.2.3-linux-x64
 
 before_install:
   - sudo apt-get remove -y mongodb-org mongodb-org-mongos mongodb-org-server mongodb-org-shell mongodb-org-tools
