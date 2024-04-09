@@ -474,29 +474,6 @@ describe('streamDAO', function () {
       });
     });
 
-    // it('setting existing outdated summary outdated leaves it unchanged', function(done){
-    //   streamDAO.setSummaryOutdated('12345', 'cgm', function(err, outdatedSinceTime){
-    //     expect(err).to.not.exist;
-    //     expect(outdatedSinceTime).to.exist;
-    //
-    //     let outdatedSinceOne = outdatedSinceTime;
-    //
-    //     streamDAO.setSummaryOutdated('12345', 'cgm',function(err, outdatedSinceTime){
-    //       expect(err).to.not.exist;
-    //       expect(outdatedSinceTime).to.exist;
-    //
-    //       expect(outdatedSinceOne.getTime()).to.equal(outdatedSinceTime.getTime());
-    //
-    //       streamDAO.getSummary('12345', 'cgm', function(err, summary){
-    //         expect(err).to.not.exist;
-    //         expect(summary).to.exist;
-    //
-    //         return done(err);
-    //       });
-    //     });
-    //   });
-    // });
-
     it('setting existing summary outdated only adds the outdated flag', function(done){
       let test_summary = {userId: '54321', type: 'cgm', extra: 'unchanged_value',
                                dates: {outdatedSince: null, hasOutdatedSince: false}};
@@ -546,23 +523,6 @@ describe('streamDAO', function () {
         });
       });
     });
-
-    // it('setting existing outdated summary outdated leaves it unchanged', function(done){
-    //   streamDAO.setSummaryOutdated('12345', 'bgm', function(err, outdatedSinceTime){
-    //     expect(err).to.not.exist;
-    //     expect(outdatedSinceTime).to.exist;
-    //
-    //     var outdatedSinceOne = outdatedSinceTime;
-    //
-    //     streamDAO.setSummaryOutdated('12345', 'bgm',function(err, outdatedSinceTime){
-    //       expect(err).to.not.exist;
-    //       expect(outdatedSinceTime).to.exist;
-    //
-    //       expect(outdatedSinceOne.getTime()).to.equal(outdatedSinceTime.getTime());
-    //       return done(err);
-    //     });
-    //   });
-    // });
 
     it('setting existing summary outdated only adds the outdated flag', function (done) {
       let test_summary = {
@@ -625,33 +585,6 @@ describe('streamDAO', function () {
             );
             return done(err);
           });
-        }
-      );
-    });
-
-    it('setting existing outdated summary outdated leaves it unchanged', function (done) {
-      streamDAO.setSummaryOutdated(
-        '12345',
-        'bgm',
-        function (err, outdatedSinceTime) {
-          expect(err).to.not.exist;
-          expect(outdatedSinceTime).to.exist;
-
-          var outdatedSinceOne = outdatedSinceTime;
-
-          streamDAO.setSummaryOutdated(
-            '12345',
-            'bgm',
-            function (err, outdatedSinceTime) {
-              expect(err).to.not.exist;
-              expect(outdatedSinceTime).to.exist;
-
-              expect(outdatedSinceOne.getTime()).to.equal(
-                outdatedSinceTime.getTime()
-              );
-              return done(err);
-            }
-          );
         }
       );
     });
