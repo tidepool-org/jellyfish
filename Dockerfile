@@ -1,41 +1,29 @@
 ### Stage 0 - Base image
-FROM node:14.21.2-alpine as base
+FROM node:20.12.1-alpine as base
 WORKDIR /app
 RUN apk --no-cache update && \
     apk --no-cache upgrade && \
-    apk add --no-cache --virtual .build-dependencies python3 make g++ && \
-    mkdir -p node_modules && chown -R node:node .
+    apk add --no-cache --virtual .build-dependencies python3 make g++
 
-
-### Stage 1 - Create cached `node_modules`
-# Only rebuild layer if `package.json` has changed
+### Stage 1 - Cached node_modules image
 FROM base as dependencies
 COPY package.json .
 COPY package-lock.json .
-RUN \
-  # Build and separate all dependencies required for production
-  npm install --production && cp -R node_modules production_node_modules \
-  # Build all modules, including `devDependancies`
-  && npm install
+RUN NODE_ENV=production npm install && mv node_modules node_modules_production
+RUN NODE_ENV=development npm install && mv node_modules node_modules_development
 
-
-### Stage 2 - Development root with Chromium installed for unit tests
+### Stage 2 - Development image
 FROM base as development
 ENV NODE_ENV=development
-# Copy all `node_modules` dependencies
-COPY --chown=node:node --from=dependencies /app/node_modules ./node_modules
-# Copy source files
-COPY --chown=node:node . .
-USER node
-CMD ["npm", "start"]
+COPY --from=dependencies /app/node_modules_development ./node_modules
+COPY . .
+USER nobody
+CMD ["node", "app"]
 
-
-### Stage 3 - Serve production-ready release
+### Stage 3 - Production image
 FROM base as production
 ENV NODE_ENV=production
-# Copy only `node_modules` needed to run the server
-COPY --from=dependencies /app/production_node_modules ./node_modules
-# Copy source files
-COPY --chown=node:node . .
-USER node
-CMD ["npm", "start"]
+COPY --from=dependencies /app/node_modules_production ./node_modules
+COPY . .
+USER nobody
+CMD ["node", "app"]
