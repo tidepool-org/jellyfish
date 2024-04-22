@@ -1,0 +1,13 @@
+ignore:
+  SNYK-JS-INFLIGHT-6095116:
+    - '*':
+        reason: >-
+          No remediation available. Production dependency via bunyan, but only
+          for the 'rotating-file' logger, which is not in use. Development
+          dependency via mocha, grunt, jshint, and others.
+        expires: 2025-03-31
+  SNYK-JS-ANSIREGEX-1583908:
+    - '*':
+        reason: No remediation available. Dependency dependency via jshint-stylish.
+        expires: 2025-03-31
+patch: {}

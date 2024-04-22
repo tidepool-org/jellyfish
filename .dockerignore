@@ -2,3 +2,7 @@
 .gitignore
 node_modules
 npm-debug.log
+
+.vscode/
+*.envrc
+*.env
