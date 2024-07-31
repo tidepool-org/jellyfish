@@ -26,7 +26,7 @@
         "_version": 0,
         "_active": true,
         "_deduplicator": {
-            "name": "org.tidepool.deduplicator.device.deactivate.legacy.hash",
+            "name": "org.tidepool.deduplicator.device.deactivate.hash",
             "version": "0.0.0"
         }
     }
