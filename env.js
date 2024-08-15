@@ -48,33 +48,59 @@ module.exports = (function () {
     maybeReplaceWithContentsOfFile(env.httpsConfig, 'pfx');
   }
   if (env.httpsPort != null && env.httpsConfig == null) {
-    throw new Error('No https config provided, please set HTTPS_CONFIG with at least the certificate to use.');
+    throw new Error(
+      'No https config provided, please set HTTPS_CONFIG with at least the certificate to use.'
+    );
   }
 
   if (env.httpPort == null && env.httpsPort == null) {
-    throw new Error('Must specify either PORT or HTTPS_PORT in your environment.');
+    throw new Error(
+      'Must specify either PORT or HTTPS_PORT in your environment.'
+    );
   }
 
   env.userApi = {
-    service: config.fromEnvironment('TIDEPOOL_AUTH_CLIENT_ADDRESS', 'shoreline:9107'),
+    service: config.fromEnvironment(
+      'TIDEPOOL_AUTH_CLIENT_ADDRESS',
+      'shoreline:9107'
+    ),
 
     // Name of this server to pass to user-api when getting a server token
-    serverName: config.fromEnvironment("SERVER_NAME", "jellyfish:default"),
+    serverName: config.fromEnvironment('SERVER_NAME', 'jellyfish:default'),
 
     // The secret to use when getting a server token from user-api
-    serverSecret: config.fromEnvironment("TIDEPOOL_SERVER_SECRET")
+    serverSecret: config.fromEnvironment('TIDEPOOL_SERVER_SECRET'),
   };
 
   env.gatekeeper = {
-    service: config.fromEnvironment('TIDEPOOL_PERMISSION_CLIENT_ADDRESS', 'gatekeeper:9123')
+    service: config.fromEnvironment(
+      'TIDEPOOL_PERMISSION_CLIENT_ADDRESS',
+      'gatekeeper:9123'
+    ),
   };
 
   env.seagull = {
-    service: config.fromEnvironment('TIDEPOOL_SEAGULL_CLIENT_ADDRESS', 'seagull:9120')
+    service: config.fromEnvironment(
+      'TIDEPOOL_SEAGULL_CLIENT_ADDRESS',
+      'seagull:9120'
+    ),
   };
 
   env.mongo = {
-    connectionString: cs('data')
+    connectionString: cs('data'),
+  };
+
+  // users who are going to upload via platform during migration
+  var platformUsers;
+  try {
+    usersFile = fs.readFileSync(__dirname + '/platform_users.json');
+    platformUsers = JSON.parse(usersFile);
+  } catch (err) {
+    platformUsers = [];
+  }
+
+  env.uploader = {
+    platformUsers,
   };
 
   return env;
