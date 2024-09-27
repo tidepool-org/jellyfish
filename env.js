@@ -91,16 +91,16 @@ module.exports = (function () {
   };
 
   // users who are going to upload via platform during migration
-  var platformUsers;
-  try {
-    usersFile = fs.readFileSync(__dirname + '/platform_users.json');
-    platformUsers = JSON.parse(usersFile);
-  } catch (err) {
-    platformUsers = [];
+  var usersFile = fs.readFileSync(__dirname + '/platform_users.json');
+  var platformUsers = JSON.parse(usersFile);
+  if (!Array.isArray(platformUsers)){
+    throw new Error(
+      'Must contain an array in platform_users.json'
+    );
   }
-
+  
   env.uploader = {
-    platformUsers,
+    platformUsers: platformUsers.map(item => item.toLowerCase().trim()),
   };
 
   return env;
