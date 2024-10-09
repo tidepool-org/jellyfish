@@ -89,19 +89,6 @@ module.exports = (function () {
   env.mongo = {
     connectionString: cs('data'),
   };
-
-  // users who are going to upload via platform during migration
-  var usersFile = fs.readFileSync(__dirname + '/platform_users.json');
-  var platformUsers = JSON.parse(usersFile);
-  if (!Array.isArray(platformUsers)){
-    throw new Error(
-      'Must contain an array in platform_users.json'
-    );
-  }
   
-  env.uploader = {
-    platformUsers: platformUsers.map(item => item.toLowerCase().trim()),
-  };
-
   return env;
 })();
