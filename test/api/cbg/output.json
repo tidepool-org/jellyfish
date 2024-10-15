@@ -13,7 +13,8 @@
         "_groupId": "1234",
         "id": "eb12p6h892pmd0hhccpt2r17muc407o0",
         "_version": 0,
-        "_active": true
+        "_active": true,
+        "_deduplicator": {}
     },
     {
         "deviceTime": "2014-06-11T17:57:01",
@@ -29,7 +30,8 @@
         "_groupId": "1234",
         "id": "ha2ogn1kenqqhseed504sqnanhnclg5s",
         "_version": 0,
-        "_active": true
+        "_active": true,
+        "_deduplicator": {}
     },
     {
         "deviceTime": "2014-06-12T11:12:43",
@@ -46,7 +48,8 @@
         "_groupId": "1234",
         "id": "i922lobl3kron3t81pjap31anopkspvb",
         "_version": 0,
-        "_active": true
+        "_active": true,
+        "_deduplicator": {}
     },
     {
         "time": "2015-12-21T11:23:08Z",
@@ -59,6 +62,7 @@
         "_groupId": "1234",
         "id": "nsikjhfaprplpq78hc7di2lu5qpt1e3k",
         "_version": 0,
-        "_active": true
+        "_active": true,
+        "_deduplicator": {}
     }
 ]

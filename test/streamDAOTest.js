@@ -80,8 +80,8 @@ describe('streamDAO', function(){
           expect(new Date(datum.createdTime).valueOf()).that.is.within(now, new Date());
           expect(new Date(datum.modifiedTime).valueOf()).that.is.within(now, new Date());
           expect(new Date(datum.modifiedTime).valueOf()).to.equal(new Date(datum.createdTime).valueOf());
-          expect(_.omit(datum, 'createdTime', 'modifiedTime', '_id')).to.deep.equals(
-            { id: 'abcd', v: 1, _userId: 'u', _groupId: 'g', _version: 0, _active: true }
+          expect(_.omit(datum, 'createdTime', 'modifiedTime')).to.deep.equals(
+            { _id: '7jedtb7fq114l6n7nu3vkhrcdimdc07m', id: 'abcd', v: 1, _userId: 'u', _groupId: 'g', _version: 0, _active: true, _deduplicator: { hash: '7jedtb7fq114l6n7nu3vkhrcdimdc07m' } }
           );
 
           done(err);
@@ -125,22 +125,28 @@ describe('streamDAO', function(){
         }
 
         streamDAO.getDatum('abcd', 'g', function(err, datum){
+          if (err != null) {
+            return done(err);
+          }
           expect(datum).to.exist;
           expect(new Date(datum.modifiedTime).valueOf()).that.is.within(now, new Date());
-          expect(_.omit(datum, 'modifiedTime', '_archivedTime', '_id')).to.deep.equals(
-            { id: 'abcd', f: 'a', v: 2828, _userId: 'u', _groupId: 'g', createdTime: createdTime, _version: 1, _active: true }
+          expect(_.omit(datum, 'modifiedTime', '_archivedTime')).to.deep.equals(
+            { _id: '7jedtb7fq114l6n7nu3vkhrcdimdc07m', id: 'abcd', f: 'a', v: 2828, _userId: 'u', _groupId: 'g', createdTime: createdTime, _version: 1, _active: true, _deduplicator: { hash: '7jedtb7fq114l6n7nu3vkhrcdimdc07m' }}
           );
 
           var overwrittenId = datum._id + '_0';
           mongoClient.withCollection('deviceData', done, function(coll, done){
+            
             coll.find({_id: overwrittenId}).toArray(function(err, elements){
+              if (err != null) {
+                return done(err);
+              }
               expect(elements).to.have.length(1);
               expect(elements[0]._archivedTime).that.is.within(now, Date.now());
               expect(_.omit(elements[0], 'modifiedTime', '_archivedTime')).to.deep.equals(
-                { _id: overwrittenId, id: 'abcd', f: 'a', _userId: 'u', _groupId: 'g', v: 1, createdTime: createdTime, _version: 0, _active: false }
+                { _id: overwrittenId, id: 'abcd', f: 'a', _userId: 'u', _groupId: 'g', v: 1, createdTime: createdTime, _version: 0, _active: false, _deduplicator: { hash: overwrittenId }}
               );
-
-              done(err);
+              done();
             });
           });
         });
