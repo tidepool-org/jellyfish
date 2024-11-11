@@ -2,7 +2,7 @@
 
 ## e.g. qa3
 ENV=$1
-## e.g. qa3_ids.txt  
+## e.g. qa3_ids.txt
 USER_IDS_FILE=$2
 ## e.g. "qa3 server secret"
 SECRET_ITEM_NAME=$3
@@ -12,7 +12,7 @@ USER_IDS=()
 
 while IFS= read -r line; do
     USER_IDS+=("$line")
-done < $USER_IDS_FILE
+done <$USER_IDS_FILE
 
 user_ids_json="[\"$(printf '%s", "' "${USER_IDS[@]}" | sed 's/, $//')\"]"
 
