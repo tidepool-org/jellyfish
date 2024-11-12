@@ -2,11 +2,11 @@
 
 ## e.g. qa3
 ENV=$1
-## e.g. qa3_ids.json
-USER_IDS_FILE=$2
 ## e.g. "qa3 server secret"
-SECRET_ITEM_NAME=$3
+SECRET_ITEM_NAME=$2
 
 SECRET=$(op item get $SECRET_ITEM_NAME --account tidepool.1password.com --fields label=credential --format json | jq -r '.value')
 
-node -e "console.log(require('./lib/misc.js').encryptUserIds('$USER_IDS_FILE','$ENV', '$SECRET'))"
+result=$(node -e "console.log(require('./lib/misc.js').decryptUserIds('$ENV', '$SECRET'))")
+
+echo $result

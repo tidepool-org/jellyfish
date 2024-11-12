@@ -26,3 +26,5 @@ artifact_docker.sh
 .vscode/
 *.envrc
 *.env
+/lib/platform_users/*.json
+/lib/platform_users/test.json.enc

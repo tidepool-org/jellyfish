@@ -28,32 +28,34 @@ describe('schema/schemaEnv.js', function () {
   const POD_NAMESPACE = 'test';
   const TIDEPOOL_SERVER_SECRET = 'some kinda secret goes here I guess';
   const USER_IDS = ['123', '456', 'ddbs', 'blahblah'];
-  const filePath = `${__dirname}/../../lib/${POD_NAMESPACE}_user_ids.json`;
 
-  function setupFile(path, data, env, secret) {
-    misc.encryptArrayToFile(data, path, env, secret);
+  function setupFile(env, secret) {
+    const jsonFilePath = `${__dirname}/user_ids/${POD_NAMESPACE}.json`;
+    misc.encryptUserIds(jsonFilePath, env, secret);
   }
 
-  function tearDownFile(path) {
-    fs.unlinkSync(path);
+  function tearDownFile() {
+    fs.unlinkSync(
+      `${__dirname}/../../lib/platform_users/${POD_NAMESPACE}.json.enc`
+    );
   }
 
-  before((done) => {
+  it('will throw an error if the environment specific user_ids file is not present', function (done) {
+    process.env.POD_NAMESPACE = 'not_test';
+    process.env.TIDEPOOL_SERVER_SECRET = TIDEPOOL_SERVER_SECRET;
+    expect(() => require('../../lib/schema/schemaEnv.js')).to.throw();
+    done();
+  });
+
+  it('will return the platform users as an unencrypted array', function (done) {
     process.env.POD_NAMESPACE = POD_NAMESPACE;
     process.env.TIDEPOOL_SERVER_SECRET = TIDEPOOL_SERVER_SECRET;
-    setupFile(filePath, USER_IDS, POD_NAMESPACE, TIDEPOOL_SERVER_SECRET);
-    done();
-  });
+    setupFile(POD_NAMESPACE, TIDEPOOL_SERVER_SECRET);
 
-  after((done) => {
-    process.env = env;
-    tearDownFile(filePath);
-    done();
-  });
-
-  it('file present gets stored platform users', function (done) {
     var schemaEnv = require('../../lib/schema/schemaEnv.js');
     expect(schemaEnv.platformUserIds).to.deep.equal(USER_IDS);
+    process.env = env;
+    tearDownFile();
     done();
   });
 });
