@@ -28,16 +28,17 @@ describe('schema/schemaEnv.js', function () {
   const POD_NAMESPACE = 'test';
   const TIDEPOOL_SERVER_SECRET = 'some kinda secret goes here I guess';
   const USER_IDS = ['123', '456', 'ddbs', 'blahblah'];
+  const envJSONFile = `${__dirname}/../../lib/platform_users/${POD_NAMESPACE}.json`;
+  const envJSONEncFile = `${__dirname}/../../lib/platform_users/${POD_NAMESPACE}.json.enc`;
 
   function setupFile(env, secret) {
-    const jsonFilePath = `${__dirname}/user_ids/${POD_NAMESPACE}.json`;
-    misc.encryptUserIds(jsonFilePath, env, secret);
+    fs.writeFileSync(envJSONFile, JSON.stringify(USER_IDS));
+    misc.encryptUserIds(env, secret);
   }
 
   function tearDownFile() {
-    fs.unlinkSync(
-      `${__dirname}/../../lib/platform_users/${POD_NAMESPACE}.json.enc`
-    );
+    fs.unlinkSync(envJSONFile);
+    fs.unlinkSync(envJSONEncFile);
   }
 
   it('will throw an error if the environment specific user_ids file is not present', function (done) {
