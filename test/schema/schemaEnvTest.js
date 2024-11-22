@@ -26,36 +26,58 @@ var fs = require('fs');
 describe('schema/schemaEnv.js', function () {
   const env = Object.assign({}, process.env);
   const POD_NAMESPACE = 'test';
-  const TIDEPOOL_SERVER_SECRET = 'some kinda secret goes here I guess';
+  const USER_ID_SALT = 'some kinda salt goes here I guess';
   const USER_IDS = ['123', '456', 'ddbs', 'blahblah'];
   const envJSONFile = `${__dirname}/../../lib/platform_users/${POD_NAMESPACE}.json`;
-  const envJSONEncFile = `${__dirname}/../../lib/platform_users/${POD_NAMESPACE}.json.enc`;
+  const envJSONHashedFile = `${__dirname}/../../lib/platform_users/${POD_NAMESPACE}_hashed.json`;
 
-  function setupFile(env, secret) {
+  function setupFile(env, salt) {
     fs.writeFileSync(envJSONFile, JSON.stringify(USER_IDS));
-    misc.encryptUserIds(env, secret);
+    misc.hashUserIds(env, salt);
   }
 
   function tearDownFile() {
     fs.unlinkSync(envJSONFile);
-    fs.unlinkSync(envJSONEncFile);
+    fs.unlinkSync(envJSONHashedFile);
+    process.env = env;
   }
 
   it('will throw an error if the environment specific user_ids file is not present', function (done) {
     process.env.POD_NAMESPACE = 'not_test';
-    process.env.TIDEPOOL_SERVER_SECRET = TIDEPOOL_SERVER_SECRET;
-    expect(() => require('../../lib/schema/schemaEnv.js')).to.throw();
+    process.env.USER_ID_SALT = USER_ID_SALT;
+    var schemaEnv = require('../../lib/schema/schemaEnv.js');
+    expect(schemaEnv.isPlatformUserId).to.throw;
     done();
   });
 
-  it('will return the platform users as an unencrypted array', function (done) {
+  it('will throw an error if the salt is not set', function (done) {
     process.env.POD_NAMESPACE = POD_NAMESPACE;
-    process.env.TIDEPOOL_SERVER_SECRET = TIDEPOOL_SERVER_SECRET;
-    setupFile(POD_NAMESPACE, TIDEPOOL_SERVER_SECRET);
+    process.env.USER_ID_SALT = null;
+    setupFile(POD_NAMESPACE, USER_ID_SALT);
 
     var schemaEnv = require('../../lib/schema/schemaEnv.js');
-    expect(schemaEnv.platformUserIds).to.deep.equal(USER_IDS);
-    process.env = env;
+    expect(schemaEnv.isPlatformUserId('not-a-user')).to.throw;
+    tearDownFile();
+    done();
+  });
+
+  it('will return false when the user is not a platform user', function (done) {
+    process.env.POD_NAMESPACE = POD_NAMESPACE;
+    process.env.USER_ID_SALT = USER_ID_SALT;
+    setupFile(POD_NAMESPACE, USER_ID_SALT);
+    var schemaEnv = require('../../lib/schema/schemaEnv.js');
+    expect(schemaEnv.isPlatformUserId('not-a-user')).to.be.false;
+    tearDownFile();
+    done();
+  });
+
+  it('will return true when the user is a platform user', function (done) {
+    process.env.POD_NAMESPACE = POD_NAMESPACE;
+    process.env.USER_ID_SALT = USER_ID_SALT;
+    setupFile(POD_NAMESPACE, USER_ID_SALT);
+    var schemaEnv = require('../../lib/schema/schemaEnv.js');
+    const randomUserId = Math.floor(Math.random() * USER_IDS.length);
+    expect(schemaEnv.isPlatformUserId(USER_IDS[randomUserId])).to.be.true;
     tearDownFile();
     done();
   });
