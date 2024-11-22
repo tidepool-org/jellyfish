@@ -28,16 +28,13 @@ describe('schema/schemaEnv.js', function () {
   const POD_NAMESPACE = 'test';
   const USER_ID_SALT = 'some kinda salt goes here I guess';
   const USER_IDS = ['123', '456', 'ddbs', 'blahblah'];
-  const envJSONFile = `${__dirname}/../../lib/platform_users/${POD_NAMESPACE}.json`;
   const envJSONHashedFile = `${__dirname}/../../lib/platform_users/${POD_NAMESPACE}_hashed.json`;
 
   function setupFile(env, salt) {
-    fs.writeFileSync(envJSONFile, JSON.stringify(USER_IDS));
-    misc.hashUserIds(env, salt);
+    misc.addUserIdsToHashedEnvironmentFile(env, salt, USER_IDS);
   }
 
   function tearDownFile() {
-    fs.unlinkSync(envJSONFile);
     fs.unlinkSync(envJSONHashedFile);
     process.env = env;
   }
