@@ -74,7 +74,8 @@ module.exports = (function () {
   };
 
   env.mongo = {
-    connectionString: cs('data')
+    connectionString: cs('data'),
+    disableIndexCreation: config.fromEnvironment('TIDEPOOL_DISABLE_INDEX_CREATION', false)
   };
 
   return env;
