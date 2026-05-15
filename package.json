@@ -37,7 +37,7 @@
     "mongodb-legacy": "^5.0.0",
     "rx": "4.1.0",
     "semver": "7.5.4",
-    "sundial": "1.7.4",
+    "sundial": "1.7.6",
     "tidepool-gatekeeper": "0.2.7",
     "tidepool-seagull-client": "0.1.11",
     "user-api-client": "0.5.2"
