@@ -15,7 +15,7 @@
  * == BSD2 LICENSE ==
  */
 
- /* global describe, before, beforeEach, it, after */
+ /* global describe, beforeEach, it */
 
 'use strict';
 
@@ -23,16 +23,7 @@ const util = require('util');
 
 var fs = require('fs');
 
-var async = require('async');
-
-var _ = require('lodash');
 var expect = require('salinity').expect;
-
-var mongoClient = require('../../lib/mongo/mongoClient.js')(
-  { connectionString: 'mongodb://localhost/data_test', closeDelay: 0 }
-);
-var streamDAO = require('../../lib/streamDAO.js')(mongoClient);
-var dataBroker = require('../../lib/dataBroker.js')(streamDAO);
 
 const generateSamples = function (sample, n) {
   const samples = [];
@@ -52,141 +43,78 @@ const generateSamples = function (sample, n) {
   return samples;
 };
 
-describe('Summaries', function () {
-  before(function(done){
-    mongoClient.start(done);
+describe('Upload postprocess work', function () {
+  const cbg = JSON.parse(fs.readFileSync(__dirname + '/cbg/input.json'))[0];
+  const smbg = JSON.parse(fs.readFileSync(__dirname + '/smbg/input.json'))[0];
+
+  const batch = generateSamples(cbg, 500).concat(generateSamples(smbg, 500));
+
+  let created;
+  const workClient = {
+    createUploadPostprocessWork: function (userId, reason, availableTime, cb) {
+      created.push({ userId, reason, availableTime });
+      cb();
+    }
+  };
+  const dataBroker = require('../../lib/dataBroker.js')({}, workClient);
+  const createWork = util.promisify(dataBroker.createUploadPostprocessWork);
+
+  beforeEach(function () {
+    created = [];
   });
 
-  beforeEach(function (done) {
-    async.parallel([
-      (cb) => {
-        mongoClient.withCollection('summary', cb, function (coll, cb) {
-          coll.deleteMany({}, cb);
-        });
-      },
-    ], done);
-  });
-
-  after(function(done){
-    mongoClient.close(done);
-  });
-
-  describe('setSummaryOutdated', function(){
-    const cbg = JSON.parse(fs.readFileSync(__dirname + '/cbg/input.json'))[0];
-    const smbg = JSON.parse(fs.readFileSync(__dirname + '/smbg/input.json'))[0];
-
-    const batch = generateSamples(cbg, 500).concat(generateSamples(smbg, 500));
-
-    const setSummariesOutdated = util.promisify(dataBroker.setSummariesOutdated);
-    const getSummary = util.promisify(streamDAO.getSummary);
-
-    it('should not return an error or create a summary if the user id is undefined', async function() {
-      await setSummariesOutdated(undefined, batch, batch.length);
-
-      const coll = mongoClient.collection('summary');
-      const count = await coll.countDocuments({});
-      expect(count).to.equal(0);
+  describe('createUploadPostprocessWork', function () {
+    it('should not return an error or create work if the user id is undefined', async function() {
+      await createWork(undefined, batch, batch.length);
+      expect(created).to.be.empty;
     });
 
-    it('should not return an error or create a summary if the user id is empty', async function() {
-      await setSummariesOutdated('', batch, batch.length);
-
-      const coll = mongoClient.collection('summary');
-      const count = await coll.countDocuments({});
-      expect(count).to.equal(0);
+    it('should not return an error or create work if the user id is empty', async function() {
+      await createWork('', batch, batch.length);
+      expect(created).to.be.empty;
     });
 
-   it('should create a new summary for each data type in the batch', async function() {
-     await setSummariesOutdated('1', batch, batch.length);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
+    it('should create one work item for the user however many summary types the batch updates', async function() {
+      await createWork('1', batch, batch.length);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].userId).to.equal('1');
+    });
 
-     expect(cgm).to.exist;
-     expect(bgm).to.exist;
-   });
+    it('should create work when only one summary type is in the batch', async function() {
+      await createWork('1', batch.slice(0, 500), 500);
+      expect(created).to.have.lengthOf(1);
+    });
 
-   it('should create a new summary only if the type is in the batch', async function() {
-     await setSummariesOutdated('1', batch.slice(0, 500), 500);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
+    it('should not create work when the batch updates no summary type', async function() {
+      const bolusOnly = generateSamples({ ...cbg, type: 'bolus' }, 10);
+      await createWork('1', bolusOnly, bolusOnly.length);
+      expect(created).to.be.empty;
+    });
 
-     expect(cgm).to.exist;
-     expect(bgm).to.not.exist;
-   });
+    it('should report LEGACY_DATA_ADDED deferred ~90 seconds with a full batch', async function() {
+      await createWork('1', batch, batch.length);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('LEGACY_DATA_ADDED');
 
-   it('should set outdated reason to LEGACY_DATA_ADDED with full batch', async function() {
-     await setSummariesOutdated('1', batch, batch.length);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
+      const now = new Date().getTime();
+      expect(created[0].availableTime).to.exist;
 
-     expect(cgm).to.exist;
-     expect(cgm.dates?.outdatedReason).to.deep.equal(['LEGACY_DATA_ADDED']);
-     expect(bgm).to.exist;
-     expect(bgm.dates?.outdatedReason).to.deep.equal(['LEGACY_DATA_ADDED']);
-   });
+      const buffer = (created[0].availableTime.getTime() - now) / 1000;
+      expect(buffer).to.be.above(85);
+      expect(buffer).to.be.below(95);
+    });
 
-   it('should set outdated since ~90 seconds in the future with a full batch', async function() {
-     await setSummariesOutdated('1', batch, batch.length);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
+    it('should report UPLOAD_COMPLETED available immediately with an incomplete batch', async function() {
+      await createWork('1', batch.slice(0, batch.length -1), batch.length - 1);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
+      expect(created[0].availableTime).to.equal(null);
+    });
 
-     const now = new Date().getTime();
-
-     expect(cgm).to.exist;
-     expect(cgm.dates?.outdatedSince).to.exist;
-
-     const cgmbuffer = (cgm.dates.outdatedSince.getTime() - now) / 1000;
-     expect(cgmbuffer).to.be.above(85);
-     expect(cgmbuffer).to.be.below(95);
-
-     expect(bgm).to.exist;
-     expect(bgm.dates?.outdatedSince).to.exist;
-
-     const bgmbuffer = (bgm.dates.outdatedSince.getTime() - now) / 1000;
-     expect(bgmbuffer).to.be.above(85);
-     expect(bgmbuffer).to.be.below(95);
-   });
-
-   it('should set outdated reason to LEGACY_UPLOAD_COMPLETED with an incomplete batch', async function() {
-     await setSummariesOutdated('1', batch.slice(0, batch.length -1), batch.length - 1);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
-
-     expect(cgm).to.exist;
-     expect(cgm.dates?.outdatedReason).to.deep.equal(['LEGACY_UPLOAD_COMPLETED']);
-     expect(bgm).to.exist;
-     expect(bgm.dates?.outdatedReason).to.deep.equal(['LEGACY_UPLOAD_COMPLETED']);
-   });
-
-   it('should set outdated since to the current time with an incomplete batch', async function() {
-     await setSummariesOutdated('1', batch.slice(0, batch.length -1), batch.length - 1);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
-
-     const now = new Date().getTime();
-
-     expect(cgm).to.exist;
-     expect(cgm.dates?.outdatedSince).to.exist;
-
-     const cgmbuffer = Math.abs((cgm.dates.outdatedSince.getTime() - now) / 1000);
-     expect(cgmbuffer).to.be.below(5);
-
-     expect(bgm).to.exist;
-     expect(bgm.dates?.outdatedSince).to.exist;
-
-     const bgmbuffer = Math.abs((bgm.dates.outdatedSince.getTime() - now) / 1000);
-     expect(bgmbuffer).to.be.below(5);
-   });
-
-   it('should set outdated reason to LEGACY_DATA_ADDED when the batch was not fully ingested', async function() {
-     await setSummariesOutdated('1', batch, batch.length - 1);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
-
-     expect(cgm).to.exist;
-     expect(cgm.dates?.outdatedReason).to.deep.equal(['LEGACY_DATA_ADDED']);
-     expect(bgm).to.exist;
-     expect(bgm.dates?.outdatedReason).to.deep.equal(['LEGACY_DATA_ADDED']);
-   });
+    it('should report LEGACY_DATA_ADDED when the batch was not fully ingested', async function() {
+      await createWork('1', batch, batch.length - 1);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('LEGACY_DATA_ADDED');
+    });
   });
 });
