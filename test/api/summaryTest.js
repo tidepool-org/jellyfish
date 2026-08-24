@@ -65,34 +65,30 @@ describe('Upload postprocess work', function () {
 
   describe('createUploadPostprocessWork', function () {
     it('should not return an error or create work if the user id is undefined', async function() {
-      await createWork(undefined, batch, batch.length);
+      await createWork(undefined, batch);
       expect(created).to.be.empty;
     });
 
     it('should not return an error or create work if the user id is empty', async function() {
-      await createWork('', batch, batch.length);
+      await createWork('', batch);
       expect(created).to.be.empty;
     });
 
-    it('should create one work item for the user however many summary types the batch updates', async function() {
-      await createWork('1', batch, batch.length);
+    it('should create one work item for the user', async function() {
+      await createWork('1', batch);
       expect(created).to.have.lengthOf(1);
       expect(created[0].userId).to.equal('1');
     });
 
-    it('should create work when only one summary type is in the batch', async function() {
-      await createWork('1', batch.slice(0, 500), 500);
-      expect(created).to.have.lengthOf(1);
-    });
-
-    it('should not create work when the batch updates no summary type', async function() {
+    it('should create work when the batch updates no summary type', async function() {
       const bolusOnly = generateSamples({ ...cbg, type: 'bolus' }, 10);
-      await createWork('1', bolusOnly, bolusOnly.length);
-      expect(created).to.be.empty;
+      await createWork('1', bolusOnly);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
     });
 
     it('should report LEGACY_DATA_ADDED deferred ~90 seconds with a full batch', async function() {
-      await createWork('1', batch, batch.length);
+      await createWork('1', batch);
       expect(created).to.have.lengthOf(1);
       expect(created[0].reason).to.equal('LEGACY_DATA_ADDED');
 
@@ -105,16 +101,10 @@ describe('Upload postprocess work', function () {
     });
 
     it('should report UPLOAD_COMPLETED available immediately with an incomplete batch', async function() {
-      await createWork('1', batch.slice(0, batch.length -1), batch.length - 1);
+      await createWork('1', batch.slice(0, batch.length -1));
       expect(created).to.have.lengthOf(1);
       expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
       expect(created[0].availableTime).to.equal(null);
-    });
-
-    it('should report LEGACY_DATA_ADDED when the batch was not fully ingested', async function() {
-      await createWork('1', batch, batch.length - 1);
-      expect(created).to.have.lengthOf(1);
-      expect(created[0].reason).to.equal('LEGACY_DATA_ADDED');
     });
   });
 });
