@@ -73,6 +73,10 @@ module.exports = (function () {
     service: config.fromEnvironment('TIDEPOOL_SEAGULL_CLIENT_ADDRESS', 'seagull:9120')
   };
 
+  env.data = {
+    service: config.fromEnvironment('TIDEPOOL_DATA_CLIENT_ADDRESS', 'data:9220')
+  };
+
   env.mongo = {
     connectionString: cs('data')
   };
