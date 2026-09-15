@@ -22,25 +22,11 @@
 const util = require('util');
 
 var fs = require('fs');
+var axios = require('axios');
 
 var expect = require('salinity').expect;
 
-const generateSamples = function (sample, n) {
-  const samples = [];
-  const now = new Date();
-
-  for (let i = 0; i < n; i++) {
-    const time = new Date(now);
-    time.setMinutes(now.getMinutes() - (i * 5));
-
-    const cloned = { ...sample };
-    cloned.time = time.toISOString();
-    cloned.id = sample.id + i;
-    samples.push(cloned);
-  }
-
-  return samples;
-};
+const generateSamples = require('./samples.js').generateSamples;
 
 describe('Upload postprocess work', function () {
   const cbg = JSON.parse(fs.readFileSync(__dirname + '/cbg/input.json'))[0];
@@ -48,6 +34,7 @@ describe('Upload postprocess work', function () {
   const upload = JSON.parse(fs.readFileSync(__dirname + '/upload/input.json'))[0];
 
   const batch = generateSamples(cbg, 500).concat(generateSamples(smbg, 500));
+  const rejected = { statusCode: 400, message: 'rejected' };
 
   let created;
   let workError;
@@ -76,7 +63,7 @@ describe('Upload postprocess work', function () {
       expect(created).to.be.empty;
     });
 
-    it('should not create work if nothing of the batch was written', async function() {
+    it('should not create work if nothing of the batch was stored', async function() {
       await createWork('1', batch, [], null);
       expect(created).to.be.empty;
     });
@@ -86,15 +73,28 @@ describe('Upload postprocess work', function () {
       expect(created).to.be.empty;
     });
 
-    it('should not create work if only upload records were written', async function() {
+    it('should not create work if only upload records were stored', async function() {
       await createWork('1', [upload], [upload], null);
       expect(created).to.be.empty;
     });
 
-    it('should create work when the upload failed, whatever was written', async function() {
-      await createWork('1', [upload], [], { statusCode: 400, message: 'rejected' });
+    it('should not create work when the upload was rejected before anything was stored', async function() {
+      await createWork('1', [upload, cbg], [], rejected);
+      expect(created).to.be.empty;
+    });
+
+    it('should create work for the data stored before the upload failed', async function() {
+      await createWork('1', [cbg, cbg], [cbg], rejected);
       expect(created).to.have.lengthOf(1);
       expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
+      expect(created[0].availableTime).to.equal(null);
+    });
+
+    it('should report a failed full batch as the completed upload, available immediately', async function() {
+      await createWork('1', batch, batch.slice(0, 10), rejected);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
+      expect(created[0].availableTime).to.equal(null);
     });
 
     it('should create one work item for the user', async function() {
@@ -110,7 +110,7 @@ describe('Upload postprocess work', function () {
       expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
     });
 
-    it('should create work for the data written along with an upload record', async function() {
+    it('should create work for the data stored along with an upload record', async function() {
       await createWork('1', [upload, cbg], [upload, cbg], null);
       expect(created).to.have.lengthOf(1);
       expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
@@ -137,7 +137,7 @@ describe('Upload postprocess work', function () {
       expect(created[0].availableTime).to.equal(null);
     });
 
-    it('should report the size of the batch when only part of it was written', async function() {
+    it('should report the size of the batch when only part of it was stored', async function() {
       await createWork('1', batch, batch.slice(0, 10), null);
       expect(created).to.have.lengthOf(1);
       expect(created[0].reason).to.equal('LEGACY_DATA_ADDED');
@@ -147,6 +147,31 @@ describe('Upload postprocess work', function () {
       workError = new Error('data service unavailable');
       await createWork('1', batch, batch, null);
       expect(created).to.have.lengthOf(1);
+    });
+
+    it('should log work request errors without the server token or request configuration', async function() {
+      const token = 'synthetic-server-token';
+      workError = new axios.AxiosError('connection refused', 'ECONNREFUSED', {
+        headers: { 'x-tidepool-session-token': token }
+      });
+      const lines = [];
+      const write = process.stdout.write;
+      process.stdout.write = function(line) { lines.push(line); return true; };
+      try {
+        await createWork('1', batch, batch, null);
+      } finally {
+        process.stdout.write = write;
+      }
+
+      expect(lines).to.have.lengthOf(1);
+      expect(lines[0]).to.not.contain(token);
+      const record = JSON.parse(lines[0]);
+      expect(record.err).to.not.have.property('config');
+      expect(record.err).to.not.have.property('request');
+      expect(record.err.message).to.equal('connection refused');
+      expect(record.err.code).to.equal('ECONNREFUSED');
+      expect(record.err.stack).to.be.a('string');
+      expect(record.userId).to.equal('1');
     });
   });
 });

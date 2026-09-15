@@ -18,24 +18,21 @@
 'use strict';
 
 var amoeba = require('amoeba');
-var httpClient = amoeba.httpClient();
 
 var config = require('./env.js');
 var log = require('./lib/log.js')('app.js');
 
 (function(){
-  var lifecycle = amoeba.lifecycle();
-
   var httpClient = amoeba.httpClient();
   
   var userApiClient = require('user-api-client').client( config.userApi, {
-    get: function() { return [{"protocol": "http", "host": config.userApi.service}]; }
+    get: function() { return [{ protocol: 'http', host: config.userApi.service }]; }
   }
   );
 
   var seagullClient = require('tidepool-seagull-client')(
     {
-      get: function() { return [{"protocol": "http", "host": config.seagull.service}]; }
+      get: function() { return [{ protocol: 'http', host: config.seagull.service }]; }
     },
     {},
     httpClient
@@ -46,9 +43,11 @@ var log = require('./lib/log.js')('app.js');
     httpClient,
     userApiClient.withServerToken.bind(userApiClient),
     {
-      get: function() { return [{"protocol": "http", "host": config.gatekeeper.service}]; }
+      get: function() { return [{ protocol: 'http', host: config.gatekeeper.service }]; }
     }
   );
+
+  var workClient = require('./lib/workClient.js')(config.data, userApiClient);
 
   var mongoClient = require('./lib/mongo/mongoClient.js')(config.mongo);
   mongoClient.start();
@@ -58,15 +57,16 @@ var log = require('./lib/log.js')('app.js');
     mongoClient,
     seagullClient,
     userApiClient,
-    gatekeeperClient
+    gatekeeperClient,
+    workClient
   );
-  lifecycle.add('jellyfishService', service);
-
   process.on('uncaughtException', function(err){
     log.error(err, 'Uncaught exception bubbled all the way up!');
+    process.exit(1);
   });
 
-  lifecycle.start();
-  lifecycle.join();
+  // Terminus owns shutdown signals and drains postprocessing work before exiting. Registering
+  // amoeba's lifecycle signal handlers here would close the server before Terminus can drain it.
+  service.start();
 
 })();

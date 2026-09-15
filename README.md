@@ -37,11 +37,23 @@ Jellyfish is configured through environment variables. Besides the ports (`PORT`
 
 ### Upload postprocess work
 
-After each upload request, jellyfish asks the platform data service to recalculate the summaries of the
-user and to synchronize the EHR by creating `org.tidepool.data.upload.postprocess` work with
-`POST /v1/work`. **The platform release providing that route must be deployed before this version of
-jellyfish.** Work creation is best-effort: a failure is logged and the upload still succeeds, but the
-data uploaded is then not postprocessed until the next upload of the user.
+After each upload request that stored data other than upload records, jellyfish asks the platform data
+service to recalculate the summaries of the user and to synchronize the EHR by creating
+`org.tidepool.data.upload.postprocess` work with `POST /v1/work`. Data present already counts as stored,
+so re-uploading a device has the user postprocessed again; a request rejected before storing anything
+creates no work.
+
+Work creation is best-effort: the work is created after the upload is answered, and a failure is logged
+at error level while the upload still succeeds, but the data uploaded is then not postprocessed until
+the next upload of the user. On shutdown, jellyfish waits for the work requests still in flight, for up
+to their timeout of 30 seconds, so the termination grace period of the pod has to cover that wait on top
+of the `preStop` hook and the 5 seconds terminus waits before stopping the server.
+
+**Deployment order.** The platform release providing `POST /v1/work` must be deployed before this
+version of jellyfish, and this version of jellyfish must be deployed before the platform release that
+retires the summary `outdatedSince` flag
+([tidepool-org/platform#969](https://github.com/tidepool-org/platform/pull/969)): uploads through an
+older jellyfish would otherwise mark summaries that nothing recalculates anymore.
 
 ## JSHint
 

@@ -29,37 +29,34 @@ var mongoClient = require('../../lib/mongo/mongoClient.js')(
   { connectionString: 'mongodb://localhost/data_test', closeDelay: 0 }
 );
 
+const generateSamples = require('./samples.js').generateSamples;
+
 const userId = 'abcd';
 const sessionToken = 'session-token';
-const serverToken = 'server-token';
 
 const cbg = JSON.parse(fs.readFileSync(__dirname + '/cbg/input.json'))[0];
 const upload = JSON.parse(fs.readFileSync(__dirname + '/upload/input.json'))[0];
 
-// generateSamples returns n copies of the sample five minutes apart, so that their ids differ
-function generateSamples(sample, n) {
-  const samples = [];
-  const start = new Date(sample.time);
-  for (let i = 0; i < n; i++) {
-    samples.push(Object.assign({}, sample, { time: new Date(start.getTime() + i * 5 * 60 * 1000).toISOString() }));
-  }
-  return samples;
-}
-
-// The upload API, with the platform data service stood in for by a local server that records the
-// upload postprocess work it is asked to create.
+// The upload API, with the work client stood in for by a double that records the upload postprocess
+// work it is asked to create.
 describe('upload API', function () {
-  let dataService;
-  let workRequests;
-  let workResponses;
-  let respondToWork;
+  let created;
+  let unanswered;
+  let answerWork;
 
-  let service;
-  let port;
-
+  const workClient = {
+    createUploadPostprocessWork: function (userId, reason, availableTime, cb) {
+      created.push({ userId, reason, availableTime });
+      if (answerWork) {
+        cb(null, { id: 'work-1' });
+      } else {
+        unanswered.push(cb);
+      }
+    }
+  };
   const userApiClient = {
     checkToken: function (token, cb) { cb(null, token === sessionToken ? { userid: userId } : null); },
-    withServerToken: function (cb) { cb(null, serverToken); }
+    withServerToken: function (cb) { cb(null, 'server-token'); }
   };
   const seagullClient = {
     getPrivatePair: function (userid, name, token, cb) { cb(null, { id: 'private-' + userid }); }
@@ -68,59 +65,38 @@ describe('upload API', function () {
     userInGroup: function (userid, groupId, cb) { cb(null, {}); }
   };
 
-  function listen(server, cb) {
-    server.listen(0, '127.0.0.1', function () { cb(server.address().port); });
-  }
+  let service;
+  let port;
 
   before(function (done) {
-    dataService = http.createServer(function (req, res) {
-      let body = '';
-      req.on('data', function (chunk) { body += chunk; });
-      req.on('end', function () {
-        workRequests.push({ method: req.method, url: req.url, headers: req.headers, body: JSON.parse(body) });
-        workResponses.push(res);
-        respondToWork(res);
-      });
-    });
-    listen(dataService, function (dataServicePort) {
-      // the service takes the port to listen on, so find a free one for it
-      const probe = http.createServer();
-      listen(probe, function (freePort) {
-        probe.close(function () {
-          port = freePort;
-          service = require('../../lib/jellyfishService.js')(
-            { httpPort: port, data: { service: '127.0.0.1:' + dataServicePort, timeout: 500 } },
-            mongoClient,
-            seagullClient,
-            userApiClient,
-            gatekeeperClient
-          );
-          mongoClient.start(function (err) {
-            if (err != null) {
-              return done(err);
-            }
-            service.start(done);
-          });
-        });
+    service = require('../../lib/jellyfishService.js')(
+      { httpPort: 0 },
+      mongoClient,
+      seagullClient,
+      userApiClient,
+      gatekeeperClient,
+      workClient
+    );
+    mongoClient.start(function (err) {
+      if (err != null) {
+        return done(err);
+      }
+      service.start(function (err, boundPort) {
+        port = boundPort;
+        done(err);
       });
     });
   });
 
   after(function (done) {
     service.close();
-    dataService.closeAllConnections();
-    dataService.close(function () {
-      mongoClient.close(done);
-    });
+    mongoClient.close(done);
   });
 
   beforeEach(function (done) {
-    workRequests = [];
-    workResponses = [];
-    respondToWork = function (res) {
-      res.writeHead(201, { 'content-type': 'application/json' });
-      res.end(JSON.stringify({ id: 'work-1' }));
-    };
+    created = [];
+    unanswered = [];
+    answerWork = true;
     async.each(['deviceData', 'deviceDataSets'], function (collectionName, cb) {
       mongoClient.withCollection(collectionName, cb, function (coll, cb) {
         coll.deleteMany({}, cb);
@@ -129,8 +105,8 @@ describe('upload API', function () {
   });
 
   afterEach(function () {
-    // release the responses a test left hanging
-    workResponses.forEach(function (res) { res.destroy(); });
+    // answer the creations a test left unanswered
+    unanswered.forEach(function (cb) { cb(null, { id: 'work-1' }); });
   });
 
   function post(body, cb) {
@@ -155,66 +131,44 @@ describe('upload API', function () {
     req.end(data);
   }
 
-  // The work is created after the upload is answered, so give it a moment to reach the data service
-  function settled(cb) {
-    setTimeout(cb, 200);
-  }
+  // The work is created right after the response is sent, before the client can have read it, so
+  // the work created is final by the time a test has the response.
+  const immediateWork = { userId: userId, reason: 'UPLOAD_COMPLETED', availableTime: null };
 
   it('should write the data and create upload postprocess work for the user', function (done) {
     post(generateSamples(cbg, 3), function (err, status, duplicates) {
       expect(err).to.not.exist;
       expect(status).to.equal(200);
       expect(duplicates).to.deep.equal([]);
-
-      settled(function () {
-        expect(workRequests).to.have.lengthOf(1);
-        const request = workRequests[0];
-        expect(request.method).to.equal('POST');
-        expect(request.url).to.equal('/v1/work');
-        expect(request.headers['x-tidepool-session-token']).to.equal(serverToken);
-        expect(request.body).to.deep.equal({
-          type: 'org.tidepool.data.upload.postprocess',
-          groupId: 'org.tidepool.data.upload.postprocess:' + userId,
-          serialId: 'org.tidepool.data.upload.postprocess:' + userId,
-          processingTimeout: 300,
-          metadata: { userId: userId, reasons: ['UPLOAD_COMPLETED'] }
-        });
-        done();
-      });
+      expect(created).to.deep.equal([immediateWork]);
+      done();
     });
   });
 
   it('should defer the work of a full batch', function (done) {
+    // the datums of a batch are written one at a time
+    this.timeout(60000);
     post(generateSamples(cbg, 1000), function (err, status, duplicates) {
       expect(err).to.not.exist;
       expect(status).to.equal(200);
       expect(duplicates).to.deep.equal([]);
-
-      settled(function () {
-        expect(workRequests).to.have.lengthOf(1);
-        const create = workRequests[0].body;
-        expect(create.metadata.reasons).to.deep.equal(['LEGACY_DATA_ADDED']);
-        const deferral = (new Date(create.processingAvailableTime).getTime() - Date.now()) / 1000;
-        expect(deferral).to.be.above(80);
-        expect(deferral).to.be.below(95);
-        done();
-      });
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('LEGACY_DATA_ADDED');
+      const deferral = (created[0].availableTime.getTime() - Date.now()) / 1000;
+      expect(deferral).to.be.above(80);
+      expect(deferral).to.be.below(95);
+      done();
     });
   });
 
-  it('should answer the upload without waiting for the data service', function (done) {
-    respondToWork = function () {};
-
-    const start = Date.now();
+  it('should answer the upload without waiting for the work to be created', function (done) {
+    answerWork = false;
     post(generateSamples(cbg, 3), function (err, status) {
       expect(err).to.not.exist;
       expect(status).to.equal(200);
-      expect(Date.now() - start).to.be.below(400);
-
-      settled(function () {
-        expect(workRequests).to.have.lengthOf(1);
-        done();
-      });
+      expect(created).to.have.lengthOf(1);
+      expect(unanswered).to.have.lengthOf(1);
+      done();
     });
   });
 
@@ -223,11 +177,8 @@ describe('upload API', function () {
       expect(err).to.not.exist;
       expect(status).to.equal(200);
       expect(duplicates).to.deep.equal([]);
-
-      settled(function () {
-        expect(workRequests).to.be.empty;
-        done();
-      });
+      expect(created).to.be.empty;
+      done();
     });
   });
 
@@ -236,64 +187,46 @@ describe('upload API', function () {
       expect(err).to.not.exist;
       expect(status).to.equal(200);
       expect(duplicates).to.deep.equal([]);
-
-      settled(function () {
-        expect(workRequests).to.be.empty;
-        done();
-      });
+      expect(created).to.be.empty;
+      done();
     });
   });
 
-  it('should create work when the upload is rejected', function (done) {
+  it('should not create work when the upload is rejected before any data is stored', function (done) {
     post([{ type: 'unknown' }], function (err, status, body) {
       expect(err).to.not.exist;
       expect(status).to.equal(400);
       expect(body.statusCode).to.equal(400);
       expect(body.dataIndex).to.equal(0);
-
-      settled(function () {
-        expect(workRequests).to.have.lengthOf(1);
-        expect(workRequests[0].body.metadata.reasons).to.deep.equal(['UPLOAD_COMPLETED']);
-        done();
-      });
+      expect(created).to.be.empty;
+      done();
     });
   });
 
-  it('should not create work when the whole upload is a duplicate', function (done) {
+  it('should create work when the whole upload is a duplicate', function (done) {
     const samples = generateSamples(cbg, 3);
     post(samples, function (err, status) {
       expect(err).to.not.exist;
       expect(status).to.equal(200);
 
-      settled(function () {
-        expect(workRequests).to.have.lengthOf(1);
-
-        post(samples, function (err, status, duplicates) {
-          expect(err).to.not.exist;
-          expect(status).to.equal(200);
-          expect(duplicates).to.deep.equal([0, 1, 2]);
-
-          settled(function () {
-            expect(workRequests).to.have.lengthOf(1);
-            done();
-          });
-        });
+      post(samples, function (err, status, duplicates) {
+        expect(err).to.not.exist;
+        expect(status).to.equal(200);
+        expect(duplicates).to.deep.equal([0, 1, 2]);
+        expect(created).to.deep.equal([immediateWork, immediateWork]);
+        done();
       });
     });
   });
 
-  it('should create work for the data written before a rejected datum', function (done) {
+  it('should create work for the data stored before a rejected datum', function (done) {
     const samples = generateSamples(cbg, 2);
     post([samples[0], { type: 'unknown' }, samples[1]], function (err, status, body) {
       expect(err).to.not.exist;
       expect(status).to.equal(400);
       expect(body.dataIndex).to.equal(1);
-
-      settled(function () {
-        expect(workRequests).to.have.lengthOf(1);
-        expect(workRequests[0].body.metadata.reasons).to.deep.equal(['UPLOAD_COMPLETED']);
-        done();
-      });
+      expect(created).to.deep.equal([immediateWork]);
+      done();
     });
   });
 });

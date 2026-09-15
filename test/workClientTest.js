@@ -156,9 +156,11 @@ describe('workClient', function () {
     it('should report a failure to get the server token without calling the data service', function (done) {
       const tokenError = { statusCode: 503, message: 'No hosts available' };
       const failing = { withServerToken: function (cb) { cb(tokenError); } };
-      createWorkClient({ service: '127.0.0.1:' + port }, failing).createUploadPostprocessWork('user1', 'UPLOAD_COMPLETED', null, function (err) {
+      const client = createWorkClient({ service: '127.0.0.1:' + port }, failing);
+      client.createUploadPostprocessWork('user1', 'UPLOAD_COMPLETED', null, function (err) {
         expect(err).to.equal(tokenError);
         expect(requests).to.be.empty;
+        expect(client.inFlight()).to.equal(0);
         done();
       });
     });
@@ -203,6 +205,57 @@ describe('workClient', function () {
           expect(requests).to.have.lengthOf(1);
           done();
         }, 50);
+      });
+    });
+  });
+
+  describe('timeout', function () {
+    it('should default to 30 seconds', function () {
+      expect(createClient('127.0.0.1:' + port).timeout).to.equal(30000);
+    });
+
+    it('should be the one configured', function () {
+      expect(createClient('127.0.0.1:' + port, { timeout: 200 }).timeout).to.equal(200);
+    });
+  });
+
+  describe('whenIdle', function () {
+    it('should resolve at once when no work is being created', function () {
+      const client = createClient('127.0.0.1:' + port);
+      expect(client.inFlight()).to.equal(0);
+      return client.whenIdle();
+    });
+
+    it('should resolve once the work being created is answered', function (done) {
+      const client = createClient('127.0.0.1:' + port);
+      let idle = false;
+      respond = function (res) {
+        // the creation is in flight until the data service answers
+        expect(client.inFlight()).to.equal(1);
+        client.whenIdle().then(function () { idle = true; });
+        setTimeout(function () {
+          expect(idle).to.equal(false);
+          res.writeHead(201, { 'content-type': 'application/json' });
+          res.end(JSON.stringify({ id: 'work-1' }));
+        }, 20);
+      };
+      client.createUploadPostprocessWork('user1', 'UPLOAD_COMPLETED', null, function (err) {
+        expect(err).to.not.exist;
+        expect(client.inFlight()).to.equal(0);
+        client.whenIdle().then(function () {
+          expect(idle).to.equal(true);
+          done();
+        });
+      });
+    });
+
+    it('should resolve once a creation that failed is answered', function (done) {
+      const client = createClient('127.0.0.1:' + port, { timeout: 200 });
+      respond = function () {};
+      client.createUploadPostprocessWork('user1', 'UPLOAD_COMPLETED', null, function (err) {
+        expect(err).to.exist;
+        expect(client.inFlight()).to.equal(0);
+        client.whenIdle().then(done);
       });
     });
   });
