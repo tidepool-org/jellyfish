@@ -54,11 +54,6 @@ describe('ingestion API', function () {
           coll.deleteMany({}, cb);
         });
       },
-      (cb) => {
-        mongoClient.withCollection('summary', cb, function (coll, cb) {
-          coll.deleteMany({}, cb);
-        });
-      },
     ], done);
   });
 

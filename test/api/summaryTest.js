@@ -15,178 +15,163 @@
  * == BSD2 LICENSE ==
  */
 
- /* global describe, before, beforeEach, it, after */
+ /* global describe, beforeEach, it */
 
 'use strict';
 
 const util = require('util');
 
 var fs = require('fs');
+var axios = require('axios');
 
-var async = require('async');
-
-var _ = require('lodash');
 var expect = require('salinity').expect;
 
-var mongoClient = require('../../lib/mongo/mongoClient.js')(
-  { connectionString: 'mongodb://localhost/data_test', closeDelay: 0 }
-);
-var streamDAO = require('../../lib/streamDAO.js')(mongoClient);
-var dataBroker = require('../../lib/dataBroker.js')(streamDAO);
+const generateSamples = require('./samples.js').generateSamples;
 
-const generateSamples = function (sample, n) {
-  const samples = [];
-  const now = new Date();
+describe('Upload postprocess work', function () {
+  const cbg = JSON.parse(fs.readFileSync(__dirname + '/cbg/input.json'))[0];
+  const smbg = JSON.parse(fs.readFileSync(__dirname + '/smbg/input.json'))[0];
+  const upload = JSON.parse(fs.readFileSync(__dirname + '/upload/input.json'))[0];
 
-  let time = new Date();
-  time.setFullYear(now.getFullYear() - 1);
+  const batch = generateSamples(cbg, 500).concat(generateSamples(smbg, 500));
+  const rejected = { statusCode: 400, message: 'rejected' };
 
-  for (let i=0; i<n;i++) {
-    samples.push({
-      ...sample,
-      time: time.toISOString(),
-    });
-    time = new Date(time.getTime() + 5*60000);
-  }
+  let created;
+  let workError;
+  const workClient = {
+    createUploadPostprocessWork: function (userId, reason, availableTime, cb) {
+      created.push({ userId, reason, availableTime });
+      cb(workError);
+    }
+  };
+  const dataBroker = require('../../lib/dataBroker.js')({}, workClient);
+  const createWork = util.promisify(dataBroker.createUploadPostprocessWork);
 
-  return samples;
-};
-
-describe('Summaries', function () {
-  before(function(done){
-    mongoClient.start(done);
+  beforeEach(function () {
+    created = [];
+    workError = null;
   });
 
-  beforeEach(function (done) {
-    async.parallel([
-      (cb) => {
-        mongoClient.withCollection('summary', cb, function (coll, cb) {
-          coll.deleteMany({}, cb);
-        });
-      },
-    ], done);
-  });
-
-  after(function(done){
-    mongoClient.close(done);
-  });
-
-  describe('setSummaryOutdated', function(){
-    const cbg = JSON.parse(fs.readFileSync(__dirname + '/cbg/input.json'))[0];
-    const smbg = JSON.parse(fs.readFileSync(__dirname + '/smbg/input.json'))[0];
-
-    const batch = generateSamples(cbg, 500).concat(generateSamples(smbg, 500));
-
-    const setSummariesOutdated = util.promisify(dataBroker.setSummariesOutdated);
-    const getSummary = util.promisify(streamDAO.getSummary);
-
-    it('should not return an error or create a summary if the user id is undefined', async function() {
-      await setSummariesOutdated(undefined, batch, batch.length);
-
-      const coll = mongoClient.collection('summary');
-      const count = await coll.countDocuments({});
-      expect(count).to.equal(0);
+  describe('createUploadPostprocessWork', function () {
+    it('should not return an error or create work if the user id is undefined', async function() {
+      await createWork(undefined, batch, batch, null);
+      expect(created).to.be.empty;
     });
 
-    it('should not return an error or create a summary if the user id is empty', async function() {
-      await setSummariesOutdated('', batch, batch.length);
-
-      const coll = mongoClient.collection('summary');
-      const count = await coll.countDocuments({});
-      expect(count).to.equal(0);
+    it('should not return an error or create work if the user id is empty', async function() {
+      await createWork('', batch, batch, null);
+      expect(created).to.be.empty;
     });
 
-   it('should create a new summary for each data type in the batch', async function() {
-     await setSummariesOutdated('1', batch, batch.length);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
+    it('should not create work if nothing of the batch was stored', async function() {
+      await createWork('1', batch, [], null);
+      expect(created).to.be.empty;
+    });
 
-     expect(cgm).to.exist;
-     expect(bgm).to.exist;
-   });
+    it('should not create work for an empty request', async function() {
+      await createWork('1', [], [], null);
+      expect(created).to.be.empty;
+    });
 
-   it('should create a new summary only if the type is in the batch', async function() {
-     await setSummariesOutdated('1', batch.slice(0, 500), 500);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
+    it('should not create work if only upload records were stored', async function() {
+      await createWork('1', [upload], [upload], null);
+      expect(created).to.be.empty;
+    });
 
-     expect(cgm).to.exist;
-     expect(bgm).to.not.exist;
-   });
+    it('should not create work when the upload was rejected before anything was stored', async function() {
+      await createWork('1', [upload, cbg], [], rejected);
+      expect(created).to.be.empty;
+    });
 
-   it('should set outdated reason to LEGACY_DATA_ADDED with full batch', async function() {
-     await setSummariesOutdated('1', batch, batch.length);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
+    it('should create work for the data stored before the upload failed', async function() {
+      await createWork('1', [cbg, cbg], [cbg], rejected);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
+      expect(created[0].availableTime).to.equal(null);
+    });
 
-     expect(cgm).to.exist;
-     expect(cgm.dates?.outdatedReason).to.deep.equal(['LEGACY_DATA_ADDED']);
-     expect(bgm).to.exist;
-     expect(bgm.dates?.outdatedReason).to.deep.equal(['LEGACY_DATA_ADDED']);
-   });
+    it('should report a failed full batch as the completed upload, available immediately', async function() {
+      await createWork('1', batch, batch.slice(0, 10), rejected);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
+      expect(created[0].availableTime).to.equal(null);
+    });
 
-   it('should set outdated since ~90 seconds in the future with a full batch', async function() {
-     await setSummariesOutdated('1', batch, batch.length);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
+    it('should create one work item for the user', async function() {
+      await createWork('1', batch, batch, null);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].userId).to.equal('1');
+    });
 
-     const now = new Date().getTime();
+    it('should create work when the batch updates no summary type', async function() {
+      const bolusOnly = generateSamples({ ...cbg, type: 'bolus' }, 10);
+      await createWork('1', bolusOnly, bolusOnly, null);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
+    });
 
-     expect(cgm).to.exist;
-     expect(cgm.dates?.outdatedSince).to.exist;
+    it('should create work for the data stored along with an upload record', async function() {
+      await createWork('1', [upload, cbg], [upload, cbg], null);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
+    });
 
-     const cgmbuffer = (cgm.dates.outdatedSince.getTime() - now) / 1000;
-     expect(cgmbuffer).to.be.above(85);
-     expect(cgmbuffer).to.be.below(95);
+    it('should report LEGACY_DATA_ADDED deferred ~90 seconds with a full batch', async function() {
+      await createWork('1', batch, batch, null);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('LEGACY_DATA_ADDED');
 
-     expect(bgm).to.exist;
-     expect(bgm.dates?.outdatedSince).to.exist;
+      const now = new Date().getTime();
+      expect(created[0].availableTime).to.exist;
 
-     const bgmbuffer = (bgm.dates.outdatedSince.getTime() - now) / 1000;
-     expect(bgmbuffer).to.be.above(85);
-     expect(bgmbuffer).to.be.below(95);
-   });
+      const buffer = (created[0].availableTime.getTime() - now) / 1000;
+      expect(buffer).to.be.above(85);
+      expect(buffer).to.be.below(95);
+    });
 
-   it('should set outdated reason to LEGACY_UPLOAD_COMPLETED with an incomplete batch', async function() {
-     await setSummariesOutdated('1', batch.slice(0, batch.length -1), batch.length - 1);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
+    it('should report UPLOAD_COMPLETED available immediately with an incomplete batch', async function() {
+      const incomplete = batch.slice(0, batch.length - 1);
+      await createWork('1', incomplete, incomplete, null);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
+      expect(created[0].availableTime).to.equal(null);
+    });
 
-     expect(cgm).to.exist;
-     expect(cgm.dates?.outdatedReason).to.deep.equal(['LEGACY_UPLOAD_COMPLETED']);
-     expect(bgm).to.exist;
-     expect(bgm.dates?.outdatedReason).to.deep.equal(['LEGACY_UPLOAD_COMPLETED']);
-   });
+    it('should report the size of the batch when only part of it was stored', async function() {
+      await createWork('1', batch, batch.slice(0, 10), null);
+      expect(created).to.have.lengthOf(1);
+      expect(created[0].reason).to.equal('LEGACY_DATA_ADDED');
+    });
 
-   it('should set outdated since to the current time with an incomplete batch', async function() {
-     await setSummariesOutdated('1', batch.slice(0, batch.length -1), batch.length - 1);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
+    it('should not return an error when creating the work fails', async function() {
+      workError = new Error('data service unavailable');
+      await createWork('1', batch, batch, null);
+      expect(created).to.have.lengthOf(1);
+    });
 
-     const now = new Date().getTime();
+    it('should log work request errors without the server token or request configuration', async function() {
+      const token = 'synthetic-server-token';
+      workError = new axios.AxiosError('connection refused', 'ECONNREFUSED', {
+        headers: { 'x-tidepool-session-token': token }
+      });
+      const lines = [];
+      const write = process.stdout.write;
+      process.stdout.write = function(line) { lines.push(line); return true; };
+      try {
+        await createWork('1', batch, batch, null);
+      } finally {
+        process.stdout.write = write;
+      }
 
-     expect(cgm).to.exist;
-     expect(cgm.dates?.outdatedSince).to.exist;
-
-     const cgmbuffer = Math.abs((cgm.dates.outdatedSince.getTime() - now) / 1000);
-     expect(cgmbuffer).to.be.below(5);
-
-     expect(bgm).to.exist;
-     expect(bgm.dates?.outdatedSince).to.exist;
-
-     const bgmbuffer = Math.abs((bgm.dates.outdatedSince.getTime() - now) / 1000);
-     expect(bgmbuffer).to.be.below(5);
-   });
-
-   it('should set outdated reason to LEGACY_DATA_ADDED when the batch was not fully ingested', async function() {
-     await setSummariesOutdated('1', batch, batch.length - 1);
-     const cgm = await getSummary('1', 'cgm');
-     const bgm = await getSummary('1', 'bgm');
-
-     expect(cgm).to.exist;
-     expect(cgm.dates?.outdatedReason).to.deep.equal(['LEGACY_DATA_ADDED']);
-     expect(bgm).to.exist;
-     expect(bgm.dates?.outdatedReason).to.deep.equal(['LEGACY_DATA_ADDED']);
-   });
+      expect(lines).to.have.lengthOf(1);
+      expect(lines[0]).to.not.contain(token);
+      const record = JSON.parse(lines[0]);
+      expect(record.err).to.not.have.property('config');
+      expect(record.err).to.not.have.property('request');
+      expect(record.err.message).to.equal('connection refused');
+      expect(record.err.code).to.equal('ECONNREFUSED');
+      expect(record.err.stack).to.be.a('string');
+      expect(record.userId).to.equal('1');
+    });
   });
 });
