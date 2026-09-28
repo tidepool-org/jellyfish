@@ -45,9 +45,12 @@ creates no work.
 
 Work creation is best-effort: the work is created after the upload is answered, and a failure is logged
 at error level while the upload still succeeds, but the data uploaded is then not postprocessed until
-the next upload of the user. On shutdown, jellyfish waits for the work requests still in flight, for up
-to their timeout of 30 seconds, so the termination grace period of the pod has to cover that wait on top
-of the `preStop` hook and the 5 seconds terminus waits before stopping the server.
+the next upload of the user. On shutdown, jellyfish exits within 12 seconds of the signal: terminus
+waits 5 seconds before stopping the server, the uploads still being handled then have until the 12
+seconds are up to be answered, and the work requests they start get whatever time is left. Work still
+in flight at the end is logged at error level and abandoned. The 12 seconds fit the default termination
+grace period of 30 seconds once the chart's 15 second `preStop` hook has run; a longer `preStop` hook or
+a shorter grace period needs `defaultShutdownTimeoutMs` in `lib/jellyfishService.js` lowered to match.
 
 **Deployment order.** The platform release providing `POST /v1/work` must be deployed before this
 version of jellyfish, and this version of jellyfish must be deployed before the platform release that

@@ -229,4 +229,23 @@ describe('upload API', function () {
       done();
     });
   });
+
+  it('should create work and answer an error when the response cannot be sent', function (done) {
+    // Stand in for an error that cannot be serialized, which express throws on
+    const response = require('express').response;
+    const send = response.send;
+    response.send = function () {
+      response.send = send;
+      throw new TypeError('Converting circular structure to JSON');
+    };
+
+    post(generateSamples(cbg, 3), function (err, status, body) {
+      response.send = send;
+      expect(err).to.not.exist;
+      expect(status).to.equal(500);
+      expect(body).to.deep.equal({ statusCode: 500, message: 'Problem uploading data' });
+      expect(created).to.deep.equal([immediateWork]);
+      done();
+    });
+  });
 });

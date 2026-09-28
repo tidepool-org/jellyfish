@@ -27,8 +27,10 @@ function start() {
 
   replaceModule('../../env.js', {
     httpPort: 0,
+    // the 5 second terminus delay, then 3 seconds for the uploads and their work
+    shutdownTimeout: 8000,
     userApi: {}, seagull: {}, gatekeeper: {}, mongo: {},
-    data: { service: '127.0.0.1:1', timeout: 1000 }
+    data: { service: '127.0.0.1:1' }
   });
   const userApi = require('user-api-client');
   replaceModule('user-api-client', Object.assign({}, userApi, {
@@ -46,8 +48,17 @@ function start() {
   replaceModule('../../lib/mongo/mongoClient.js', function() {
     return { start: function() {}, healthCheck: function() { return true; } };
   });
+  // Forked with 'hold-writes', the store writes a datum only when told to complete the write.
+  const holdWrites = process.argv.includes('hold-writes');
+  let completeWrite;
   replaceModule('../../lib/streamDAO.js', function() {
-    return { addOrUpdateDatum: function(datum, cb) { cb(null, datum); } };
+    return {
+      addOrUpdateDatum: function(datum, cb) {
+        if (!holdWrites) { return cb(null, datum); }
+        completeWrite = function() { cb(null, datum); };
+        process.send({ event: 'write-started' });
+      }
+    };
   });
 
   let answerWork;
@@ -79,7 +90,9 @@ function start() {
     return service;
   });
   process.on('message', function(message) {
-    if (message === 'complete-work') {
+    if (message === 'complete-write') {
+      completeWrite();
+    } else if (message === 'complete-work') {
       process.send({ event: 'work-created' });
       answerWork(null, { statusCode: 201 }, { id: 'work-1' });
     } else if (message === 'crash') {

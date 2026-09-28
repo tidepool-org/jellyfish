@@ -139,6 +139,19 @@ describe('workClient', function () {
       });
     });
 
+    it('should accept work deduplicated into equivalent work waiting already', function (done) {
+      respond = function (res) {
+        res.writeHead(204);
+        res.end();
+      };
+      createClient('127.0.0.1:' + port).createUploadPostprocessWork('user1', 'UPLOAD_COMPLETED', null, function (err, work) {
+        expect(err).to.not.exist;
+        expect(work).to.not.exist;
+        expect(requests).to.have.lengthOf(1);
+        done();
+      });
+    });
+
     it('should report an unexpected status as an error', function (done) {
       respond = function (res) {
         res.writeHead(400, { 'content-type': 'application/json' });
@@ -206,16 +219,6 @@ describe('workClient', function () {
           done();
         }, 50);
       });
-    });
-  });
-
-  describe('timeout', function () {
-    it('should default to 30 seconds', function () {
-      expect(createClient('127.0.0.1:' + port).timeout).to.equal(30000);
-    });
-
-    it('should be the one configured', function () {
-      expect(createClient('127.0.0.1:' + port, { timeout: 200 }).timeout).to.equal(200);
     });
   });
 
