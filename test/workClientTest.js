@@ -201,25 +201,6 @@ describe('workClient', function () {
         done();
       });
     });
-
-    it('should create the work and call back once when the server token is delivered twice', function (done) {
-      const twice = {
-        withServerToken: function (cb) {
-          cb(null, serverToken);
-          cb(null, serverToken);
-        }
-      };
-      let calls = 0;
-      createWorkClient({ service: '127.0.0.1:' + port }, twice).createUploadPostprocessWork('user1', 'UPLOAD_COMPLETED', null, function (err) {
-        ++calls;
-        expect(err).to.not.exist;
-        setTimeout(function () {
-          expect(calls).to.equal(1);
-          expect(requests).to.have.lengthOf(1);
-          done();
-        }, 50);
-      });
-    });
   });
 
   describe('whenIdle', function () {

@@ -25,10 +25,10 @@ var log = require('./lib/log.js')('app.js');
 (function(){
   var httpClient = amoeba.httpClient();
   
-  var userApiClient = require('user-api-client').client( config.userApi, {
+  var userApiClient = require('./lib/userApiClient.js')(require('user-api-client').client( config.userApi, {
     get: function() { return [{ protocol: 'http', host: config.userApi.service }]; }
   }
-  );
+  ));
 
   var seagullClient = require('tidepool-seagull-client')(
     {
@@ -60,8 +60,10 @@ var log = require('./lib/log.js')('app.js');
     gatekeeperClient,
     workClient
   );
-  process.on('uncaughtException', function(err){
-    log.error(err, 'Uncaught exception bubbled all the way up!');
+  // Node does not consider it safe to resume after an uncaught exception, so the process exits for
+  // Kubernetes to restart it
+  process.on('uncaughtException', function(err, origin){
+    log.error(err, 'Uncaught exception bubbled all the way up! Origin[%s]', origin);
     process.exit(1);
   });
 

@@ -132,5 +132,36 @@ describe('dataBroker', function () {
         done();
       });
     });
+
+    ['constructor', '__proto__', 'toString', 'hasOwnProperty'].forEach(function (type) {
+      it(`should reject the type ${type}, which names a property of every object`, function (done) {
+        dataBroker.addDatum({ type: type, _userId: 'u', _groupId: 'g' }, function (err) {
+          expect(err.statusCode).to.equal(400);
+          expect(err.message).to.match(/^Unknown type/);
+          expect(store).to.be.empty;
+          done();
+        });
+      });
+    });
+
+    [undefined, null, 5, {}].forEach(function (version) {
+      it(`should reject an upload record whose version is ${JSON.stringify(version)}`, function (done) {
+        dataBroker.addDatum({ type: 'upload', version: version, _userId: 'u', _groupId: 'g' }, function (err) {
+          expect(err.statusCode).to.equal(400);
+          expect(err.errorField).to.equal('version');
+          expect(store).to.be.empty;
+          done();
+        });
+      });
+    });
+
+    it('should reject an upload record from an uploader whose version is not one', function (done) {
+      dataBroker.addDatum({ type: 'upload', version: 'tidepool-uploader x', _userId: 'u', _groupId: 'g' }, function (err) {
+        expect(err.statusCode).to.equal(400);
+        expect(err.code).to.equal('outdatedVersion');
+        expect(store).to.be.empty;
+        done();
+      });
+    });
   });
 });

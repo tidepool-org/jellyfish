@@ -22,6 +22,7 @@
 var fs = require('fs');
 var http = require('http');
 
+var amoeba = require('amoeba');
 var async = require('async');
 var expect = require('salinity').expect;
 
@@ -38,7 +39,9 @@ const cbg = JSON.parse(fs.readFileSync(__dirname + '/cbg/input.json'))[0];
 const upload = JSON.parse(fs.readFileSync(__dirname + '/upload/input.json'))[0];
 
 // The upload API, with the work client stood in for by a double that records the upload postprocess
-// work it is asked to create.
+// work it is asked to create. Seagull is a server reached through the real client, as in production:
+// amoeba calls the client back from a promise, so an exception the upload handler lets escape is
+// caught there and the callback called again, which a double calling back at once would not show.
 describe('upload API', function () {
   let created;
   let unanswered;
@@ -58,9 +61,16 @@ describe('upload API', function () {
     checkToken: function (token, cb) { cb(null, token === sessionToken ? { userid: userId } : null); },
     withServerToken: function (cb) { cb(null, 'server-token'); }
   };
-  const seagullClient = {
-    getPrivatePair: function (userid, name, token, cb) { cb(null, { id: 'private-' + userid }); }
-  };
+  // answers GET /:userid/private/:name with the private pair of the user
+  const seagull = http.createServer(function (req, res) {
+    res.setHeader('content-type', 'application/json');
+    res.end(JSON.stringify({ id: 'private-' + req.url.split('/')[1] }));
+  });
+  const seagullClient = require('tidepool-seagull-client')(
+    { get: function () { return [{ protocol: 'http', host: '127.0.0.1:' + seagull.address().port }]; } },
+    {},
+    amoeba.httpClient()
+  );
   const gatekeeperClient = {
     userInGroup: function (userid, groupId, cb) { cb(null, {}); }
   };
@@ -77,19 +87,21 @@ describe('upload API', function () {
       gatekeeperClient,
       workClient
     );
-    mongoClient.start(function (err) {
-      if (err != null) {
-        return done(err);
+    async.series([
+      function (cb) { seagull.listen(0, '127.0.0.1', cb); },
+      function (cb) { mongoClient.start(cb); },
+      function (cb) {
+        service.start(function (err, boundPort) {
+          port = boundPort;
+          cb(err);
+        });
       }
-      service.start(function (err, boundPort) {
-        port = boundPort;
-        done(err);
-      });
-    });
+    ], done);
   });
 
   after(function (done) {
     service.close();
+    seagull.close();
     mongoClient.close(done);
   });
 
@@ -246,6 +258,47 @@ describe('upload API', function () {
       expect(body).to.deep.equal({ statusCode: 500, message: 'Problem uploading data' });
       expect(created).to.deep.equal([immediateWork]);
       done();
+    });
+  });
+
+  // Each would have thrown in the upload handler, or left the upload unanswered
+  describe('malformed datums', function () {
+    function expectRejected(datums, dataIndex, message, cb) {
+      post(datums, function (err, status, body) {
+        expect(err).to.not.exist;
+        expect(status).to.equal(400);
+        expect(body.dataIndex).to.equal(dataIndex);
+        expect(body.message).to.match(message);
+        cb();
+      });
+    }
+
+    it('should reject a datum that is not an object', function (done) {
+      async.eachSeries([null, 1, 'text', true], function (datum, cb) {
+        expectRejected([datum], 0, /^Expected an object datum/, cb);
+      }, function () {
+        expect(created).to.be.empty;
+        done();
+      });
+    });
+
+    it('should create work for the data stored before a datum that is not an object', function (done) {
+      expectRejected([generateSamples(cbg, 1)[0], null], 1, /^Expected an object datum/, function () {
+        expect(created).to.deep.equal([immediateWork]);
+        done();
+      });
+    });
+
+    it('should reject a type naming a property of every object', function (done) {
+      async.eachSeries(['constructor', '__proto__', 'toString'], function (type, cb) {
+        expectRejected([{ type: type }], 0, /^Unknown type/, cb);
+      }, done);
+    });
+
+    it('should reject an upload record without a version string', function (done) {
+      async.eachSeries([{ type: 'upload' }, { type: 'upload', version: 5 }], function (datum, cb) {
+        expectRejected([datum], 0, /^upload\.version should be a string/, cb);
+      }, done);
     });
   });
 });

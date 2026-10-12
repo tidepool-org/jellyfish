@@ -41,7 +41,8 @@ describe('application shutdown', function() {
   // Use actual signals in a separate process: stubbing process.on would miss the original race
   // where amoeba closed the server before Terminus could reach its work-draining hook.
   function run(signal, options) {
-    const { completeWork, crash, holdWrite } = options;
+    // abandonWrite holds the write past the shutdown deadline, so the upload is never answered
+    const { completeWork, crash, holdWrite, abandonWrite, closeServer } = options;
     return new Promise(function(resolve, reject) {
       const events = [];
       let output = '';
@@ -67,6 +68,7 @@ describe('application shutdown', function() {
         events.push(message.event);
         if (message.event === 'ready') {
           if (crash) { return child.send('crash'); }
+          if (closeServer) { return child.send('close-server'); }
           const request = http.request({
             hostname: '127.0.0.1', port: message.port, path: '/data', method: 'POST', agent: false,
             headers: { 'content-type': 'application/json', 'x-tidepool-session-token': 'synthetic-token' }
@@ -78,13 +80,17 @@ describe('application shutdown', function() {
               maybeSignal();
             });
           });
-          request.on('error', reject);
+          request.on('error', abandonWrite ? function() {} : reject);
           request.end(JSON.stringify([require('./api/cbg/input.json')[0]]));
         } else if (message.event === 'write-started') {
           sendSignal();
-          setTimeout(function() {
-            if (child.connected) { child.send('complete-write'); }
-          }, completeWriteAfterSignalMs);
+          if (!abandonWrite) {
+            setTimeout(function() {
+              if (child.connected) { child.send('complete-write'); }
+            }, completeWriteAfterSignalMs);
+          }
+        } else if (message.event === 'server-closed') {
+          sendSignal();
         } else if (message.event === 'work-started') {
           workStarted = true;
           maybeSignal();
@@ -124,6 +130,22 @@ describe('application shutdown', function() {
     expect(result.shutdownMs, result.output).to.be.within(8000, 9000);
     expect(result.code, result.output).to.equal(null);
     expect(result.signal, result.output).to.equal('SIGTERM');
+  });
+
+  it('should report an upload still being handled and exit when the shutdown wait expires', async function() {
+    const result = await run('SIGTERM', { holdWrite: true, abandonWrite: true });
+    expect(result.uploaded, result.output).to.equal(false);
+    expect(result.events, result.output).to.deep.equal(['ready', 'write-started']);
+    expect(result.output).to.contain('Shutting down with 1 upload(s) being handled');
+    expect(result.code, result.output).to.equal(null);
+    expect(result.signal, result.output).to.equal('SIGTERM');
+  });
+
+  it('should log an error that fails the shutdown and exit with an error', async function() {
+    const result = await run('SIGTERM', { closeServer: true });
+    expect(result.output).to.contain('error happened during shutdown');
+    expect(result.output).to.contain('ERR_SERVER_NOT_RUNNING');
+    expect(result.code, result.output).to.equal(1);
   });
 
   it('should still exit with an error on an uncaught exception', async function() {

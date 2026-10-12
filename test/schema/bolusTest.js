@@ -126,6 +126,13 @@ describe('schema/bolus.js', function(){
             done(err);
           });
         });
+
+        it('rejects a completion whose previous is not stored', function(done){
+          helper.streamDAO.getDatum
+            .withArgs('unknown', goodObject._groupId, sinon.match.func)
+            .callsArgWith(2, null, null);
+          helper.expectRejection(_.assign({}, goodObject, {previous: 'unknown'}), 'previous', done);
+        });
       });
     });
 
@@ -197,6 +204,13 @@ describe('schema/bolus.js', function(){
             );
             done(err);
           });
+        });
+
+        it('rejects a completion whose previous is not stored', function(done){
+          helper.streamDAO.getDatum
+            .withArgs('unknown', goodObject._groupId, sinon.match.func)
+            .callsArgWith(2, null, null);
+          helper.expectRejection(_.assign({}, goodObject, {previous: 'unknown'}), 'previous', done);
         });
       });
     });

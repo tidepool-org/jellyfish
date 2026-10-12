@@ -77,9 +77,10 @@ function start() {
   });
 
   // Report the ephemeral port without changing which component starts or closes the server.
+  let service;
   const createService = require('../../lib/jellyfishService.js');
   replaceModule('../../lib/jellyfishService.js', function(...args) {
-    const service = createService(...args);
+    service = createService(...args);
     const startService = service.start;
     service.start = function() {
       startService(function(err, port) {
@@ -95,6 +96,10 @@ function start() {
     } else if (message === 'complete-work') {
       process.send({ event: 'work-created' });
       answerWork(null, { statusCode: 201 }, { id: 'work-1' });
+    } else if (message === 'close-server') {
+      // closed before the signal, the server fails to stop during the shutdown
+      service.close();
+      process.send({ event: 'server-closed' });
     } else if (message === 'crash') {
       throw new Error('synthetic uncaught exception');
     }

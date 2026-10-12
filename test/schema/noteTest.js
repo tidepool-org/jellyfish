@@ -118,6 +118,13 @@ describe('schema/note.js', function(){
         done();
       });
     });
+
+    it('Rejects a reference to a datum that is not stored', function(done){
+      helper.streamDAO.getDatum
+        .withArgs('unknown', goodObject._groupId, sinon.match.func)
+        .callsArgWith(2, null, null);
+      helper.expectRejection(_.assign({}, goodObject, {reference: 'unknown'}), 'reference', done);
+    });
   });
 
   helper.testCommonFields(goodObject);
