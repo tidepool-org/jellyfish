@@ -83,44 +83,43 @@ describe('dataBroker', function () {
   });
 
   describe('addDatum', function () {
-    it('should call back with the datum written', function (done) {
+    it('should write the datum', function (done) {
       dataBroker.addDatum(_.cloneDeep(cbg), function (err, written) {
         expect(err).to.not.exist;
+        expect(written).to.equal(true);
         expect(store).to.have.lengthOf(1);
-        expect(written).to.have.lengthOf(1);
-        expect(written[0].type).to.equal('cbg');
-        expect(written[0].id).to.exist;
+        expect(store[0].type).to.equal('cbg');
+        expect(store[0].id).to.exist;
         done();
       });
     });
 
-    it('should call back with every datum its handler makes of one', function (done) {
+    it('should write every datum its handler makes of one', function (done) {
       dataBroker.addDatum(_.cloneDeep(suspended), function (err, written) {
         expect(err).to.not.exist;
+        expect(written).to.equal(true);
         expect(store).to.have.lengthOf(2);
-        expect(written).to.have.lengthOf(2);
-        expect(written[0].time).to.equal(previous.time);
-        expect(written[1].time).to.equal(suspended.time);
+        expect(store[0].time).to.equal(previous.time);
+        expect(store[1].time).to.equal(suspended.time);
         done();
       });
     });
 
-    it('should call back with nothing written when the store rejects the datum', function (done) {
+    it('should report nothing written when the store rejects the datum', function (done) {
       failures[0] = duplicate;
       dataBroker.addDatum(_.cloneDeep(cbg), function (err, written) {
         expect(err).to.equal(duplicate);
-        expect(written).to.be.empty;
+        expect(written).to.equal(false);
         done();
       });
     });
 
-    it('should call back with the datums written before the store failed', function (done) {
+    it('should report the datums written before the store failed', function (done) {
       failures[1] = duplicate;
       dataBroker.addDatum(_.cloneDeep(suspended), function (err, written) {
         expect(err).to.equal(duplicate);
+        expect(written).to.equal(true);
         expect(store).to.have.lengthOf(2);
-        expect(written).to.have.lengthOf(1);
-        expect(written[0].time).to.equal(previous.time);
         done();
       });
     });

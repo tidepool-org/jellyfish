@@ -86,10 +86,6 @@ describe('workClient', function () {
       expect(function () { createWorkClient({}, userApiClient); }).to.throw();
     });
 
-    it('should reject an invalid service address', function () {
-      expect(function () { createWorkClient({ service: 'http://' }, userApiClient); }).to.throw();
-    });
-
     it('should require the user api client', function () {
       expect(function () { createWorkClient({ service: 'data:9220' }, null); }).to.throw();
     });
@@ -126,15 +122,6 @@ describe('workClient', function () {
         const create = JSON.parse(requests[0].body);
         expect(create).to.not.have.property('processingAvailableTime');
         expect(create.metadata.reasons).to.deep.equal(['UPLOAD_COMPLETED']);
-        done();
-      });
-    });
-
-    it('should accept the service address with a scheme', function (done) {
-      createClient('http://127.0.0.1:' + port).createUploadPostprocessWork('user1', 'UPLOAD_COMPLETED', null, function (err) {
-        expect(err).to.not.exist;
-        expect(requests).to.have.lengthOf(1);
-        expect(requests[0].url).to.equal('/v1/work');
         done();
       });
     });

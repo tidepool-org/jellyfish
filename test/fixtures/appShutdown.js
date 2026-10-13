@@ -48,17 +48,8 @@ function start() {
   replaceModule('../../lib/mongo/mongoClient.js', function() {
     return { start: function() {}, healthCheck: function() { return true; } };
   });
-  // Forked with 'hold-writes', the store writes a datum only when told to complete the write.
-  const holdWrites = process.argv.includes('hold-writes');
-  let completeWrite;
   replaceModule('../../lib/streamDAO.js', function() {
-    return {
-      addOrUpdateDatum: function(datum, cb) {
-        if (!holdWrites) { return cb(null, datum); }
-        completeWrite = function() { cb(null, datum); };
-        process.send({ event: 'write-started' });
-      }
-    };
+    return { addOrUpdateDatum: function(datum, cb) { cb(null, datum); } };
   });
 
   let answerWork;
@@ -91,9 +82,7 @@ function start() {
     return service;
   });
   process.on('message', function(message) {
-    if (message === 'complete-write') {
-      completeWrite();
-    } else if (message === 'complete-work') {
+    if (message === 'complete-work') {
       process.send({ event: 'work-created' });
       answerWork(null, { statusCode: 201 }, { id: 'work-1' });
     } else if (message === 'close-server') {

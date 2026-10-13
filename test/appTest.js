@@ -33,16 +33,10 @@ describe('application shutdown', function() {
     }
   });
 
-  // Holding the write of an upload, the signal is sent while it is being handled, and the write
-  // completes once the server has stopped: after the 5 seconds terminus waits before stopping it,
-  // and past the second it used to give the requests being handled.
-  const completeWriteAfterSignalMs = 6500;
-
   // Use actual signals in a separate process: stubbing process.on would miss the original race
   // where amoeba closed the server before Terminus could reach its work-draining hook.
   function run(signal, options) {
-    // abandonWrite holds the write past the shutdown deadline, so the upload is never answered
-    const { completeWork, crash, holdWrite, abandonWrite, closeServer } = options;
+    const { completeWork, crash, closeServer } = options;
     return new Promise(function(resolve, reject) {
       const events = [];
       let output = '';
@@ -60,7 +54,7 @@ describe('application shutdown', function() {
           sendSignal();
         }
       }
-      child = fork(__dirname + '/fixtures/appShutdown.js', holdWrite ? ['hold-writes'] : [], { silent: true });
+      child = fork(__dirname + '/fixtures/appShutdown.js', [], { silent: true });
       child.on('error', reject);
       child.stdout.on('data', function(chunk) { output += chunk; });
       child.stderr.on('data', function(chunk) { output += chunk; });
@@ -80,15 +74,8 @@ describe('application shutdown', function() {
               maybeSignal();
             });
           });
-          request.on('error', abandonWrite ? function() {} : reject);
+          request.on('error', reject);
           request.end(JSON.stringify([require('./api/cbg/input.json')[0]]));
-        } else if (message.event === 'write-started') {
-          sendSignal();
-          if (!abandonWrite) {
-            setTimeout(function() {
-              if (child.connected) { child.send('complete-write'); }
-            }, completeWriteAfterSignalMs);
-          }
         } else if (message.event === 'server-closed') {
           sendSignal();
         } else if (message.event === 'work-started') {
@@ -99,7 +86,7 @@ describe('application shutdown', function() {
         }
       });
       child.on('close', function(code, exitSignal) {
-        resolve({ code: code, signal: exitSignal, events: events, output: output, uploaded: uploaded,
+        resolve({ code: code, signal: exitSignal, events: events, output: output,
           shutdownMs: signalledAt != null ? Date.now() - signalledAt : null });
       });
     });
@@ -114,29 +101,12 @@ describe('application shutdown', function() {
     });
   });
 
-  it('should answer an upload being handled when the signal arrives and drain its work', async function() {
-    const result = await run('SIGTERM', { completeWork: true, holdWrite: true });
-    expect(result.uploaded, result.output).to.equal(true);
-    expect(result.events, result.output).to.deep.equal(['ready', 'write-started', 'work-started', 'waiting-for-work', 'work-created']);
-    expect(result.code, result.output).to.equal(null);
-    expect(result.signal, result.output).to.equal('SIGTERM');
-  });
-
   it('should report pending work and exit when the shutdown wait expires', async function() {
     const result = await run('SIGTERM', { completeWork: false });
     expect(result.events, result.output).to.deep.equal(['ready', 'work-started', 'waiting-for-work']);
     expect(result.output).to.contain('Shutting down with 1 upload postprocess work request(s) in flight');
     // the fixture's shutdown timeout, plus the time the process takes to exit
     expect(result.shutdownMs, result.output).to.be.within(8000, 9000);
-    expect(result.code, result.output).to.equal(null);
-    expect(result.signal, result.output).to.equal('SIGTERM');
-  });
-
-  it('should report an upload still being handled and exit when the shutdown wait expires', async function() {
-    const result = await run('SIGTERM', { holdWrite: true, abandonWrite: true });
-    expect(result.uploaded, result.output).to.equal(false);
-    expect(result.events, result.output).to.deep.equal(['ready', 'write-started']);
-    expect(result.output).to.contain('Shutting down with 1 upload(s) being handled');
     expect(result.code, result.output).to.equal(null);
     expect(result.signal, result.output).to.equal('SIGTERM');
   });

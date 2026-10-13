@@ -54,70 +54,70 @@ describe('Upload postprocess work', function () {
 
   describe('createUploadPostprocessWork', function () {
     it('should not return an error or create work if the user id is undefined', async function() {
-      await createWork(undefined, batch, batch, null);
+      await createWork(undefined, batch, true, null);
       expect(created).to.be.empty;
     });
 
     it('should not return an error or create work if the user id is empty', async function() {
-      await createWork('', batch, batch, null);
+      await createWork('', batch, true, null);
       expect(created).to.be.empty;
     });
 
-    it('should not create work if nothing of the batch was stored', async function() {
-      await createWork('1', batch, [], null);
+    it('should not create work if no data of the batch was stored', async function() {
+      await createWork('1', batch, false, null);
       expect(created).to.be.empty;
     });
 
     it('should not create work for an empty request', async function() {
-      await createWork('1', [], [], null);
+      await createWork('1', [], false, null);
       expect(created).to.be.empty;
     });
 
-    it('should not create work if only upload records were stored', async function() {
-      await createWork('1', [upload], [upload], null);
+    it('should not create work if only upload records were stored, which carry no data', async function() {
+      await createWork('1', [upload], false, null);
       expect(created).to.be.empty;
     });
 
     it('should not create work when the upload was rejected before anything was stored', async function() {
-      await createWork('1', [upload, cbg], [], rejected);
+      await createWork('1', [upload, cbg], false, rejected);
       expect(created).to.be.empty;
     });
 
     it('should create work for the data stored before the upload failed', async function() {
-      await createWork('1', [cbg, cbg], [cbg], rejected);
+      await createWork('1', [cbg, cbg], true, rejected);
       expect(created).to.have.lengthOf(1);
       expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
       expect(created[0].availableTime).to.equal(null);
     });
 
     it('should report a failed full batch as the completed upload, available immediately', async function() {
-      await createWork('1', batch, batch.slice(0, 10), rejected);
+      await createWork('1', batch, true, rejected);
       expect(created).to.have.lengthOf(1);
       expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
       expect(created[0].availableTime).to.equal(null);
     });
 
     it('should create one work item for the user', async function() {
-      await createWork('1', batch, batch, null);
+      await createWork('1', batch, true, null);
       expect(created).to.have.lengthOf(1);
       expect(created[0].userId).to.equal('1');
     });
 
     it('should create work when the batch updates no summary type', async function() {
       const bolusOnly = generateSamples({ ...cbg, type: 'bolus' }, 10);
-      await createWork('1', bolusOnly, bolusOnly, null);
+      await createWork('1', bolusOnly, true, null);
       expect(created).to.have.lengthOf(1);
       expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
     });
 
     it('should create work for the data stored along with an upload record', async function() {
-      await createWork('1', [upload, cbg], [upload, cbg], null);
+      await createWork('1', [upload, cbg], true, null);
       expect(created).to.have.lengthOf(1);
       expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
     });
 
     it('should report LEGACY_DATA_ADDED deferred ~90 seconds with a full batch', async function() {
-      await createWork('1', batch, batch, null);
+      await createWork('1', batch, true, null);
       expect(created).to.have.lengthOf(1);
       expect(created[0].reason).to.equal('LEGACY_DATA_ADDED');
 
@@ -131,21 +131,21 @@ describe('Upload postprocess work', function () {
 
     it('should report UPLOAD_COMPLETED available immediately with an incomplete batch', async function() {
       const incomplete = batch.slice(0, batch.length - 1);
-      await createWork('1', incomplete, incomplete, null);
+      await createWork('1', incomplete, true, null);
       expect(created).to.have.lengthOf(1);
       expect(created[0].reason).to.equal('UPLOAD_COMPLETED');
       expect(created[0].availableTime).to.equal(null);
     });
 
     it('should report the size of the batch when only part of it was stored', async function() {
-      await createWork('1', batch, batch.slice(0, 10), null);
+      await createWork('1', batch, true, null);
       expect(created).to.have.lengthOf(1);
       expect(created[0].reason).to.equal('LEGACY_DATA_ADDED');
     });
 
     it('should not return an error when creating the work fails', async function() {
       workError = new Error('data service unavailable');
-      await createWork('1', batch, batch, null);
+      await createWork('1', batch, true, null);
       expect(created).to.have.lengthOf(1);
     });
 
@@ -158,7 +158,7 @@ describe('Upload postprocess work', function () {
       const write = process.stdout.write;
       process.stdout.write = function(line) { lines.push(line); return true; };
       try {
-        await createWork('1', batch, batch, null);
+        await createWork('1', batch, true, null);
       } finally {
         process.stdout.write = write;
       }
